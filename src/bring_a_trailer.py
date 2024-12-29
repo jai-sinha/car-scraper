@@ -1,8 +1,14 @@
-import requests, bs4
+import requests, bs4, listing
 from datetime import datetime
+from threading import Lock
 
 def countdown(url):
 	res = requests.get(url)
+	try:
+		res.raise_for_status()
+	except Exception as e:
+		print("Error fetching countdown for BaT: %s" %e)
+
 	soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
 	countdown_element = soup.select_one('.listing-available-countdown')
@@ -28,44 +34,39 @@ def countdown(url):
 		print("Element not found")
 		return 0
 	
-def get_bring_a_trailer_results():
-	out = {}
+def get_bring_a_trailer_results(out, lock):
 
 	res = requests.get("https://bringatrailer.com/porsche/991-911/")
 	try:
 		res.raise_for_status()
 	except Exception as e:
-		print('There was a problem: %s' %e)
+		print('Error fetching BaT results: %s' %e)
 
 	soup = bs4.BeautifulSoup(res.text, 'html.parser')
 
-	live = soup.select('.listings-container.items-container.auctions-grid .listing-card')
-	for listing in live:
-		title = listing.select_one('h3 a').text.strip()
-		url = listing.select_one('h3 a')['href']
-		image = listing.select_one('.thumbnail img')['src']
-		bid = listing.select_one('.bidding-bid .bid-formatted').text.strip()
+	items = soup.select('.listings-container.items-container.auctions-grid .listing-card')
+	for item in items:
+		title = item.select_one('h3 a').text.strip()
+		url = item.select_one('h3 a')['href']
+		image = item.select_one('.thumbnail img')['src']
+		bid = item.select_one('.bidding-bid .bid-formatted').text.strip()
 		time = countdown(url)
 
-		out[title] = {
-			"title": title,
-			"subtitle": "",
-			"url": url,
-			"image": image,
-			"bid": bid,
-			"time": time
-			}
-		
+		key = "BaT: " + title
+		with lock:
+			out[key] = listing.Listing(title, url, image, time, bid)
 
-		print(f"Title: {title}")
-		print(f"URL: {url}")
-		# print(f"Image URL: {image}")
-		print(f"Current Bid: {bid}")
-		print(f"Time Remaining: {time}")
-		print("-" * 40)
+		# print(f"Title: {title}")
+		# print(f"URL: {url}")
+		# # print(f"Image URL: {image}")
+		# print(f"Current Bid: {bid}")
+		# print(f"Time Remaining: {time}")
+		# print("-" * 40)
 	
-	return out
+
 
 if __name__ == "__main__":
-	get_bring_a_trailer_results()
+	out = {}
+	lock = Lock()
+	get_bring_a_trailer_results(out, lock)
 
