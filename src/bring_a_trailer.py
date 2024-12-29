@@ -2,6 +2,12 @@ import requests, bs4, listing
 from datetime import datetime
 from threading import Lock
 
+def query(car: listing.Car) -> str:
+	model = car.model.lower().strip().replace(" ", "-")
+	make = car.make.lower()
+	out = "https://bringatrailer.com/" + make + "/" + model
+	return out
+
 def countdown(url):
 	res = requests.get(url)
 	try:
@@ -34,9 +40,9 @@ def countdown(url):
 		print("Element not found")
 		return 0
 	
-def get_bring_a_trailer_results(out, lock):
-
-	res = requests.get("https://bringatrailer.com/porsche/991-911/")
+def get_bring_a_trailer_results(car, out, lock):
+	q = query(car)
+	res = requests.get(q)
 	try:
 		res.raise_for_status()
 	except Exception as e:
@@ -68,5 +74,6 @@ def get_bring_a_trailer_results(out, lock):
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	get_bring_a_trailer_results(out, lock)
+	car = listing.Car("Porsche", "991 911")
+	get_bring_a_trailer_results(car, out, lock)
 

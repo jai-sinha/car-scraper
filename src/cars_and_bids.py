@@ -8,12 +8,19 @@ from webdriver_manager.chrome import ChromeDriverManager
 from threading import Lock
 import bs4, listing
 
-def get_cars_and_bids_results(out, lock):
+def query(car: listing.Car) -> str:
+	model = car.model.lower().strip().replace(" ", "-")
+	make = car.make.lower()
+	out = "https://carsandbids.com/search/" + make + "/" + model
+	return out
 
+def get_cars_and_bids_results(car: listing.Car, out: dict, lock: Lock):
 	options = Options()
 	options.headless = True
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-	driver.get("https://carsandbids.com/search/porsche/991-911/")
+	
+	q = query(car)
+	driver.get(q)
 
 	WebDriverWait(driver, 10).until(
 		EC.presence_of_element_located((By.CLASS_NAME, "auctions-list"))
@@ -32,10 +39,10 @@ def get_cars_and_bids_results(out, lock):
 
 		key = "Cars & Bids: " + title
 		with lock:
-			out[key] = listing.Listing(title, url, image, time, bid)
+			out[key] = listing.Listing(title, url, image, time, bid, subtitle)
 		
 		# print(f"Title: {title}")
-		# # print(f"Subtitle: {subtitle}")
+		# print(f"Subtitle: {subtitle}")
 		# print(f"URL: {url}")
 		# # print(f"Image URL: {image}")
 		# print(f"Current Bid: {bid}")
@@ -47,4 +54,5 @@ def get_cars_and_bids_results(out, lock):
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	get_cars_and_bids_results(out, lock)
+	car = listing.Car("Porsche", "991 911")
+	get_cars_and_bids_results(car, out, lock)
