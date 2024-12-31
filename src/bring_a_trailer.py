@@ -4,7 +4,7 @@ from threading import Lock
 
 def query(car: listing.Car) -> str:
 	model = car.model.lower().strip().replace(" ", "-")
-	make = car.make.lower()
+	make = car.make.lower().strip().replace(" ", "-")
 	out = "https://bringatrailer.com/" + make + "/" + model
 	return out
 

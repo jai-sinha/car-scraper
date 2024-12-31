@@ -61,7 +61,8 @@ def get_pcarmarket_results(car, out, lock):
 		# else, just get high bid and time remaining
 		else:
 			bid = item.select_one('.auction-bid').text.strip()
-			ends_at = time.get('data-ends-at')
+			countdown_element = soup.select_one('.countdownTimer')
+			ends_at = countdown_element.get('data-ends-at')
 			time = countdown(ends_at)
 			with lock:
 				out[key] = listing.Listing(title, url, image, time, bid)
