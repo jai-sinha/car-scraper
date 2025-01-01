@@ -3,12 +3,30 @@ from datetime import datetime
 from threading import Lock
 
 def query(car: listing.Car) -> str:
+	"""
+	Makes the search URL for a make and model.
+
+	Args:
+		car: The desired car to search.
+
+	Returns:
+		The pcarmarket search URL for desired car.
+	"""
 	model = car.model.lower().strip().replace(" ", "+")
 	make = car.make.lower()
 	out = "https://www.pcarmarket.com/search/?q=" + make + "+" + model
 	return out
 
 def countdown(ends_at):
+	"""
+	Calculates remaining time from specified end time in human readable format.
+
+	Args:
+		ends_at: Time at which countdown ends at.
+
+	Returns:
+		Remaining time from now until end time in human readable format.
+	"""
 	end_time = datetime.utcfromtimestamp(int(ends_at))
 	now = datetime.utcnow()
 	time_left = end_time - now
@@ -24,6 +42,15 @@ def countdown(ends_at):
 		return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
 
 def dt_highbid(url):
+	"""
+	Fetches the current highest bid for a car with "DT".
+
+	Args:
+		url: pcarmaret url for "DT" car.
+
+	Returns:
+		The highest bid.
+	"""
 	res = requests.get(url)
 	try:
 		res.raise_for_status()
@@ -35,6 +62,15 @@ def dt_highbid(url):
 	return bid
 
 def get_pcarmarket_results(car, out, lock):
+	"""
+	Fetches search results from pcarmarket for a given car,
+	extracts listing details, and stores them in a shared dictionary.
+
+	Args:
+		car: The desired car to search.
+		out: Shared dictionary with listing details.
+		lock: Threading lock.
+	"""
 	q = query(car)
 	res = requests.get(q)
 	try:

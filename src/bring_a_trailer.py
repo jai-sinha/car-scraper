@@ -3,12 +3,30 @@ from datetime import datetime
 from threading import Lock
 
 def query(car: listing.Car) -> str:
+	"""
+	Makes the search URL for a make and model.
+
+	Args:
+		car: The desired car to search.
+
+	Returns:
+		The bring a trailer search URL for desired car.
+	"""
 	model = car.model.lower().strip().replace(" ", "-")
 	make = car.make.lower().strip().replace(" ", "-")
 	out = "https://bringatrailer.com/" + make + "/" + model
 	return out
 
 def countdown(url):
+	"""
+	Calculates remaining time from specified end time in human readable format.
+
+	Args:
+		ends_at: Time at which countdown ends at.
+
+	Returns:
+		Remaining time from now until end time in human readable format.
+	"""
 	res = requests.get(url)
 	try:
 		res.raise_for_status()
@@ -40,8 +58,17 @@ def countdown(url):
 		print("Element not found")
 		return 0
 	
-def get_bring_a_trailer_results(car, out, lock):
-	q = query(car)
+def get_bring_a_trailer_results(car: listing.Car, out: dict, lock: Lock):
+	"""
+	Fetches search results from bring a trailer for a given car,
+	extracts listing details, and stores them in a shared dictionary.
+
+	Args:
+		car: The desired car to search.
+		out: Shared dictionary with listing details.
+		lock: Threading lock.
+	"""
+	q = car.query("bringatrailer")
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
