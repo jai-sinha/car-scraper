@@ -8,21 +8,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 from threading import Lock
 import bs4, listing
 
-def query(car: listing.Car) -> str:
-	"""
-	Makes the search URL for a make and model.
-
-	Args:
-		car: The desired car to search.
-
-	Returns:
-		The cars and bids search URL for desired car.
-	"""
-	model = car.model.lower().strip().replace(" ", "-")
-	make = car.make.lower()
-	out = "https://carsandbids.com/search/" + make + "/" + model
-	return out
-
 def get_cars_and_bids_results(car: listing.Car, out: dict, lock: Lock):
 	"""
 	Fetches search results from cars and bids for a given car,
@@ -37,7 +22,7 @@ def get_cars_and_bids_results(car: listing.Car, out: dict, lock: Lock):
 	options.headless = True
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 	
-	q = query(car)
+	q = car.query("cars and bids")
 	driver.get(q)
 
 	WebDriverWait(driver, 10).until(

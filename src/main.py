@@ -1,7 +1,7 @@
 import listing, cars_and_bids, pcarmarket, bring_a_trailer 
 import threading
 
-car = listing.Car("Porsche", "991 911")
+car = listing.Car("Porsche", "992 GT3")
 out = {}
 lock = threading.Lock()
 

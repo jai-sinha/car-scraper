@@ -22,7 +22,7 @@ def countdown(ends_at):
 	Calculates remaining time from specified end time in human readable format.
 
 	Args:
-		ends_at: Time at which countdown ends at.
+		ends_at: Time at which countdown ends at in unix time format.
 
 	Returns:
 		Remaining time from now until end time in human readable format.
