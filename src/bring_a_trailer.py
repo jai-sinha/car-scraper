@@ -43,7 +43,7 @@ def countdown(url):
 		print("Element not found")
 		return 0
 	
-def get_bring_a_trailer_results(car: listing.Car, out: dict, lock: Lock):
+def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
 	Fetches search results from bring a trailer for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -84,5 +84,5 @@ if __name__ == "__main__":
 	out = {}
 	lock = Lock()
 	car = listing.Car("Porsche", "991 911")
-	get_bring_a_trailer_results(car, out, lock)
+	get_results(car, out, lock)
 

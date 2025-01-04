@@ -8,7 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from threading import Lock
 import bs4, listing
 
-def get_cars_and_bids_results(car: listing.Car, out: dict, lock: Lock):
+def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
 	Fetches search results from cars and bids for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -58,4 +58,4 @@ if __name__ == "__main__":
 	out = {}
 	lock = Lock()
 	car = listing.Car("Porsche", "991 911")
-	get_cars_and_bids_results(car, out, lock)
+	get_results(car, out, lock)
