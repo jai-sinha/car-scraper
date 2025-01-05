@@ -1,4 +1,4 @@
-import requests, bs4
+import json
 
 class Listing:
 	def __init__(self, title, url, image, time, price, subtitle = None, dt_highbid = None):
@@ -21,10 +21,13 @@ class Car:
 		self.eyear = eyear
 		self.bodystyle = bodystyle
 		self.trans = trans
+		self.query = query
 	
-	# We're probably only using this and __hash__ for the google search cache,
-	# which is only being used for BaT and carsandbids, so no need to add year,
-	# bodystyle, etc.
+	""" 
+	We're probably only using this and __hash__ for the google search cache,
+	which is only being used for BaT and carsandbids, so no need to add year,
+	bodystyle, etc.
+	"""
 	def __eq__(self, other):
 		if isinstance(other, Car):
 			return (self.make==other.make and self.model==other.model)
@@ -33,25 +36,22 @@ class Car:
 	def __hash__(self):
 		return hash((self.make, self.model))
 	
-	def set_query(self, site):
-		self.query = site
-	
 	def get_query(self):
-		pass
-		# search_term = f"{site}+{self.make}"
-		# for term in self.model.split():
-		# 	search_term+= f"+{term}"
-		
-		# res = requests.get(f"https://www.google.com/search?q={search_term}")
-		# soup = bs4.BeautifulSoup(res.text, 'html.parser')
-		# # first h3 is the first search result item, go back 3 parents to get its href
-		# # can't find the url directly because all div classes are nonsense
-		# search = soup.select_one('h3')
+		"""
+		Uses the Google Search API to fetch urls for BaT and cars&bids listing
+		pages, saving us the work of hardcoding each edge-case url (there are
+		many!)
 
-		# # url comes with nonsense attached to back, '/url?q=' attached to front,
-		# # nonsense at the end starts with '&' so this just cleans it up.
-		# # cleaning up could also be done with re library and "https[^&]*" but this
-		# # way is quicker (i think) and doesn't require another library.
+		Returns:
+			URLs of BaT and cars&bids for the specific make/model/generation, as a
+			tuple of strings with BaT first.
+		"""
 
-		# url = search.parent.parent.parent['href']
-		# return url[7:url.find('&')]
+		# upon query success, increment today's api calls count, formatted as
+		# "Today's Google API use count: "
+		with open("../keys/api_uses.txt", 'r+') as f:
+			s = str(f.read())
+			count = int(s[30:])
+			count += 1
+			s = s[:30] + str(count)
+			f.write(s)

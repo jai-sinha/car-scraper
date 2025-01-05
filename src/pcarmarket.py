@@ -43,10 +43,10 @@ def countdown(ends_at):
 
 def dt_highbid(url):
 	"""
-	Fetches the current highest bid for a car with "DT".
+	Fetches the current highest bid for a listing in "DT" format.
 
 	Args:
-		url: pcarmaret url for "DT" car.
+		url: pcarmarket url for "DT" car.
 
 	Returns:
 		The highest bid.

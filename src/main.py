@@ -4,10 +4,11 @@ from diskcache import Cache
 
 CACHE_DIR = ".car_cache" # make this a constant for use later(?)
 
+# shouldn't need FanoutCache because cache isn't used in threads
 cache = Cache(CACHE_DIR)
 car = listing.Car("Porsche", "991 911")
 if car in cache:
-	car.query(cache[car])
+	car.query = cache[car]
 else:
 	query_results = car.get_query()
 	cache.add(car, query_results)
@@ -19,6 +20,7 @@ bat = threading.Thread(bring_a_trailer.get_results(car, out, lock))
 crsnbds = threading.Thread(cars_and_bids.get_results(car, out, lock))
 pcar = threading.Thread(pcarmarket.get_results(car, out, lock))
 
+# threading to increase efficiency in getting/scraping urls
 crsnbds.start()
 pcar.start()
 bat.start()

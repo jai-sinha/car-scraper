@@ -85,4 +85,3 @@ if __name__ == "__main__":
 	lock = Lock()
 	car = listing.Car("Porsche", "991 911")
 	get_results(car, out, lock)
-
