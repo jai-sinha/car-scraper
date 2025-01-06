@@ -1,4 +1,4 @@
-import json
+import requests, const
 
 class Listing:
 	def __init__(self, title, url, image, time, price, subtitle = None, dt_highbid = None):
@@ -43,9 +43,17 @@ class Car:
 		many!)
 
 		Returns:
-			URLs of BaT and cars&bids for the specific make/model/generation, as a
+			URLs of BaT and Cars&Bids for the specific make/model/generation, as a
 			tuple of strings with BaT first.
 		"""
+		q = f"{self.make} {self.model} bringatrailer carsandbids"
+		params = {
+			'key': const.GOOGLE_API_KEY,
+			'cx': '620f99273bef84934', # my unique search engine key-- use this
+			'q': q
+		}
+		res = requests.get("https://www.googleapis.com/customsearch/v1?", params=params)
+		print(res.json())
 
 		# upon query success, increment today's api calls count, formatted as
 		# "Today's Google API use count: "

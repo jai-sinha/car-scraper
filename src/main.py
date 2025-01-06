@@ -1,11 +1,9 @@
-import listing, cars_and_bids, pcarmarket, bring_a_trailer
+import listing, const, cars_and_bids, pcarmarket, bring_a_trailer
 import threading
 from diskcache import Cache
 
-CACHE_DIR = ".car_cache" # make this a constant for use later(?)
-
 # shouldn't need FanoutCache because cache isn't used in threads
-cache = Cache(CACHE_DIR)
+cache = Cache(const.CACHE_DIR)
 car = listing.Car("Porsche", "991 911")
 if car in cache:
 	car.query = cache[car]
