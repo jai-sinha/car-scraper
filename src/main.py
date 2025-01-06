@@ -4,12 +4,12 @@ from diskcache import Cache
 
 # shouldn't need FanoutCache because cache isn't used in threads
 cache = Cache(const.CACHE_DIR)
-car = listing.Car("Porsche", "991 911")
+car = listing.Car("Porsche", "911", generation="991")
 if car in cache:
 	car.query = cache[car]
 else:
-	query_results = car.get_query()
-	cache.add(car, query_results)
+	car.get_query()
+	cache.add(car, car.query)
 
 out = {}
 lock = threading.Lock()
