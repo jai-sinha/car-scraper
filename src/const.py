@@ -7,3 +7,4 @@ CACHE_DIR = ".car_cache"
 with open(ROOT_DIR/'keys'/'keys.json') as f:
 	dict = json.load(f)
 	GOOGLE_API_KEY = dict["google"]
+	EBAY_API_KEY = dict["ebay"]

@@ -1,4 +1,4 @@
-import listing, const, cars_and_bids, pcarmarket, bring_a_trailer
+import listing, const, cars_and_bids, pcarmarket, bring_a_trailer, ebay
 import threading
 from diskcache import Cache
 
@@ -17,14 +17,17 @@ lock = threading.Lock()
 bat = threading.Thread(bring_a_trailer.get_results(car, out, lock))
 crsnbds = threading.Thread(cars_and_bids.get_results(car, out, lock))
 pcar = threading.Thread(pcarmarket.get_results(car, out, lock))
+eby = threading.Thread(ebay.get_results(car, out, lock))
 
 # threading to increase efficiency in getting/scraping urls
 crsnbds.start()
 pcar.start()
 bat.start()
+eby.start()
 crsnbds.join()
 pcar.join()
 bat.join()
+eby.join()
 
 for item in out:
 	print(item)
