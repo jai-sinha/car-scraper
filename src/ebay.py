@@ -65,7 +65,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
     # Check if the request was successful
     if response.status_code == 200:
         data = response.json()
-        print(f"{car.make} {car.model} Listings from eBay:")
+        #print(f"{car.make} {car.model} Listings from eBay:")
         for item in data.get("itemSummaries", []):
             title = item.get("title", "N/A")
             price = item.get("price", {}).get("value", "N/A")
@@ -77,15 +77,15 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 
             is_auction = "AUCTION" in buying_options
 
-            print(f"Title: {title}")
-            print(f"Price: {price} {currency}")
-            print(f"URL: {url}")
-            print(f"Auction: {'Yes' if is_auction else 'No'}")
+            #print(f"Title: {title}")
+            #print(f"Auction: {'Yes' if is_auction else 'No'}")
             time = 0
             if is_auction and end_time != "N/A":
                 time = countdown(end_time)
-                print(f"Auction Ends: {time}")
-                
+                #print(f"Auction Ends: {time}")
+            #print(f"Price: {price} {currency}")
+            #print(f"URL: {url}")
+
             key = "eBay: " + title
             with lock:
                 out[key] = listing.Listing(title, url, image, time, price)
