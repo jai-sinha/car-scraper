@@ -53,7 +53,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
-	q = car.query("bringatrailer")
+	q = car.query[0]
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
