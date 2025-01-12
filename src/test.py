@@ -1,23 +1,23 @@
-import const, requests, pprint, json
+import const, requests, pprint
 
-make = "Porsche"
-model = "911"
-generation = "991"
-site = "bringatrailer"
+make = "bmw"
+model = "m3"
+generation = "e90"
 
 
-q = f"{make} {generation} {model} for sale {site}"
+q = f"{make} {generation} {model} for sale carsandbids"
 params = {
 	'key': const.GOOGLE_API_KEY,
 	'cx': '620f99273bef84934', # my unique search engine key-- use this
 	'q': q
 }
 res = requests.get("https://www.googleapis.com/customsearch/v1?", params=params)
-print(res.json())
+pprint.pp(res.json())
 
-results = json.loads(res.json())
-for items in results['items']:
-	pass
+print("-" * 80)
+
+topResult = res.json()['items'][0]
+pprint.pp(topResult)
 
 # upon query success, increment today's api calls count, formatted as
 # "Today's Google API use count: "

@@ -1,20 +1,20 @@
 {'kind': 'customsearch#search',
  'url': {'type': 'application/json',
          'template': 'https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json'},
- 'queries': {'request': [{'title': 'Google Custom Search - Porsche 991 911 '
+ 'queries': {'request': [{'title': 'Google Custom Search - bmw e90 m3 for sale '
                                    'carsandbids',
-                          'totalResults': '5440',
-                          'searchTerms': 'Porsche 991 911 carsandbids',
+                          'totalResults': '4640',
+                          'searchTerms': 'bmw e90 m3 for sale carsandbids',
                           'count': 10,
                           'startIndex': 1,
                           'inputEncoding': 'utf8',
                           'outputEncoding': 'utf8',
                           'safe': 'off',
                           'cx': '620f99273bef84934'}],
-             'nextPage': [{'title': 'Google Custom Search - Porsche 991 911 '
-                                    'carsandbids',
-                           'totalResults': '5440',
-                           'searchTerms': 'Porsche 991 911 carsandbids',
+             'nextPage': [{'title': 'Google Custom Search - bmw e90 m3 for '
+                                    'sale carsandbids',
+                           'totalResults': '4640',
+                           'searchTerms': 'bmw e90 m3 for sale carsandbids',
                            'count': 10,
                            'startIndex': 11,
                            'inputEncoding': 'utf8',
@@ -22,163 +22,142 @@
                            'safe': 'off',
                            'cx': '620f99273bef84934'}]},
  'context': {'title': 'Test'},
- 'searchInformation': {'searchTime': 0.351165,
-                       'formattedSearchTime': '0.35',
-                       'totalResults': '5440',
-                       'formattedTotalResults': '5,440'},
+ 'searchInformation': {'searchTime': 0.446191,
+                       'formattedSearchTime': '0.45',
+                       'totalResults': '4640',
+                       'formattedTotalResults': '4,640'},
  'items': [{'kind': 'customsearch#result',
-            'title': 'Used Porsche 991 911 for Sale - Cars & Bids',
-            'htmlTitle': 'Used <b>Porsche 991 911</b> for Sale - Cars &amp; '
+            'title': 'Used BMW E9X M3 for Sale - Cars & Bids',
+            'htmlTitle': '<b>Used BMW</b> E9X <b>M3 for Sale</b> - Cars &amp; '
                          'Bids',
-            'link': 'https://carsandbids.com/search/porsche/991-911',
+            'link': 'https://carsandbids.com/search/bmw/e9x-m3',
             'displayLink': 'carsandbids.com',
-            'snippet': 'The Porsche 991 911, produced from 2011 to 2019, '
-                       'marked the next chapter in the evolution of the iconic '
-                       'sports car. Characterized by a longer wheelbase and\xa0'
-                       '...',
-            'htmlSnippet': 'The <b>Porsche 991 911</b>, produced from 2011 to '
-                           '2019, marked the next chapter in the evolution of '
-                           'the iconic sports car. Characterized by a longer '
-                           'wheelbase and&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/search/porsche/991-911',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>porsche</b>/<b>991</b>-<b>911</b>',
+            'snippet': 'Considered to be one of the most unique of the breed, '
+                       'the E9X M3 brought high-revving V8 power to the line '
+                       'for the first – and only – time.',
+            'htmlSnippet': 'Considered to be one of the most unique of the '
+                           'breed, the E9X <b>M3</b> brought high-revving V8 '
+                           'power to the line for the first – and only – time.',
+            'formattedUrl': 'https://carsandbids.com/search/bmw/e9x-m3',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>bmw</b>/e9x-<b>m3</b>',
             'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp52PsmmTY2OCY41s2jiKGF7qlx8x_w-XgIE6JVWJeTY3kue7j8l94caUi&s',
                                            'width': '311',
                                            'height': '162'}],
                         'metatags': [{'og:image': 'https://carsandbids.com/carsandbids.png',
                                       'apple-itunes-app': 'app-id=1589512351, '
-                                                          'app-argument=https://carsandbids.com/search/porsche/991-911',
+                                                          'app-argument=https://carsandbids.com/search/bmw/e9x-m3',
                                       'theme-color': '#ffffff',
                                       'og:type': 'website',
                                       'twitter:card': 'summary_large_image',
-                                      'twitter:title': 'Used Porsche 991 911 '
-                                                       'for Sale',
+                                      'twitter:title': 'Used BMW E9X M3 for '
+                                                       'Sale',
                                       'og:site_name': 'Cars & Bids',
                                       'apple-mobile-web-app-title': 'Cars & '
                                                                     'Bids',
-                                      'og:title': 'Used Porsche 991 911 for '
-                                                  'Sale',
+                                      'og:title': 'Used BMW E9X M3 for Sale',
                                       'color-scheme': 'light dark',
                                       'page-loaded': 'true',
                                       'twitter:creator': '@carsandbids',
-                                      'og:description': 'The Porsche 991 911, '
-                                                        'produced from 2011 to '
-                                                        '2019, marked the next '
-                                                        'chapter in the '
-                                                        'evolution of the '
-                                                        'iconic sports car. '
-                                                        'Characterized by a '
-                                                        'longer wheelbase and '
-                                                        'a wider track, the '
-                                                        '991 featured a more '
-                                                        'aerodynamic design '
-                                                        'with pronounced '
-                                                        'curves and sleek LED '
-                                                        'headlights. Available '
-                                                        'in various models, '
-                                                        'including the '
-                                                        'Carrera, Carrera S, '
-                                                        'GT3, Turbo, and more, '
-                                                        'the 991 offered a '
-                                                        'range of flat-six '
-                                                        'engines delivering '
-                                                        'impressive '
-                                                        'performance. '
-                                                        'Technological '
-                                                        'advancements included '
-                                                        'a refined suspension '
-                                                        'system, adaptive '
-                                                        'aerodynamics, and a '
-                                                        'modernized interior '
-                                                        'with the introduction '
-                                                        'of the Porsche '
-                                                        'Communication '
-                                                        'Management (PCM) '
-                                                        'system. The 991 is '
-                                                        'praised for its '
-                                                        'dynamic driving '
-                                                        'experience, striking '
-                                                        'design, and a perfect '
-                                                        'blend of tradition '
-                                                        'and innovation, '
-                                                        'making it a revered '
-                                                        'model in the 911 '
-                                                        'lineup.',
+                                      'og:description': 'Considered to be one '
+                                                        'of the most unique of '
+                                                        'the breed, the E9X M3 '
+                                                        'brought high-revving '
+                                                        'V8 power to the line '
+                                                        'for the first – and '
+                                                        'only – time. Based on '
+                                                        'the architecture of '
+                                                        'the V10 from the M5, '
+                                                        'the S65 V8 produced '
+                                                        'over 400 horsepower '
+                                                        'out of a '
+                                                        'naturally-aspirated, '
+                                                        '4-liter engine, all '
+                                                        'while weighing less '
+                                                        'than the S54 inline-6 '
+                                                        'it replaced. Coupled '
+                                                        'with sensational '
+                                                        'styling, even more '
+                                                        'technology, and a '
+                                                        'further improved '
+                                                        'interior, the E9X '
+                                                        'underscored that the '
+                                                        'M3 was the benchmark '
+                                                        'for the '
+                                                        'everyday-usable, '
+                                                        'balanced-performance '
+                                                        'car. Produced in '
+                                                        'coupe, sedan, and '
+                                                        'convertible forms, '
+                                                        'the fourth generation '
+                                                        'M3 is a beloved and '
+                                                        'special piece of the '
+                                                        'M Division’s history.',
                                       'twitter:image': 'https://carsandbids.com/carsandbids.png',
                                       'twitter:site': '@carsandbids',
                                       'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'The Porsche 991 '
-                                                             '911, produced '
-                                                             'from 2011 to '
-                                                             '2019, marked the '
-                                                             'next chapter in '
-                                                             'the evolution of '
-                                                             'the iconic '
-                                                             'sports car. '
-                                                             'Characterized by '
-                                                             'a longer '
-                                                             'wheelbase and a '
-                                                             'wider track, the '
-                                                             '991 featured a '
-                                                             'more aerodynamic '
-                                                             'design with '
-                                                             'pronounced '
-                                                             'curves and sleek '
-                                                             'LED headlights. '
-                                                             'Available in '
-                                                             'various models, '
-                                                             'including the '
-                                                             'Carrera, Carrera '
-                                                             'S, GT3, Turbo, '
-                                                             'and more, the '
-                                                             '991 offered a '
-                                                             'range of '
-                                                             'flat-six engines '
-                                                             'delivering '
-                                                             'impressive '
-                                                             'performance. '
-                                                             'Technological '
-                                                             'advancements '
-                                                             'included a '
-                                                             'refined '
-                                                             'suspension '
-                                                             'system, adaptive '
-                                                             'aerodynamics, '
-                                                             'and a modernized '
-                                                             'interior with '
-                                                             'the introduction '
-                                                             'of the Porsche '
-                                                             'Communication '
-                                                             'Management (PCM) '
-                                                             'system. The 991 '
-                                                             'is praised for '
-                                                             'its dynamic '
-                                                             'driving '
-                                                             'experience, '
-                                                             'striking design, '
-                                                             'and a perfect '
-                                                             'blend of '
-                                                             'tradition and '
-                                                             'innovation, '
-                                                             'making it a '
-                                                             'revered model in '
-                                                             'the 911 lineup.',
-                                      'og:url': 'https://carsandbids.com/search/porsche/991-911'}],
+                                      'twitter:description': 'Considered to be '
+                                                             'one of the most '
+                                                             'unique of the '
+                                                             'breed, the E9X '
+                                                             'M3 brought '
+                                                             'high-revving V8 '
+                                                             'power to the '
+                                                             'line for the '
+                                                             'first – and only '
+                                                             '– time. Based on '
+                                                             'the architecture '
+                                                             'of the V10 from '
+                                                             'the M5, the S65 '
+                                                             'V8 produced over '
+                                                             '400 horsepower '
+                                                             'out of a '
+                                                             'naturally-aspirated, '
+                                                             '4-liter engine, '
+                                                             'all while '
+                                                             'weighing less '
+                                                             'than the S54 '
+                                                             'inline-6 it '
+                                                             'replaced. '
+                                                             'Coupled with '
+                                                             'sensational '
+                                                             'styling, even '
+                                                             'more technology, '
+                                                             'and a further '
+                                                             'improved '
+                                                             'interior, the '
+                                                             'E9X underscored '
+                                                             'that the M3 was '
+                                                             'the benchmark '
+                                                             'for the '
+                                                             'everyday-usable, '
+                                                             'balanced-performance '
+                                                             'car. Produced in '
+                                                             'coupe, sedan, '
+                                                             'and convertible '
+                                                             'forms, the '
+                                                             'fourth '
+                                                             'generation M3 is '
+                                                             'a beloved and '
+                                                             'special piece of '
+                                                             'the M Division’s '
+                                                             'history.',
+                                      'og:url': 'https://carsandbids.com/search/bmw/e9x-m3'}],
                         'cse_image': [{'src': 'https://carsandbids.com/carsandbids.png'}]}},
            {'kind': 'customsearch#result',
-            'title': 'Used Porsche 911 for Sale - Cars & Bids',
-            'htmlTitle': 'Used <b>Porsche 911</b> for Sale - Cars &amp; Bids',
-            'link': 'https://carsandbids.com/search/porsche/911',
+            'title': 'Used BMW M3 for Sale - Cars & Bids',
+            'htmlTitle': '<b>Used BMW M3 for Sale</b> - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/search/bmw/m3',
             'displayLink': 'carsandbids.com',
-            'snippet': '... 991, and 992. From track-focused offerings such as '
-                       'the GT3 and GT3 RS to high-performance models like the '
-                       'iconic Turbo and Turbo S, the Porsche 911 has\xa0...',
-            'htmlSnippet': '... <b>991</b>, and 992. From track-focused '
-                           'offerings such as the GT3 and GT3 RS to '
-                           'high-performance models like the iconic Turbo and '
-                           'Turbo S, the <b>Porsche 911</b> has&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/search/porsche/911',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>porsche</b>/<b>911</b>',
+            'snippet': '... E90, E92, and E93 generation. Regardless of the '
+                       'model, the M3 has always attracted a dedicated band of '
+                       'enthusiasts — and it remains a benchmark in the\xa0...',
+            'htmlSnippet': '... <b>E90</b>, <b>E92</b>, and <b>E93</b> '
+                           'generation. Regardless of the model, the <b>M3</b> '
+                           'has always attracted a dedicated band of '
+                           'enthusiasts — and it remains a benchmark in '
+                           'the&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/search/bmw/m3',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>bmw</b>/<b>m3</b>',
             'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp52PsmmTY2OCY41s2jiKGF7qlx8x_w-XgIE6JVWJeTY3kue7j8l94caUi&s',
                                            'width': '311',
                                            'height': '162'}],
@@ -186,584 +165,697 @@
                                       'theme-color': '#ffffff',
                                       'og:type': 'website',
                                       'twitter:card': 'summary_large_image',
-                                      'twitter:title': 'Used Porsche 911 for '
-                                                       'Sale',
+                                      'twitter:title': 'Used BMW M3 for Sale',
                                       'apple-mobile-web-app-title': 'Cars & '
                                                                     'Bids',
-                                      'og:title': 'Used Porsche 911 for Sale',
+                                      'og:title': 'Used BMW M3 for Sale',
                                       'page-loaded': 'true',
                                       'twitter:creator': '@carsandbids',
-                                      'og:description': 'The Porsche 911 is a '
-                                                        'sports car icon '
-                                                        'that’s focused on the '
-                                                        'constant refinement '
-                                                        'of its rear-engine '
-                                                        'layout since it was '
-                                                        'introduced in the '
-                                                        '1960s. The 911 is '
-                                                        'separated by most '
-                                                        'enthusiasts into two '
-                                                        'distinct eras: the '
-                                                        'air-cooled models — '
-                                                        'the original 911, '
-                                                        '930, 964, and 993 — '
-                                                        'and the water-cooled '
-                                                        'models — the 996, '
-                                                        '997, 991, and 992. '
-                                                        'From track-focused '
-                                                        'offerings such as the '
-                                                        'GT3 and GT3 RS to '
+                                      'og:description': 'The BMW M3 is the '
                                                         'high-performance '
-                                                        'models like the '
-                                                        'iconic Turbo and '
-                                                        'Turbo S, the Porsche '
-                                                        '911 has cultivated a '
-                                                        'dedicated group of '
+                                                        'version of BMW’s '
+                                                        'popular 3 Series. '
+                                                        'Since its inception, '
+                                                        'the M3 has been the '
+                                                        'benchmark for '
+                                                        'handling in its '
+                                                        'class, offering '
+                                                        'sports car-like '
+                                                        'dynamics in various '
+                                                        'body styles. Many '
+                                                        'engines have powered '
+                                                        'the M3, from a '
+                                                        '4-cylinder found in '
+                                                        'the E30 to '
+                                                        '6-cylinders found in '
+                                                        'the E36, E46, F80, '
+                                                        'and G80 generations — '
+                                                        'plus a V8 making a '
+                                                        'brief appearance for '
+                                                        'the E90, E92, and E93 '
+                                                        'generation. '
+                                                        'Regardless of the '
+                                                        'model, the M3 has '
+                                                        'always attracted a '
+                                                        'dedicated band of '
                                                         'enthusiasts — and it '
                                                         'remains a benchmark '
-                                                        'for sports cars '
-                                                        'today.',
+                                                        'in the performance '
+                                                        'car sector to this '
+                                                        'day.',
                                       'twitter:image': 'https://carsandbids.com/carsandbids.png',
                                       'twitter:site': '@carsandbids',
                                       'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'The Porsche 911 '
-                                                             'is a sports car '
-                                                             'icon that’s '
-                                                             'focused on the '
-                                                             'constant '
-                                                             'refinement of '
-                                                             'its rear-engine '
-                                                             'layout since it '
-                                                             'was introduced '
-                                                             'in the 1960s. '
-                                                             'The 911 is '
-                                                             'separated by '
-                                                             'most enthusiasts '
-                                                             'into two '
-                                                             'distinct eras: '
-                                                             'the air-cooled '
-                                                             'models — the '
-                                                             'original 911, '
-                                                             '930, 964, and '
-                                                             '993 — and the '
-                                                             'water-cooled '
-                                                             'models — the '
-                                                             '996, 997, 991, '
-                                                             'and 992. From '
-                                                             'track-focused '
-                                                             'offerings such '
-                                                             'as the GT3 and '
-                                                             'GT3 RS to '
+                                      'twitter:description': 'The BMW M3 is '
+                                                             'the '
                                                              'high-performance '
-                                                             'models like the '
-                                                             'iconic Turbo and '
-                                                             'Turbo S, the '
-                                                             'Porsche 911 has '
-                                                             'cultivated a '
-                                                             'dedicated group '
+                                                             'version of BMW’s '
+                                                             'popular 3 '
+                                                             'Series. Since '
+                                                             'its inception, '
+                                                             'the M3 has been '
+                                                             'the benchmark '
+                                                             'for handling in '
+                                                             'its class, '
+                                                             'offering sports '
+                                                             'car-like '
+                                                             'dynamics in '
+                                                             'various body '
+                                                             'styles. Many '
+                                                             'engines have '
+                                                             'powered the M3, '
+                                                             'from a '
+                                                             '4-cylinder found '
+                                                             'in the E30 to '
+                                                             '6-cylinders '
+                                                             'found in the '
+                                                             'E36, E46, F80, '
+                                                             'and G80 '
+                                                             'generations — '
+                                                             'plus a V8 making '
+                                                             'a brief '
+                                                             'appearance for '
+                                                             'the E90, E92, '
+                                                             'and E93 '
+                                                             'generation. '
+                                                             'Regardless of '
+                                                             'the model, the '
+                                                             'M3 has always '
+                                                             'attracted a '
+                                                             'dedicated band '
                                                              'of enthusiasts — '
                                                              'and it remains a '
-                                                             'benchmark for '
-                                                             'sports cars '
-                                                             'today.',
-                                      'og:url': 'https://carsandbids.com/search/porsche/911'}],
+                                                             'benchmark in the '
+                                                             'performance car '
+                                                             'sector to this '
+                                                             'day.',
+                                      'og:url': 'https://carsandbids.com/search/bmw/m3'}],
                         'cse_image': [{'src': 'https://carsandbids.com/carsandbids.png'}]}},
            {'kind': 'customsearch#result',
-            'title': 'Used Porsche for Sale - Cars & Bids',
-            'htmlTitle': 'Used <b>Porsche</b> for Sale - Cars &amp; Bids',
-            'link': 'https://carsandbids.com/search/porsche',
+            'title': '2011 BMW M3 Sedan for Sale - Cars & Bids',
+            'htmlTitle': '2011 <b>BMW M3</b> Sedan for <b>Sale</b> - Cars '
+                         '&amp; Bids',
+            'link': 'https://carsandbids.com/auctions/KYZ2Jjg5/2011-bmw-m3-sedan',
             'displayLink': 'carsandbids.com',
-            'snippet': '997 911. Porsche 987 Cayman Community. 987 Cayman. '
-                       'Porsche 981 Cayman Community. 981 Cayman. Porsche 718 '
-                       'Cayman Community. 718 Cayman. Porsche 991 911 '
-                       'Community.',
-            'htmlSnippet': '997 <b>911</b>. <b>Porsche</b> 987 Cayman '
-                           'Community. 987 Cayman. <b>Porsche</b> 981 Cayman '
-                           'Community. 981 Cayman. <b>Porsche</b> 718 Cayman '
-                           'Community. 718 Cayman. <b>Porsche 991 911</b> '
-                           'Community.',
-            'formattedUrl': 'https://carsandbids.com/search/porsche',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>porsche</b>',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp52PsmmTY2OCY41s2jiKGF7qlx8x_w-XgIE6JVWJeTY3kue7j8l94caUi&s',
-                                           'width': '311',
-                                           'height': '162'}],
-                        'metatags': [{'og:image': 'https://carsandbids.com/carsandbids.png',
-                                      'apple-itunes-app': 'app-id=1589512351, '
-                                                          'app-argument=https://carsandbids.com/search/porsche',
-                                      'theme-color': '#ffffff',
-                                      'og:type': 'website',
-                                      'twitter:card': 'summary_large_image',
-                                      'twitter:title': 'Used Porsche for Sale',
-                                      'og:site_name': 'Cars & Bids',
-                                      'apple-mobile-web-app-title': 'Cars & '
-                                                                    'Bids',
-                                      'og:title': 'Used Porsche for Sale',
-                                      'color-scheme': 'light dark',
-                                      'page-loaded': 'true',
-                                      'og:description': 'Cars & Bids has daily '
-                                                        'auctions of cool '
-                                                        'enthusiast vehicles '
-                                                        'from the 1980s to the '
-                                                        '2020s — like Porsche, '
-                                                        'BMW, Mercedes-Benz, '
-                                                        'and more.',
-                                      'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://carsandbids.com/carsandbids.png',
-                                      'twitter:site': '@carsandbids',
-                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'Cars & Bids has '
-                                                             'daily auctions '
-                                                             'of cool '
-                                                             'enthusiast '
-                                                             'vehicles from '
-                                                             'the 1980s to the '
-                                                             '2020s — like '
-                                                             'Porsche, BMW, '
-                                                             'Mercedes-Benz, '
-                                                             'and more.',
-                                      'og:url': 'https://carsandbids.com/search/porsche'}],
-                        'cse_image': [{'src': 'https://carsandbids.com/carsandbids.png'}]}},
-           {'kind': 'customsearch#result',
-            'title': '2018 Porsche 911 Turbo S Coupe for Sale - Cars & Bids',
-            'htmlTitle': '2018 <b>Porsche 911</b> Turbo S Coupe for Sale - '
-                         'Cars &amp; Bids',
-            'link': 'https://carsandbids.com/auctions/9WvRnpRB/2018-porsche-911-turbo-s-coupe',
-            'displayLink': 'carsandbids.com',
-            'snippet': 'The Turbo S is one of the most desirable variants of '
-                       'the 991 Porsche 911, thanks to a 580-horsepower '
-                       'twin-turbocharged flat-6, all-wheel drive, and a '
-                       'quick-\xa0...',
-            'htmlSnippet': 'The Turbo S is one of the most desirable variants '
-                           'of the <b>991 Porsche 911</b>, thanks to a '
-                           '580-horsepower twin-turbocharged flat-6, all-wheel '
-                           'drive, and a quick-&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/.../2018-porsche-911-turbo-s-coupe',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2018-<b>porsche</b>-<b>911</b>-turbo-s-coupe',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG2UMf6Y8l_FXZvxsqXyiEv4X4lq_6pjKYN1V7vTYdKtmVLlAZWB6H9mZF&s',
+            'snippet': 'May 21, 2024 ... Wow, THIS is a special E90 BMW M3! '
+                       'While the matte look is common now, BMW was early to '
+                       'experiment with matte finishes back in 2011 with\xa0'
+                       '...',
+            'htmlSnippet': 'May 21, 2024 <b>...</b> Wow, THIS is a special '
+                           '<b>E90 BMW M3</b>! While the matte look is common '
+                           'now, <b>BMW</b> was early to experiment with matte '
+                           'finishes back in 2011 with&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/auctions/KYZ2Jjg5/2011-bmw-m3-sedan',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/KYZ2Jjg5/2011-<b>bmw</b>-<b>m3</b>-sedan',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0QVV3Fc3ufAxqo3-Yv_dJCF600EfLbfkvxm5FWNL9fBMIhB_6cVqpljI&s',
                                            'width': '275',
                                            'height': '183'}],
-                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/59339d5e07287c702e69307de910cceaa69c1d04/photos/rxyj0aR0-jH0-Jjo8TF-(edit).jpg?t=171650164196',
-                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/59339d5e07287c702e69307de910cceaa69c1d04/photos/rxyj0aR0-jH0-Jjo8TF-(edit).jpg?t=171650164196',
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/rEGdQN7V-GWLJCGYth052-LdH5hSetiZ.jpg?t=171571102565',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/rEGdQN7V-GWLJCGYth052-LdH5hSetiZ.jpg?t=171571102565',
                                       'theme-color': '#ffffff',
-                                      'twitter:title': '2018 Porsche 911 Turbo '
-                                                       'S Coupe - 580-hp '
-                                                       'Twin-Turbo Flat-6, '
-                                                       '7-Speed PDK, AWD, '
-                                                       'Carrara White',
+                                      'twitter:title': '2011 BMW M3 Sedan - '
+                                                       '6-Speed Manual, Frozen '
+                                                       'Grey Metallic, Rod '
+                                                       'Bearings Replaced, '
+                                                       'Some Modifications',
                                       'twitter:card': 'summary_large_image',
                                       'apple-mobile-web-app-title': 'Cars & '
                                                                     'Bids',
-                                      'og:title': '2018 Porsche 911 Turbo S '
-                                                  'Coupe - 580-hp Twin-Turbo '
-                                                  'Flat-6, 7-Speed PDK, AWD, '
-                                                  'Carrara White',
+                                      'og:title': '2011 BMW M3 Sedan - 6-Speed '
+                                                  'Manual, Frozen Grey '
+                                                  'Metallic, Rod Bearings '
+                                                  'Replaced, Some '
+                                                  'Modifications',
                                       'color-scheme': 'light dark',
                                       'page-loaded': 'true',
-                                      'og:description': 'This 2018 Porsche 911 '
-                                                        'Turbo S Coupe is for '
-                                                        'sale on Cars & Bids! '
-                                                        '580-hp Twin-Turbo '
-                                                        'Flat-6, 7-Speed PDK, '
-                                                        'AWD, Carrara White! '
-                                                        'Auction ends June 5 '
+                                      'og:description': 'This 2011 BMW M3 '
+                                                        'Sedan is for sale on '
+                                                        'Cars & Bids! 6-Speed '
+                                                        'Manual, Frozen Grey '
+                                                        'Metallic, Rod '
+                                                        'Bearings Replaced, '
+                                                        'Some Modifications! '
+                                                        'Auction ends May 29 '
                                                         '2024.',
                                       'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/59339d5e07287c702e69307de910cceaa69c1d04/photos/rxyj0aR0-jH0-Jjo8TF-(edit).jpg?t=171650164196',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/rEGdQN7V-GWLJCGYth052-LdH5hSetiZ.jpg?t=171571102565',
                                       'twitter:site': '@carsandbids',
                                       'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2018 '
-                                                             'Porsche 911 '
-                                                             'Turbo S Coupe is '
-                                                             'for sale on Cars '
-                                                             '& Bids! 580-hp '
-                                                             'Twin-Turbo '
-                                                             'Flat-6, 7-Speed '
-                                                             'PDK, AWD, '
-                                                             'Carrara White! '
-                                                             'Auction ends '
-                                                             'June 5 2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/9WvRnpRB/2018-porsche-911-turbo-s-coupe'}],
-                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/59339d5e07287c702e69307de910cceaa69c1d04/photos/rxyj0aR0-jH0-Jjo8TF-(edit).jpg?t=171650164196'}]}},
-           {'kind': 'customsearch#result',
-            'title': '2013 Porsche 911 Carrera S Coupe for Sale - Cars & Bids',
-            'htmlTitle': '2013 <b>Porsche 911</b> Carrera S Coupe for Sale - '
-                         'Cars &amp; Bids',
-            'link': 'https://carsandbids.com/auctions/356JWe4k/2013-porsche-911-carrera-s-coupe',
-            'displayLink': 'carsandbids.com',
-            'snippet': 'Feb 14, 2024 ... This particular 991 is a Carrera S '
-                       "model, meaning it's powered by a flat-6 with 400 "
-                       'naturally-aspirated horsepower, while later models '
-                       'switched to turbocharged\xa0...',
-            'htmlSnippet': 'Feb 14, 2024 <b>...</b> This particular <b>991</b> '
-                           'is a Carrera S model, meaning it&#39;s powered by '
-                           'a flat-6 with 400 naturally-aspirated horsepower, '
-                           'while later models switched to '
-                           'turbocharged&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/.../2013-porsche-911-carrera-s-coupe',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2013-<b>porsche</b>-<b>911</b>-carrera-s-coupe',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkhaI5h7jrn85xhbkjXcjl-4eQ4LDvEdih3fPuyZ4eDo__IRUTMNsQGsI&s',
-                                           'width': '275',
-                                           'height': '183'}],
-                        'metatags': [{'image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/ee7f173e46ec801a48d1673c50f9cebaa1bf2854/photos/9lY8lVVm-4Uuk4XAIyD-(edit).jpg?t=170707034682',
-                                      'og:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/ee7f173e46ec801a48d1673c50f9cebaa1bf2854/photos/9lY8lVVm-4Uuk4XAIyD-(edit).jpg?t=170707034682',
-                                      'theme-color': '#ffffff',
-                                      'twitter:title': '2013 Porsche 911 '
-                                                       'Carrera S Coupe - '
-                                                       '400-hp Flat-6, Premium '
-                                                       'Package, PASM Sport '
-                                                       'Suspension',
-                                      'twitter:card': 'summary_large_image',
-                                      'apple-mobile-web-app-title': 'Cars & '
-                                                                    'Bids',
-                                      'og:title': '2013 Porsche 911 Carrera S '
-                                                  'Coupe - 400-hp Flat-6, '
-                                                  'Premium Package, PASM Sport '
-                                                  'Suspension',
-                                      'page-loaded': 'true',
-                                      'og:description': 'This 2013 Porsche 911 '
-                                                        'Carrera S Coupe is '
-                                                        'for sale on Cars & '
-                                                        'Bids! 400-hp Flat-6, '
-                                                        'Premium Package, PASM '
-                                                        'Sport Suspension! '
-                                                        'Auction ends February '
-                                                        '14 2024.',
-                                      'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/ee7f173e46ec801a48d1673c50f9cebaa1bf2854/photos/9lY8lVVm-4Uuk4XAIyD-(edit).jpg?t=170707034682',
-                                      'twitter:site': '@carsandbids',
-                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2013 '
-                                                             'Porsche 911 '
-                                                             'Carrera S Coupe '
-                                                             'is for sale on '
-                                                             'Cars & Bids! '
-                                                             '400-hp Flat-6, '
-                                                             'Premium Package, '
-                                                             'PASM Sport '
-                                                             'Suspension! '
-                                                             'Auction ends '
-                                                             'February 14 '
-                                                             '2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/356JWe4k/2013-porsche-911-carrera-s-coupe'}],
-                        'cse_image': [{'src': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/ee7f173e46ec801a48d1673c50f9cebaa1bf2854/photos/9lY8lVVm-4Uuk4XAIyD-(edit).jpg?t=170707034682'}]}},
-           {'kind': 'customsearch#result',
-            'title': '2018 Porsche 911 GT3 VIN: WP0AC2A94JS174678 for Sale - '
-                     'Cars ...',
-            'htmlTitle': '2018 <b>Porsche 911</b> GT3 VIN: WP0AC2A94JS174678 '
-                         'for Sale - Cars ...',
-            'link': 'https://carsandbids.com/auctions/3ylonZLE/2018-porsche-911-gt3',
-            'displayLink': 'carsandbids.com',
-            'snippet': 'Porsche · 991 911 · 2018. Auction EndedSold for '
-                       '$160,000; 8/15/24; Bids17; Comments46. This auction '
-                       'has ended, see more Porsche 991 911 auctions here. '
-                       'Ended\xa0...',
-            'htmlSnippet': '<b>Porsche</b> &middot; <b>991 911</b> &middot; '
-                           '2018. Auction EndedSold for $160,000; 8/15/24; '
-                           'Bids17; Comments46. This auction has ended, see '
-                           'more <b>Porsche 991 911</b> auctions here. '
-                           'Ended&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/3ylonZLE/2018-porsche-911-gt3',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/3ylonZLE/2018-<b>porsche</b>-<b>911</b>-gt3',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRU_nFsa5Hp3amEMl6YlKmbQfUQFT_J9MkdN2b1TFUZFXsOi61JSKL_8gc-&s',
-                                           'width': '275',
-                                           'height': '183'}],
-                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9Q2ayWlx-eEyWPnbq7Z-(edit).jpg?t=172293646065',
-                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9Q2ayWlx-eEyWPnbq7Z-(edit).jpg?t=172293646065',
-                                      'theme-color': '#ffffff',
-                                      'og:type': 'article',
-                                      'twitter:title': '2018 Porsche 911 GT3  '
-                                                       '- 500-hp Flat-6, '
-                                                       'Sapphire Blue '
-                                                       'Metallic, Carbon Fiber '
-                                                       'Bucket Seats',
-                                      'twitter:card': 'summary_large_image',
-                                      'og:site_name': 'Cars & Bids',
-                                      'apple-mobile-web-app-title': 'Cars & '
-                                                                    'Bids',
-                                      'og:title': '2018 Porsche 911 GT3  - '
-                                                  '500-hp Flat-6, Sapphire '
-                                                  'Blue Metallic, Carbon Fiber '
-                                                  'Bucket Seats',
-                                      'color-scheme': 'light dark',
-                                      'page-loaded': 'true',
-                                      'og:description': 'This 2018 Porsche 911 '
-                                                        'GT3  is for sale on '
-                                                        'Cars & Bids! 500-hp '
-                                                        'Flat-6, Sapphire Blue '
-                                                        'Metallic, Carbon '
-                                                        'Fiber Bucket Seats! '
-                                                        'Auction ends August '
-                                                        '15 2024.',
-                                      'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9Q2ayWlx-eEyWPnbq7Z-(edit).jpg?t=172293646065',
-                                      'twitter:site': '@carsandbids',
-                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2018 '
-                                                             'Porsche 911 GT3  '
-                                                             'is for sale on '
-                                                             'Cars & Bids! '
-                                                             '500-hp Flat-6, '
-                                                             'Sapphire Blue '
-                                                             'Metallic, Carbon '
-                                                             'Fiber Bucket '
-                                                             'Seats! Auction '
-                                                             'ends August 15 '
-                                                             '2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/3ylonZLE/2018-porsche-911-gt3'}],
-                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9Q2ayWlx-eEyWPnbq7Z-(edit).jpg?t=172293646065'}]}},
-           {'kind': 'customsearch#result',
-            'title': '2018 Porsche 911 GT2 RS Weissach for Sale - Cars & Bids',
-            'htmlTitle': '2018 <b>Porsche 911</b> GT2 RS Weissach for Sale - '
-                         'Cars &amp; Bids',
-            'link': 'https://carsandbids.com/auctions/98nwEk0Y/2018-porsche-911-gt2-rs-weissach',
-            'displayLink': 'carsandbids.com',
-            'snippet': 'Feb 1, 2024 ... The 991 GT2 RS blurs the line between '
-                       'a road car and a race car with a 3.8-liter '
-                       'twin-turbocharged flat-6 rated at 700 horsepower, '
-                       'rear-wheel drive, AND a long\xa0...',
-            'htmlSnippet': 'Feb 1, 2024 <b>...</b> The <b>991</b> GT2 RS blurs '
-                           'the line between a road car and a race car with a '
-                           '3.8-liter twin-turbocharged flat-6 rated at 700 '
-                           'horsepower, rear-wheel drive, AND a long&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/.../2018-porsche-911-gt2-rs-weissach',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2018-<b>porsche</b>-<b>911</b>-gt2-rs-weissach',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRGUarvxKgP5zrhob7GyNRBDqfYAPiVEOGHvo68AanVQB5SoBsgte5Wh4&s',
-                                           'width': '275',
-                                           'height': '183'}],
-                        'metatags': [{'image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/0a57cb53ba59c46fc4b692527a38a87c78d84028/photos/30EM7LY2-7tXFPr4_fo-(edit).jpg?t=170613895605',
-                                      'og:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/0a57cb53ba59c46fc4b692527a38a87c78d84028/photos/30EM7LY2-7tXFPr4_fo-(edit).jpg?t=170613895605',
-                                      'theme-color': '#ffffff',
-                                      'twitter:title': '2018 Porsche 911 GT2 '
-                                                       'RS Weissach - 700-hp '
-                                                       'Twin-Turbocharged '
-                                                       'Flat-6, Mostly '
-                                                       'Unmodified, Front Axle '
-                                                       'Lift',
-                                      'twitter:card': 'summary_large_image',
-                                      'apple-mobile-web-app-title': 'Cars & '
-                                                                    'Bids',
-                                      'og:title': '2018 Porsche 911 GT2 RS '
-                                                  'Weissach - 700-hp '
-                                                  'Twin-Turbocharged Flat-6, '
-                                                  'Mostly Unmodified, Front '
-                                                  'Axle Lift',
-                                      'page-loaded': 'true',
-                                      'og:description': 'This 2018 Porsche 911 '
-                                                        'GT2 RS Weissach is '
-                                                        'for sale on Cars & '
-                                                        'Bids! 700-hp '
-                                                        'Twin-Turbocharged '
-                                                        'Flat-6, Mostly '
-                                                        'Unmodified, Front '
-                                                        'Axle Lift! Auction '
-                                                        'ends February 1 2024.',
-                                      'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/0a57cb53ba59c46fc4b692527a38a87c78d84028/photos/30EM7LY2-7tXFPr4_fo-(edit).jpg?t=170613895605',
-                                      'twitter:site': '@carsandbids',
-                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2018 '
-                                                             'Porsche 911 GT2 '
-                                                             'RS Weissach is '
-                                                             'for sale on Cars '
-                                                             '& Bids! 700-hp '
-                                                             'Twin-Turbocharged '
-                                                             'Flat-6, Mostly '
-                                                             'Unmodified, '
-                                                             'Front Axle Lift! '
-                                                             'Auction ends '
-                                                             'February 1 2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/98nwEk0Y/2018-porsche-911-gt2-rs-weissach'}],
-                        'cse_image': [{'src': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/0a57cb53ba59c46fc4b692527a38a87c78d84028/photos/30EM7LY2-7tXFPr4_fo-(edit).jpg?t=170613895605'}]}},
-           {'kind': 'customsearch#result',
-            'title': '2016 Porsche 911 Carrera Black Edition VIN ...',
-            'htmlTitle': '2016 <b>Porsche 911</b> Carrera Black Edition VIN '
-                         '...',
-            'link': 'https://carsandbids.com/auctions/rJzlzgwv/2016-porsche-911-carrera-black-edition',
-            'displayLink': 'carsandbids.com',
-            'snippet': 'Jun 12, 2024 ... 991 911 · 2016. Auction EndedBid to '
-                       '$49,250 (Sold After); 6/13/24; Bids10; Comments34. '
-                       'This auction has ended, see more Porsche 991 911 '
-                       'auctions\xa0...',
-            'htmlSnippet': 'Jun 12, 2024 <b>...</b> <b>991 911</b> &middot; '
-                           '2016. Auction EndedBid to $49,250 (Sold After); '
-                           '6/13/24; Bids10; Comments34. This auction has '
-                           'ended, see more <b>Porsche 991 911</b> '
-                           'auctions&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/.../2016-porsche-911-carrera-black-edition',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2016-<b>porsche</b>-<b>911</b>-carrera-black-edition',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMXS5n0xPQfwiyIVSvhSJZ3fRFNJjl9-rzaSKRRS4-9eOZEpMRR4J6_6i7&s',
-                                           'width': '275',
-                                           'height': '183'}],
-                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9aQojPkD-xN1EGqFk54-(edit).jpg?t=171704993343',
-                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9aQojPkD-xN1EGqFk54-(edit).jpg?t=171704993343',
-                                      'theme-color': '#ffffff',
-                                      'twitter:title': '2016 Porsche 911 '
-                                                       'Carrera Black Edition '
-                                                       '- 7-Speed Manual, '
-                                                       '3.4-Liter Flat-6, '
-                                                       'Mostly Unmodified, Jet '
-                                                       'Black Metallic',
-                                      'twitter:card': 'summary_large_image',
-                                      'apple-mobile-web-app-title': 'Cars & '
-                                                                    'Bids',
-                                      'og:title': '2016 Porsche 911 Carrera '
-                                                  'Black Edition - 7-Speed '
-                                                  'Manual, 3.4-Liter Flat-6, '
-                                                  'Mostly Unmodified, Jet '
-                                                  'Black Metallic',
-                                      'color-scheme': 'light dark',
-                                      'page-loaded': 'true',
-                                      'og:description': 'This 2016 Porsche 911 '
-                                                        'Carrera Black Edition '
-                                                        'is for sale on Cars & '
-                                                        'Bids! 7-Speed Manual, '
-                                                        '3.4-Liter Flat-6, '
-                                                        'Mostly Unmodified, '
-                                                        'Jet Black Metallic! '
-                                                        'Auction ends June 13 '
-                                                        '2024.',
-                                      'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9aQojPkD-xN1EGqFk54-(edit).jpg?t=171704993343',
-                                      'twitter:site': '@carsandbids',
-                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2016 '
-                                                             'Porsche 911 '
-                                                             'Carrera Black '
-                                                             'Edition is for '
+                                      'twitter:description': 'This 2011 BMW M3 '
+                                                             'Sedan is for '
                                                              'sale on Cars & '
-                                                             'Bids! 7-Speed '
-                                                             'Manual, '
-                                                             '3.4-Liter '
-                                                             'Flat-6, Mostly '
-                                                             'Unmodified, Jet '
-                                                             'Black Metallic! '
-                                                             'Auction ends '
-                                                             'June 13 2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/rJzlzgwv/2016-porsche-911-carrera-black-edition'}],
-                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/c51905b0000b639a185eeb080dd879bf007f5604/photos/9aQojPkD-xN1EGqFk54-(edit).jpg?t=171704993343'}]}},
+                                                             'Bids! 6-Speed '
+                                                             'Manual, Frozen '
+                                                             'Grey Metallic, '
+                                                             'Rod Bearings '
+                                                             'Replaced, Some '
+                                                             'Modifications! '
+                                                             'Auction ends May '
+                                                             '29 2024.',
+                                      'og:url': 'https://carsandbids.com/auctions/KYZ2Jjg5/2011-bmw-m3-sedan'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/rEGdQN7V-GWLJCGYth052-LdH5hSetiZ.jpg?t=171571102565'}]}},
            {'kind': 'customsearch#result',
-            'title': '2017 Porsche 911 Carrera Coupe VIN: WP0AA2A96HS107290 '
-                     'for ...',
-            'htmlTitle': '2017 <b>Porsche 911</b> Carrera Coupe VIN: '
-                         'WP0AA2A96HS107290 for ...',
-            'link': 'https://carsandbids.com/auctions/KPe5X5yQ/2017-porsche-911-carrera-coupe',
+            'title': '2013 BMW M3 Coupe Competition Package for Sale - Cars & '
+                     'Bids',
+            'htmlTitle': '2013 <b>BMW M3</b> Coupe Competition Package for '
+                         '<b>Sale</b> - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/auctions/rbnL0eZd/2013-bmw-m3-coupe-competition-package',
             'displayLink': 'carsandbids.com',
-            'snippet': 'Nov 14, 2024 ... This 2017 Porsche 911 Carrera Coupe '
-                       'VIN: WP0AA2A96HS107290 is for sale on Cars & Bids! 370 '
-                       '... The 991 Porsche 911 is a fantastic sports car '
-                       'that\xa0...',
-            'htmlSnippet': 'Nov 14, 2024 <b>...</b> This 2017 <b>Porsche '
-                           '911</b> Carrera Coupe VIN: WP0AA2A96HS107290 is '
-                           'for sale on Cars &amp; Bids! 370 ... The <b>991 '
-                           'Porsche 911</b> is a fantastic sports car '
-                           'that&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/auctions/.../2017-porsche-911-carrera-coupe',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2017-<b>porsche</b>-<b>911</b>-carrera-coupe',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVvyzYaG5pzQuV7Ga1uVmMr9l3PmJ74zzLhZ9ZzPds643Djff3-vl7mP8&s',
+            'snippet': 'May 18, 2023 ... This E92 M3 has a LOT going for it, '
+                       'as it boasts unusually low mileage (its odometer '
+                       "hasn't crossed the 20,000-mile mark yet!), an "
+                       'eye-catching\xa0...',
+            'htmlSnippet': 'May 18, 2023 <b>...</b> This <b>E92 M3</b> has a '
+                           'LOT going for it, as it boasts unusually low '
+                           'mileage (its odometer hasn&#39;t crossed the '
+                           '20,000-mile mark yet!), an eye-catching&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/.../2013-bmw-m3-coupe-competition-package',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/.../2013-<b>bmw</b>-<b>m3</b>-coupe-competition-package',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzQRpiLAsebPUIZ4OcsUnjPwsx4bDwTOliT9uDRtghY1552yVODsr9hu3j&s',
                                            'width': '275',
                                            'height': '183'}],
-                        'metatags': [{'apple-itunes-app': 'app-id=1589512351, '
-                                                          'app-argument=https://carsandbids.com/auctions/KPe5X5yQ/rendertron',
-                                      'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/exterior/KDYL5DRG-WBee7FzIYQJ/edit/Sg3dN.jpg?t=173086588945',
-                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/exterior/KDYL5DRG-WBee7FzIYQJ/edit/Sg3dN.jpg?t=173086588945',
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/9nJWRJGl--FEegAPzBZ-(edit).jpg?t=168387421764',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/9nJWRJGl--FEegAPzBZ-(edit).jpg?t=168387421764',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2013 BMW M3 Coupe '
+                                                       'Competition Package - '
+                                                       '~17,000 Miles, V8 '
+                                                       'Power, Premium and '
+                                                       'Cold Weather Packages, '
+                                                       'Melbourne Red Metallic',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2013 BMW M3 Coupe '
+                                                  'Competition Package - '
+                                                  '~17,000 Miles, V8 Power, '
+                                                  'Premium and Cold Weather '
+                                                  'Packages, Melbourne Red '
+                                                  'Metallic',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2013 BMW M3 '
+                                                        'Coupe Competition '
+                                                        'Package is for sale '
+                                                        'on Cars & Bids! '
+                                                        '~17,000 Miles, V8 '
+                                                        'Power, Premium and '
+                                                        'Cold Weather '
+                                                        'Packages, Melbourne '
+                                                        'Red Metallic! Auction '
+                                                        'ends May 23 2023.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/9nJWRJGl--FEegAPzBZ-(edit).jpg?t=168387421764',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2013 BMW M3 '
+                                                             'Coupe '
+                                                             'Competition '
+                                                             'Package is for '
+                                                             'sale on Cars & '
+                                                             'Bids! ~17,000 '
+                                                             'Miles, V8 Power, '
+                                                             'Premium and Cold '
+                                                             'Weather '
+                                                             'Packages, '
+                                                             'Melbourne Red '
+                                                             'Metallic! '
+                                                             'Auction ends May '
+                                                             '23 2023.',
+                                      'og:url': 'https://carsandbids.com/auctions/rbnL0eZd/2013-bmw-m3-coupe-competition-package'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/9nJWRJGl--FEegAPzBZ-(edit).jpg?t=168387421764'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2013 BMW M3 Coupe Lime Rock Park Edition for Sale - Cars '
+                     '& Bids',
+            'htmlTitle': '2013 <b>BMW M3</b> Coupe Lime Rock Park Edition for '
+                         '<b>Sale</b> - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/auctions/3Rpky4BX/2013-bmw-m3-coupe-lime-rock-park-edition',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'The E9X M3 is one of our favorites here on Cars & '
+                       'Bids, and the Lime Rock Park Edition is the most '
+                       'special version of the E92 M3 we got in North America.',
+            'htmlSnippet': 'The E9X <b>M3</b> is one of our favorites here on '
+                           'Cars &amp; Bids, and the Lime Rock Park Edition is '
+                           'the most special version of the <b>E92 M3</b> we '
+                           'got in North America.',
+            'formattedUrl': 'https://carsandbids.com/.../2013-bmw-m3-coupe-lime-rock-park-edition',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/.../2013-<b>bmw</b>-<b>m3</b>-coupe-lime-rock-park-edition',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMvyp5dCRNFqZSu3JO0SeWxrp8SSG-3MLkDypklpqF13PhEPeNEbv7tkA&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/KZdojkOO.ywUXzKiyr-(edit).jpg?t=164299026635',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/KZdojkOO.ywUXzKiyr-(edit).jpg?t=164299026635',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2013 BMW M3 Coupe Lime '
+                                                       'Rock Park Edition - '
+                                                       '6-Speed Manual, '
+                                                       '~36,500 Miles, 1 of '
+                                                       '200 Built, '
+                                                       'California-Owned',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2013 BMW M3 Coupe Lime Rock '
+                                                  'Park Edition - 6-Speed '
+                                                  'Manual, ~36,500 Miles, 1 of '
+                                                  '200 Built, California-Owned',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2013 BMW M3 '
+                                                        'Coupe Lime Rock Park '
+                                                        'Edition is for sale '
+                                                        'on Cars & Bids! '
+                                                        '6-Speed Manual, '
+                                                        '~36,500 Miles, 1 of '
+                                                        '200 Built, '
+                                                        'California-Owned! '
+                                                        'Auction ends February '
+                                                        '3 2022.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/KZdojkOO.ywUXzKiyr-(edit).jpg?t=164299026635',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2013 BMW M3 '
+                                                             'Coupe Lime Rock '
+                                                             'Park Edition is '
+                                                             'for sale on Cars '
+                                                             '& Bids! 6-Speed '
+                                                             'Manual, ~36,500 '
+                                                             'Miles, 1 of 200 '
+                                                             'Built, '
+                                                             'California-Owned! '
+                                                             'Auction ends '
+                                                             'February 3 2022.',
+                                      'og:url': 'https://carsandbids.com/auctions/3Rpky4BX/2013-bmw-m3-coupe-lime-rock-park-edition'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/KZdojkOO.ywUXzKiyr-(edit).jpg?t=164299026635'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2011 BMW M3 Sedan Competition Package for Sale - Cars & '
+                     'Bids',
+            'htmlTitle': '2011 <b>BMW M3</b> Sedan Competition Package for '
+                         '<b>Sale</b> - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/auctions/3z8zoVQA/2011-bmw-m3-sedan-competition-package',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'The E90 BMW M3 is a thrilling sport sedan with great '
+                       'handling characteristics and a powerful, rev-happy V8. '
+                       'This particular M3 has some excellent benefits\xa0...',
+            'htmlSnippet': 'The <b>E90 BMW M3</b> is a thrilling sport sedan '
+                           'with great handling characteristics and a '
+                           'powerful, rev-happy V8. This particular <b>M3</b> '
+                           'has some excellent benefits&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/auctions/.../2011-bmw-m3-sedan-competition-pack...',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2011-<b>bmw</b>-<b>m3</b>-sedan-competition-pack...',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfbp52qEzSNIReNXXkRyOM-sp4gynZZaXQ_WThKbEQTg_-hajrOJ-LS7JP&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/20309e251cb7341d1fb94cb5d4546882260d2202/photos/3geP6eEo-QMczkdPgKW-(edit).jpg?t=168557642409',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/20309e251cb7341d1fb94cb5d4546882260d2202/photos/3geP6eEo-QMczkdPgKW-(edit).jpg?t=168557642409',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2011 BMW M3 Sedan '
+                                                       'Competition Package - '
+                                                       '6-Speed Manual, '
+                                                       'Limited-Slip '
+                                                       'Differential, Le Mans '
+                                                       'Blue Metallic, Mostly '
+                                                       'Unmodified',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2011 BMW M3 Sedan '
+                                                  'Competition Package - '
+                                                  '6-Speed Manual, '
+                                                  'Limited-Slip Differential, '
+                                                  'Le Mans Blue Metallic, '
+                                                  'Mostly Unmodified',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2011 BMW M3 '
+                                                        'Sedan Competition '
+                                                        'Package is for sale '
+                                                        'on Cars & Bids! '
+                                                        '6-Speed Manual, '
+                                                        'Limited-Slip '
+                                                        'Differential, Le Mans '
+                                                        'Blue Metallic, Mostly '
+                                                        'Unmodified! Auction '
+                                                        'ends June 13 2023.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/20309e251cb7341d1fb94cb5d4546882260d2202/photos/3geP6eEo-QMczkdPgKW-(edit).jpg?t=168557642409',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2011 BMW M3 '
+                                                             'Sedan '
+                                                             'Competition '
+                                                             'Package is for '
+                                                             'sale on Cars & '
+                                                             'Bids! 6-Speed '
+                                                             'Manual, '
+                                                             'Limited-Slip '
+                                                             'Differential, Le '
+                                                             'Mans Blue '
+                                                             'Metallic, Mostly '
+                                                             'Unmodified! '
+                                                             'Auction ends '
+                                                             'June 13 2023.',
+                                      'og:url': 'https://carsandbids.com/auctions/3z8zoVQA/2011-bmw-m3-sedan-competition-package'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/20309e251cb7341d1fb94cb5d4546882260d2202/photos/3geP6eEo-QMczkdPgKW-(edit).jpg?t=168557642409'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2011 BMW M3 Sedan Competition Package for Sale - Cars & '
+                     'Bids',
+            'htmlTitle': '2011 <b>BMW M3</b> Sedan Competition Package for '
+                         '<b>Sale</b> - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/auctions/rxezvwjz/2011-bmw-m3-sedan-competition-package',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'Jan 4, 2024 ... The E90 BMW M3 is a thrilling sports '
+                       'sedan with great handling characteristics and a '
+                       "powerful, rev-happy V8 – and it's especially "
+                       'engaging\xa0...',
+            'htmlSnippet': 'Jan 4, 2024 <b>...</b> The <b>E90 BMW M3</b> is a '
+                           'thrilling sports sedan with great handling '
+                           'characteristics and a powerful, rev-happy V8 – and '
+                           'it&#39;s especially engaging&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/auctions/.../2011-bmw-m3-sedan-competition-pack...',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2011-<b>bmw</b>-<b>m3</b>-sedan-competition-pack...',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRItnMicTqT3XO2keMI2s5zZPbyUzb_2ExVEYxgGYD0_x7z8Uvds-Tdn4o&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/rNQPD8Z7-eJFWPVvrWe-(edit).jpg?t=170241924754',
+                                      'og:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/rNQPD8Z7-eJFWPVvrWe-(edit).jpg?t=170241924754',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2011 BMW M3 Sedan '
+                                                       'Competition Package - '
+                                                       'V8 Power, Interlagos '
+                                                       'Blue Metallic, Mostly '
+                                                       'Unmodified',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2011 BMW M3 Sedan '
+                                                  'Competition Package - V8 '
+                                                  'Power, Interlagos Blue '
+                                                  'Metallic, Mostly Unmodified',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2011 BMW M3 '
+                                                        'Sedan Competition '
+                                                        'Package is for sale '
+                                                        'on Cars & Bids! V8 '
+                                                        'Power, Interlagos '
+                                                        'Blue Metallic, Mostly '
+                                                        'Unmodified! Auction '
+                                                        'ends January 4 2024.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/rNQPD8Z7-eJFWPVvrWe-(edit).jpg?t=170241924754',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2011 BMW M3 '
+                                                             'Sedan '
+                                                             'Competition '
+                                                             'Package is for '
+                                                             'sale on Cars & '
+                                                             'Bids! V8 Power, '
+                                                             'Interlagos Blue '
+                                                             'Metallic, Mostly '
+                                                             'Unmodified! '
+                                                             'Auction ends '
+                                                             'January 4 2024.',
+                                      'og:url': 'https://carsandbids.com/auctions/rxezvwjz/2011-bmw-m3-sedan-competition-package'}],
+                        'cse_image': [{'src': 'https://media-r2.carsandbids.com/cdn-cgi/image/width=2080,quality=70/d9b636c2ec84ddc3bc7f2eb32861b39bdd5f9683/photos/rNQPD8Z7-eJFWPVvrWe-(edit).jpg?t=170241924754'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2012 BMW M3 Coupe Competition Package VIN ...',
+            'htmlTitle': '2012 <b>BMW M3</b> Coupe Competition Package VIN ...',
+            'link': 'https://carsandbids.com/auctions/9ngyJXnl/2012-bmw-m3-coupe-competition-package',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'This 2012 BMW M3 Coupe Competition Package VIN: '
+                       'WBSKG9C50CE798578 is for sale on Cars ... The E92 BMW '
+                       'M3 is a highly desirable car, boasting V8 power\xa0...',
+            'htmlSnippet': 'This 2012 <b>BMW M3</b> Coupe Competition Package '
+                           'VIN: WBSKG9C50CE798578 is for <b>sale</b> on Cars '
+                           '... The <b>E92 BMW M3</b> is a highly desirable '
+                           'car, boasting V8 power&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/.../2012-bmw-m3-coupe-competition-package',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/.../2012-<b>bmw</b>-<b>m3</b>-coupe-competition-package',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIenOHtHagTWCET5nqYZUJhG0U0sONfCCKhzS6ysWvpNBPEnhk99WNReI&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/3vL4wmJj-Z-JkACja15-(edit).jpg?t=172117965221',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/3vL4wmJj-Z-JkACja15-(edit).jpg?t=172117965221',
                                       'theme-color': '#ffffff',
                                       'og:type': 'article',
-                                      'twitter:title': '2017 Porsche 911 '
-                                                       'Carrera Coupe - 370-hp '
-                                                       'Twin-Turbo Flat-6, '
-                                                       'Racing Yellow, Soul '
-                                                       'Performance Exhaust',
+                                      'twitter:title': '2012 BMW M3 Coupe '
+                                                       'Competition Package - '
+                                                       '~12,200 Miles, BMW '
+                                                       'Individual Fire '
+                                                       'Orange, Warm '
+                                                       'Climate-Owned, Some '
+                                                       'Modifications',
                                       'twitter:card': 'summary_large_image',
                                       'og:site_name': 'Cars & Bids',
                                       'apple-mobile-web-app-title': 'Cars & '
                                                                     'Bids',
-                                      'og:title': '2017 Porsche 911 Carrera '
-                                                  'Coupe - 370-hp Twin-Turbo '
-                                                  'Flat-6, Racing Yellow, Soul '
-                                                  'Performance Exhaust',
+                                      'og:title': '2012 BMW M3 Coupe '
+                                                  'Competition Package - '
+                                                  '~12,200 Miles, BMW '
+                                                  'Individual Fire Orange, '
+                                                  'Warm Climate-Owned, Some '
+                                                  'Modifications',
                                       'color-scheme': 'light dark',
                                       'page-loaded': 'true',
-                                      'og:description': 'This 2017 Porsche 911 '
-                                                        'Carrera Coupe is for '
-                                                        'sale on Cars & Bids! '
-                                                        '370-hp Twin-Turbo '
-                                                        'Flat-6, Racing '
-                                                        'Yellow, Soul '
-                                                        'Performance Exhaust! '
-                                                        'Auction ends November '
-                                                        '18 2024.',
+                                      'og:description': 'This 2012 BMW M3 '
+                                                        'Coupe Competition '
+                                                        'Package is for sale '
+                                                        'on Cars & Bids! '
+                                                        '~12,200 Miles, BMW '
+                                                        'Individual Fire '
+                                                        'Orange, Warm '
+                                                        'Climate-Owned, Some '
+                                                        'Modifications! '
+                                                        'Auction ends July 25 '
+                                                        '2024.',
                                       'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/exterior/KDYL5DRG-WBee7FzIYQJ/edit/Sg3dN.jpg?t=173086588945',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/3vL4wmJj-Z-JkACja15-(edit).jpg?t=172117965221',
                                       'twitter:site': '@carsandbids',
                                       'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'This 2017 '
-                                                             'Porsche 911 '
-                                                             'Carrera Coupe is '
-                                                             'for sale on Cars '
-                                                             '& Bids! 370-hp '
-                                                             'Twin-Turbo '
-                                                             'Flat-6, Racing '
-                                                             'Yellow, Soul '
-                                                             'Performance '
-                                                             'Exhaust! Auction '
-                                                             'ends November 18 '
-                                                             '2024.',
-                                      'og:url': 'https://carsandbids.com/auctions/KPe5X5yQ/2017-porsche-911-carrera-coupe'}],
-                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/9004500a220bf3a3d455d15ee052cf8c332606f8/photos/exterior/KDYL5DRG-WBee7FzIYQJ/edit/Sg3dN.jpg?t=173086588945'}]}},
+                                      'twitter:description': 'This 2012 BMW M3 '
+                                                             'Coupe '
+                                                             'Competition '
+                                                             'Package is for '
+                                                             'sale on Cars & '
+                                                             'Bids! ~12,200 '
+                                                             'Miles, BMW '
+                                                             'Individual Fire '
+                                                             'Orange, Warm '
+                                                             'Climate-Owned, '
+                                                             'Some '
+                                                             'Modifications! '
+                                                             'Auction ends '
+                                                             'July 25 2024.',
+                                      'og:url': 'https://carsandbids.com/auctions/9ngyJXnl/2012-bmw-m3-coupe-competition-package'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/photos/3vL4wmJj-Z-JkACja15-(edit).jpg?t=172117965221'}]}},
            {'kind': 'customsearch#result',
-            'title': 'BMW E39 M5 Discussion Board - Cars & Bids',
-            'htmlTitle': 'BMW E39 M5 Discussion Board - Cars &amp; Bids',
-            'link': 'https://carsandbids.com/community/3vJ5ZNWN',
+            'title': '2009 BMW M3 Sedan for Sale - Cars & Bids',
+            'htmlTitle': '2009 <b>BMW M3</b> Sedan for <b>Sale</b> - Cars '
+                         '&amp; Bids',
+            'link': 'https://carsandbids.com/auctions/rE61v0od/2009-bmw-m3-sedan',
             'displayLink': 'carsandbids.com',
-            'snippet': 'Porsche 997 911 Community. Porsche 997 911 · BMW M2 '
-                       'Community. BMW M2 · Honda Civic Community. Honda Civic '
-                       '· Porsche 991 911 Community. Porsche 991 911 · BMW '
-                       '3\xa0...',
-            'htmlSnippet': '<b>Porsche</b> 997 <b>911</b> Community. '
-                           '<b>Porsche</b> 997 <b>911</b> &middot; BMW M2 '
-                           'Community. BMW M2 &middot; Honda Civic Community. '
-                           'Honda Civic &middot; <b>Porsche 991 911</b> '
-                           'Community. <b>Porsche 991 911</b> &middot; BMW '
-                           '3&nbsp;...',
-            'formattedUrl': 'https://carsandbids.com/community/3vJ5ZNWN',
-            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/community/3vJ5ZNWN',
-            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxTxZCEVFy8C9d_C0ikjRwdQ6om6cqpXxQ7KceNkapLEjlzZXZ1H6Ffx7v&s',
+            'snippet': 'Aug 31, 2023 ... The E90 BMW M3 is a fantastic sport '
+                       "sedan, touting the M3's only-ever V8, classic BMW "
+                       'handling, and subtle yet aggressive styling.',
+            'htmlSnippet': 'Aug 31, 2023 <b>...</b> The <b>E90 BMW M3</b> is a '
+                           'fantastic sport sedan, touting the <b>M3&#39;s</b> '
+                           'only-ever V8, classic <b>BMW</b> handling, and '
+                           'subtle yet aggressive styling.',
+            'formattedUrl': 'https://carsandbids.com/auctions/rE61v0od/2009-bmw-m3-sedan',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/rE61v0od/2009-<b>bmw</b>-<b>m3</b>-sedan',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEPmvGSHS_gyp20lzpVz0kAWuLAKlQq_fDsEKGqLJb6Jj1Wmuq4UPSYWg&s',
                                            'width': '275',
                                            'height': '183'}],
-                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/community/c-id-hOg-99M.jpg',
-                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/community/c-id-hOg-99M.jpg',
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/3zO12jbP-JJrQ_q2Qcm-(edit).jpg?t=169206898628',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/3zO12jbP-JJrQ_q2Qcm-(edit).jpg?t=169206898628',
                                       'theme-color': '#ffffff',
-                                      'og:type': 'website',
-                                      'twitter:title': 'BMW E39 M5 Discussion '
-                                                       'Board',
+                                      'twitter:title': '2009 BMW M3 Sedan - '
+                                                       'Supercharged V8, Rod '
+                                                       'Bearings Replaced, '
+                                                       'California- and '
+                                                       'Texas-Owned',
                                       'twitter:card': 'summary_large_image',
-                                      'og:site_name': 'Cars & Bids',
                                       'apple-mobile-web-app-title': 'Cars & '
                                                                     'Bids',
-                                      'og:title': 'BMW E39 M5 Discussion Board',
-                                      'color-scheme': 'light dark',
+                                      'og:title': '2009 BMW M3 Sedan - '
+                                                  'Supercharged V8, Rod '
+                                                  'Bearings Replaced, '
+                                                  'California- and Texas-Owned',
                                       'page-loaded': 'true',
-                                      'og:description': 'The Cars & Bids BMW '
-                                                        'E39 M5 community is '
-                                                        'your place to talk, '
-                                                        'share, and interact '
-                                                        'with other '
-                                                        'enthusiasts of cool '
-                                                        'cars from the modern '
-                                                        'era!',
+                                      'og:description': 'This 2009 BMW M3 '
+                                                        'Sedan is for sale on '
+                                                        'Cars & Bids! '
+                                                        'Supercharged V8, Rod '
+                                                        'Bearings Replaced, '
+                                                        'California- and '
+                                                        'Texas-Owned! Auction '
+                                                        'ends September 1 '
+                                                        '2023.',
                                       'twitter:creator': '@carsandbids',
-                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/community/c-id-hOg-99M.jpg',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/3zO12jbP-JJrQ_q2Qcm-(edit).jpg?t=169206898628',
                                       'twitter:site': '@carsandbids',
                                       'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
-                                      'twitter:description': 'The Cars & Bids '
-                                                             'BMW E39 M5 '
-                                                             'community is '
-                                                             'your place to '
-                                                             'talk, share, and '
-                                                             'interact with '
-                                                             'other '
-                                                             'enthusiasts of '
-                                                             'cool cars from '
-                                                             'the modern era!',
-                                      'og:url': 'https://carsandbids.com/community/bmw-e39-m5'}],
-                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/da4b9237bacccdf19c0760cab7aec4a8359010b0/community/c-id-hOg-99M.jpg'}]}}]}
+                                      'twitter:description': 'This 2009 BMW M3 '
+                                                             'Sedan is for '
+                                                             'sale on Cars & '
+                                                             'Bids! '
+                                                             'Supercharged V8, '
+                                                             'Rod Bearings '
+                                                             'Replaced, '
+                                                             'California- and '
+                                                             'Texas-Owned! '
+                                                             'Auction ends '
+                                                             'September 1 '
+                                                             '2023.',
+                                      'og:url': 'https://carsandbids.com/auctions/rE61v0od/2009-bmw-m3-sedan'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/8bbf0f64fbfad81f6867cff798d92495738b23a7/photos/3zO12jbP-JJrQ_q2Qcm-(edit).jpg?t=169206898628'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2008 BMW M3 Sedan for Sale - Cars & Bids',
+            'htmlTitle': '2008 <b>BMW M3</b> Sedan for <b>Sale</b> - Cars '
+                         '&amp; Bids',
+            'link': 'https://carsandbids.com/auctions/rG5AjXAX/2008-bmw-m3-sedan',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'Jul 22, 2022 ... The E90 M3 is a thrilling sedan with '
+                       'a powerful, rev-happy V8, great handling, and handsome '
+                       'BMW styling. This particular M3 is especially fun to '
+                       'drive.',
+            'htmlSnippet': 'Jul 22, 2022 <b>...</b> The <b>E90 M3</b> is a '
+                           'thrilling sedan with a powerful, rev-happy V8, '
+                           'great handling, and handsome <b>BMW</b> styling. '
+                           'This particular <b>M3</b> is especially fun to '
+                           'drive.',
+            'formattedUrl': 'https://carsandbids.com/auctions/rG5AjXAX/2008-bmw-m3-sedan',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/rG5AjXAX/2008-<b>bmw</b>-<b>m3</b>-sedan',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTR1sSKmqiJL2IAYSB-O8567FTdwk23Gfdm5aeRu8guoUG92JDoPLz2GFr-&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/7a0a3c6148108c9c64425dd85e0181fa3cccb652/photos/3gWBWMG3-8QQQI0jMM7-(edit).jpg?t=165757268109',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/7a0a3c6148108c9c64425dd85e0181fa3cccb652/photos/3gWBWMG3-8QQQI0jMM7-(edit).jpg?t=165757268109',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2008 BMW M3 Sedan - '
+                                                       '6-Speed Manual, Rod '
+                                                       'Bearings and Throttle '
+                                                       'Actuators Replaced, '
+                                                       'Some Modifications',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2008 BMW M3 Sedan - 6-Speed '
+                                                  'Manual, Rod Bearings and '
+                                                  'Throttle Actuators '
+                                                  'Replaced, Some '
+                                                  'Modifications',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2008 BMW M3 '
+                                                        'Sedan is for sale on '
+                                                        'Cars & Bids! 6-Speed '
+                                                        'Manual, Rod Bearings '
+                                                        'and Throttle '
+                                                        'Actuators Replaced, '
+                                                        'Some Modifications! '
+                                                        'Auction ends July 22 '
+                                                        '2022.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/7a0a3c6148108c9c64425dd85e0181fa3cccb652/photos/3gWBWMG3-8QQQI0jMM7-(edit).jpg?t=165757268109',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2008 BMW M3 '
+                                                             'Sedan is for '
+                                                             'sale on Cars & '
+                                                             'Bids! 6-Speed '
+                                                             'Manual, Rod '
+                                                             'Bearings and '
+                                                             'Throttle '
+                                                             'Actuators '
+                                                             'Replaced, Some '
+                                                             'Modifications! '
+                                                             'Auction ends '
+                                                             'July 22 2022.',
+                                      'og:url': 'https://carsandbids.com/auctions/rG5AjXAX/2008-bmw-m3-sedan'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/7a0a3c6148108c9c64425dd85e0181fa3cccb652/photos/3gWBWMG3-8QQQI0jMM7-(edit).jpg?t=165757268109'}]}}]}
+--------------------------------------------------------------------------------
+{'kind': 'customsearch#result',
+ 'title': 'Used BMW E9X M3 for Sale - Cars & Bids',
+ 'htmlTitle': '<b>Used BMW</b> E9X <b>M3 for Sale</b> - Cars &amp; Bids',
+ 'link': 'https://carsandbids.com/search/bmw/e9x-m3',
+ 'displayLink': 'carsandbids.com',
+ 'snippet': 'Considered to be one of the most unique of the breed, the E9X M3 '
+            'brought high-revving V8 power to the line for the first – and '
+            'only – time.',
+ 'htmlSnippet': 'Considered to be one of the most unique of the breed, the E9X '
+                '<b>M3</b> brought high-revving V8 power to the line for the '
+                'first – and only – time.',
+ 'formattedUrl': 'https://carsandbids.com/search/bmw/e9x-m3',
+ 'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/search/<b>bmw</b>/e9x-<b>m3</b>',
+ 'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp52PsmmTY2OCY41s2jiKGF7qlx8x_w-XgIE6JVWJeTY3kue7j8l94caUi&s',
+                                'width': '311',
+                                'height': '162'}],
+             'metatags': [{'og:image': 'https://carsandbids.com/carsandbids.png',
+                           'apple-itunes-app': 'app-id=1589512351, '
+                                               'app-argument=https://carsandbids.com/search/bmw/e9x-m3',
+                           'theme-color': '#ffffff',
+                           'og:type': 'website',
+                           'twitter:card': 'summary_large_image',
+                           'twitter:title': 'Used BMW E9X M3 for Sale',
+                           'og:site_name': 'Cars & Bids',
+                           'apple-mobile-web-app-title': 'Cars & Bids',
+                           'og:title': 'Used BMW E9X M3 for Sale',
+                           'color-scheme': 'light dark',
+                           'page-loaded': 'true',
+                           'twitter:creator': '@carsandbids',
+                           'og:description': 'Considered to be one of the most '
+                                             'unique of the breed, the E9X M3 '
+                                             'brought high-revving V8 power to '
+                                             'the line for the first – and '
+                                             'only – time. Based on the '
+                                             'architecture of the V10 from the '
+                                             'M5, the S65 V8 produced over 400 '
+                                             'horsepower out of a '
+                                             'naturally-aspirated, 4-liter '
+                                             'engine, all while weighing less '
+                                             'than the S54 inline-6 it '
+                                             'replaced. Coupled with '
+                                             'sensational styling, even more '
+                                             'technology, and a further '
+                                             'improved interior, the E9X '
+                                             'underscored that the M3 was the '
+                                             'benchmark for the '
+                                             'everyday-usable, '
+                                             'balanced-performance car. '
+                                             'Produced in coupe, sedan, and '
+                                             'convertible forms, the fourth '
+                                             'generation M3 is a beloved and '
+                                             'special piece of the M '
+                                             'Division’s history.',
+                           'twitter:image': 'https://carsandbids.com/carsandbids.png',
+                           'twitter:site': '@carsandbids',
+                           'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                           'twitter:description': 'Considered to be one of the '
+                                                  'most unique of the breed, '
+                                                  'the E9X M3 brought '
+                                                  'high-revving V8 power to '
+                                                  'the line for the first – '
+                                                  'and only – time. Based on '
+                                                  'the architecture of the V10 '
+                                                  'from the M5, the S65 V8 '
+                                                  'produced over 400 '
+                                                  'horsepower out of a '
+                                                  'naturally-aspirated, '
+                                                  '4-liter engine, all while '
+                                                  'weighing less than the S54 '
+                                                  'inline-6 it replaced. '
+                                                  'Coupled with sensational '
+                                                  'styling, even more '
+                                                  'technology, and a further '
+                                                  'improved interior, the E9X '
+                                                  'underscored that the M3 was '
+                                                  'the benchmark for the '
+                                                  'everyday-usable, '
+                                                  'balanced-performance car. '
+                                                  'Produced in coupe, sedan, '
+                                                  'and convertible forms, the '
+                                                  'fourth generation M3 is a '
+                                                  'beloved and special piece '
+                                                  'of the M Division’s '
+                                                  'history.',
+                           'og:url': 'https://carsandbids.com/search/bmw/e9x-m3'}],
+             'cse_image': [{'src': 'https://carsandbids.com/carsandbids.png'}]}}
