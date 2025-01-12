@@ -1,3 +1,5 @@
 /venv
 keys.json
 __pycache__
+.car_cache
+api_uses.txt
