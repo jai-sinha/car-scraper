@@ -22,7 +22,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 	options.headless = True
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 	
-	q = car.query("cars and bids")
+	q = car.query[1]
 	driver.get(q)
 
 	WebDriverWait(driver, 10).until(

@@ -1,0 +1,569 @@
+{'kind': 'customsearch#search',
+ 'url': {'type': 'application/json',
+         'template': 'https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json'},
+ 'queries': {'request': [{'title': 'Google Custom Search - Porsche 991 911 '
+                                   'bringatrailer carsandbids',
+                          'totalResults': '904',
+                          'searchTerms': 'Porsche 991 911 bringatrailer '
+                                         'carsandbids',
+                          'count': 10,
+                          'startIndex': 1,
+                          'inputEncoding': 'utf8',
+                          'outputEncoding': 'utf8',
+                          'safe': 'off',
+                          'cx': '620f99273bef84934'}],
+             'nextPage': [{'title': 'Google Custom Search - Porsche 991 911 '
+                                    'bringatrailer carsandbids',
+                           'totalResults': '904',
+                           'searchTerms': 'Porsche 991 911 bringatrailer '
+                                          'carsandbids',
+                           'count': 10,
+                           'startIndex': 11,
+                           'inputEncoding': 'utf8',
+                           'outputEncoding': 'utf8',
+                           'safe': 'off',
+                           'cx': '620f99273bef84934'}]},
+ 'context': {'title': 'Test'},
+ 'searchInformation': {'searchTime': 0.354926,
+                       'formattedSearchTime': '0.35',
+                       'totalResults': '904',
+                       'formattedTotalResults': '904'},
+ 'items': [{'kind': 'customsearch#result',
+            'title': 'Are G-series 911s worth buying? : r/Porsche',
+            'htmlTitle': 'Are G-series <b>911s</b> worth buying? : '
+                         'r/<b>Porsche</b>',
+            'link': 'https://www.reddit.com/r/Porsche/comments/1bquuze/are_gseries_911s_worth_buying/',
+            'displayLink': 'www.reddit.com',
+            'snippet': 'Mar 29, 2024 ... I have driven 996s, 997s and 991s but '
+                       'I have never driven an air-cooled 911. I have seen 80s '
+                       'G-series cabriolets and targas go for around\xa0...',
+            'htmlSnippet': 'Mar 29, 2024 <b>...</b> I have driven 996s, 997s '
+                           'and <b>991s</b> but I have never driven an '
+                           'air-cooled <b>911</b>. I have seen 80s G-series '
+                           'cabriolets and targas go for around&nbsp;...',
+            'formattedUrl': 'https://www.reddit.com/r/Porsche/.../are_gseries_911s_worth_buying/',
+            'htmlFormattedUrl': 'https://www.reddit.com/r/<b>Porsche</b>/.../are_gseries_<b>911</b>s_worth_buying/',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiRy1DGDTerg8hJOzSdQKej5HC-FgZYdFH07tq-12FsCjk2m4iD9_Aq5E&s',
+                                           'width': '194',
+                                           'height': '259'}],
+                        'metatags': [{'og:image': 'https://share.redd.it/preview/post/1bquuze',
+                                      'theme-color': '#000000',
+                                      'og:image:width': '1200',
+                                      'og:type': 'website',
+                                      'og:image:alt': 'An image containing a '
+                                                      'preview of the post',
+                                      'twitter:card': 'summary_large_image',
+                                      'twitter:title': 'r/Porsche on Reddit: '
+                                                       'Are G-series 911s '
+                                                       'worth buying?',
+                                      'og:site_name': 'Reddit',
+                                      'og:title': 'r/Porsche on Reddit: Are '
+                                                  'G-series 911s worth buying?',
+                                      'og:image:height': '630',
+                                      'msapplication-navbutton-color': '#000000',
+                                      'og:description': 'Posted by '
+                                                        'u/newtonreddits - 17 '
+                                                        'votes and 73 comments',
+                                      'twitter:image': 'https://share.redd.it/preview/post/1bquuze',
+                                      'apple-mobile-web-app-status-bar-style': 'black',
+                                      'twitter:site': '@reddit',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1, '
+                                                  'viewport-fit=cover',
+                                      'apple-mobile-web-app-capable': 'yes',
+                                      'og:ttl': '600',
+                                      'og:url': 'https://www.reddit.com/r/Porsche/comments/1bquuze/are_gseries_911s_worth_buying/'}],
+                        'cse_image': [{'src': 'https://i.redd.it/5ns3l67ssdrc1.jpeg'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Porsche 911 For Sale - BaT Auctions',
+            'htmlTitle': '<b>Porsche 911</b> For Sale - BaT Auctions',
+            'link': 'https://bringatrailer.com/porsche/911/',
+            'displayLink': 'bringatrailer.com',
+            'snippet': 'Browse and bid online for the chance to own a Porsche '
+                       '911 at auction with Bring a Trailer, the home of the '
+                       'best vintage and classic cars online.',
+            'htmlSnippet': 'Browse and bid online for the chance to own a '
+                           '<b>Porsche 911</b> at auction with <b>Bring a '
+                           'Trailer</b>, the home of the best vintage and '
+                           'classic cars online.',
+            'formattedUrl': 'https://bringatrailer.com/porsche/911/',
+            'htmlFormattedUrl': 'https://<b>bringatrailer</b>.com/<b>porsche</b>/<b>911</b>/',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_zZB0rajU95GlPXW84NgxCPyl7WL-PH-4KlsYzQMgdRzYHQ-ajnPdE6E&s',
+                                           'width': '389',
+                                           'height': '130'}],
+                        'metatags': [{'og:image': 'https://bringatrailer.com/wp-content/uploads/2021/06/16228571970e0c05PORSCHE_911-e1622857237551.jpeg',
+                                      'og:type': 'article',
+                                      'og:site_name': 'Bring a Trailer',
+                                      'handheldfriendly': 'True',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1.0',
+                                      'tec-api-origin': 'https://bringatrailer.com',
+                                      'apple-mobile-web-app-title': 'Bring a '
+                                                                    'Trailer',
+                                      'og:title': '911',
+                                      'og:locale': 'en_US',
+                                      'og:url': 'https://bringatrailer.com/porsche/911/',
+                                      'tec-api-version': 'v1',
+                                      'og:description': 'Browse and bid online '
+                                                        'for the chance to own '
+                                                        'a Porsche 911 at '
+                                                        'auction with Bring a '
+                                                        'Trailer, the home of '
+                                                        'the best vintage and '
+                                                        'classic cars '
+                                                        'online.'}],
+                        'cse_image': [{'src': 'https://bringatrailer.com/wp-content/uploads/2021/06/16228571970e0c05PORSCHE_911-e1622857237551.jpeg'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Best Way to Sell 991 GT3? : r/Porsche',
+            'htmlTitle': 'Best Way to Sell <b>991</b> GT3? : r/<b>Porsche</b>',
+            'link': 'https://www.reddit.com/r/Porsche/comments/1aj235t/best_way_to_sell_991_gt3/',
+            'displayLink': 'www.reddit.com',
+            'snippet': 'Feb 4, 2024 ... ... 991 GT3/RS, but pulling from some '
+                       'research done by ... Bringatrailer or Carsandbids '
+                       'arent technically the best place to sell your car.',
+            'htmlSnippet': 'Feb 4, 2024 <b>...</b> ... <b>991</b> GT3/RS, but '
+                           'pulling from some research done by ... '
+                           '<b>Bringatrailer</b> or <b>Carsandbids</b> arent '
+                           'technically the best place to sell your car.',
+            'formattedUrl': 'https://www.reddit.com/r/Porsche/comments/.../best_way_to_sell_991_gt3/',
+            'htmlFormattedUrl': 'https://www.reddit.com/r/<b>Porsche</b>/comments/.../best_way_to_sell_<b>991</b>_gt3/',
+            'pagemap': {'metatags': [{'og:image': 'https://share.redd.it/preview/post/1aj235t',
+                                      'theme-color': '#000000',
+                                      'og:image:width': '1200',
+                                      'og:type': 'website',
+                                      'og:image:alt': 'An image containing a '
+                                                      'preview of the post',
+                                      'twitter:card': 'summary_large_image',
+                                      'twitter:title': 'r/Porsche on Reddit: '
+                                                       'Best Way to Sell 991 '
+                                                       'GT3?',
+                                      'og:site_name': 'Reddit',
+                                      'og:title': 'r/Porsche on Reddit: Best '
+                                                  'Way to Sell 991 GT3?',
+                                      'og:image:height': '630',
+                                      'msapplication-navbutton-color': '#000000',
+                                      'og:description': 'Posted by u/WestonP - '
+                                                        '38 votes and 28 '
+                                                        'comments',
+                                      'twitter:image': 'https://share.redd.it/preview/post/1aj235t',
+                                      'apple-mobile-web-app-status-bar-style': 'black',
+                                      'twitter:site': '@reddit',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1, '
+                                                  'viewport-fit=cover',
+                                      'apple-mobile-web-app-capable': 'yes',
+                                      'og:ttl': '600',
+                                      'og:url': 'https://www.reddit.com/r/Porsche/comments/1aj235t/best_way_to_sell_991_gt3/'}],
+                        'cse_image': [{'src': 'https://share.redd.it/preview/post/1aj235t'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'BAT (Bring a Trailer) selling experience - Pelican Parts '
+                     'Forums',
+            'htmlTitle': 'BAT (<b>Bring a Trailer</b>) selling experience - '
+                         'Pelican Parts Forums',
+            'link': 'http://forums.pelicanparts.com/porsche-marketplace-discussion/1097089-bat-bring-trailer-selling-experience.html',
+            'displayLink': 'forums.pelicanparts.com',
+            'snippet': 'Jul 3, 2021 ... My wife is selling her 996 to help '
+                       'fund her 991. However BAT seems incredibly slow. She '
+                       'paid and had the photos taken early in June but she\xa0'
+                       '...',
+            'htmlSnippet': 'Jul 3, 2021 <b>...</b> My wife is selling her 996 '
+                           'to help fund her <b>991</b>. However BAT seems '
+                           'incredibly slow. She paid and had the photos taken '
+                           'early in June but she&nbsp;...',
+            'formattedUrl': 'http://forums.pelicanparts.com/porsche.../1097089-bat-bring-trailer-selling-...',
+            'htmlFormattedUrl': 'http://forums.pelicanparts.com/<b>porsche</b>.../1097089-bat-bring-trailer-selling-...',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4i7YRQYMpfs44BGMfB46oLkKM_DV8MZoM4eiP-L9KH-C20jQxNlhXc34&s',
+                                           'width': '320',
+                                           'height': '100'}],
+                        'metatags': [{'twitter:app:url:iphone': 'tapatalk://forums.pelicanparts.com?location=topic&fid=268&tid=1097089&channel=twitter-indexing',
+                                      'twitter:app:id:googleplay': 'com.quoord.tapatalkpro.activity',
+                                      'twitter:card': 'summary',
+                                      'twitter:title': 'BAT (Bring a Trailer) '
+                                                       'selling experience',
+                                      'al:ios:app_name': 'Tapatalk',
+                                      'twitter:app:url:ipad': 'tapatalk://forums.pelicanparts.com?location=topic&fid=268&tid=1097089&channel=twitter-indexing',
+                                      'al:android:package': 'com.quoord.tapatalkpro.activity',
+                                      'twitter:app:id:ipad': '307880732',
+                                      'al:ios:url': 'tapatalk://forums.pelicanparts.com?location=topic&fid=268&tid=1097089&channel=facebook-indexing',
+                                      'twitter:app:id:iphone': '307880732',
+                                      'al:ios:app_store_id': '307880732',
+                                      'al:android:url': 'tapatalk://forums.pelicanparts.com?location=topic&fid=268&tid=1097089&channel=facebook-indexing',
+                                      'twitter:app:url:googleplay': 'tapatalk://forums.pelicanparts.com?location=topic&fid=268&tid=1097089&channel=twitter-indexing',
+                                      'twitter:site': '@tapatalk',
+                                      'viewport': 'width=320; '
+                                                  'initial-scale=1.0; '
+                                                  'maximum-scale=1.0; '
+                                                  'user-scalable=0;',
+                                      'twitter:description': 'Pelican Parts '
+                                                             'Forums',
+                                      'al:android:app_name': 'Tapatalk'}],
+                        'cse_image': [{'src': 'https://mca.pelicanparts.com/images/188_4_320_100_soul_performance.png'}]}},
+           {'kind': 'customsearch#result',
+            'title': '2015 Porsche 911 Carrera GTS Coupe for Sale - Cars & '
+                     'Bids',
+            'htmlTitle': '2015 <b>Porsche 911</b> Carrera GTS Coupe for Sale - '
+                         'Cars &amp; Bids',
+            'link': 'https://carsandbids.com/auctions/3gQRPzYG/2015-porsche-911-carrera-gts-coupe',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'Jun 13, 2022 ... The 991 911 Carrera GTS is a '
+                       'phenomenal sports car that touts classic Porsche '
+                       'styling, an amazing 3.8-liter naturally-aspirated '
+                       'flat-6, and handling\xa0...',
+            'htmlSnippet': 'Jun 13, 2022 <b>...</b> The <b>991 911</b> Carrera '
+                           'GTS is a phenomenal sports car that touts classic '
+                           '<b>Porsche</b> styling, an amazing 3.8-liter '
+                           'naturally-aspirated flat-6, and handling&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/auctions/.../2015-porsche-911-carrera-gts-coupe',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/auctions/.../2015-<b>porsche</b>-<b>911</b>-carrera-gts-coupe',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQR8zIIzKAnHCFFGjlCzeDyfLJb37GchvTXaU6CcErlctApdV_BDOJclVE&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/438ad923cef6d8239e95d61e7d6849486bae11d9/photos/3v0QaNpm-W1FQIjlRlc-(edit).jpg?t=165083735554',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/438ad923cef6d8239e95d61e7d6849486bae11d9/photos/3v0QaNpm-W1FQIjlRlc-(edit).jpg?t=165083735554',
+                                      'theme-color': '#ffffff',
+                                      'twitter:title': '2015 Porsche 911 '
+                                                       'Carrera GTS Coupe - '
+                                                       '~9,400 Miles, 430-hp '
+                                                       'Flat-6, Sport Chrono '
+                                                       'Package',
+                                      'twitter:card': 'summary_large_image',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': '2015 Porsche 911 Carrera '
+                                                  'GTS Coupe - ~9,400 Miles, '
+                                                  '430-hp Flat-6, Sport Chrono '
+                                                  'Package',
+                                      'page-loaded': 'true',
+                                      'og:description': 'This 2015 Porsche 911 '
+                                                        'Carrera GTS Coupe is '
+                                                        'for sale on Cars & '
+                                                        'Bids! ~9,400 Miles, '
+                                                        '430-hp Flat-6, Sport '
+                                                        'Chrono Package! '
+                                                        'Auction ends June 13 '
+                                                        '2022.',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/438ad923cef6d8239e95d61e7d6849486bae11d9/photos/3v0QaNpm-W1FQIjlRlc-(edit).jpg?t=165083735554',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'This 2015 '
+                                                             'Porsche 911 '
+                                                             'Carrera GTS '
+                                                             'Coupe is for '
+                                                             'sale on Cars & '
+                                                             'Bids! ~9,400 '
+                                                             'Miles, 430-hp '
+                                                             'Flat-6, Sport '
+                                                             'Chrono Package! '
+                                                             'Auction ends '
+                                                             'June 13 2022.',
+                                      'og:url': 'https://carsandbids.com/auctions/3gQRPzYG/2015-porsche-911-carrera-gts-coupe'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/438ad923cef6d8239e95d61e7d6849486bae11d9/photos/3v0QaNpm-W1FQIjlRlc-(edit).jpg?t=165083735554'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Difference Between Porsche 991 and 964 | TikTok',
+            'htmlTitle': 'Difference Between <b>Porsche 991</b> and 964 | '
+                         'TikTok',
+            'link': 'https://www.tiktok.com/discover/difference-between-porsche-991-and-964',
+            'displayLink': 'www.tiktok.com',
+            'snippet': '6 days ago ... #porsche #911 #porsche911 #macdemarco '
+                       '#chamberofreflection #fd #accessories #cars ... '
+                       'BringaTrailer #CarsAndBids #CarEnthusiast #CarGram\xa0'
+                       '...',
+            'htmlSnippet': '6 days ago <b>...</b> #<b>porsche</b> #<b>911</b> '
+                           '#<b>porsche911</b> #macdemarco '
+                           '#chamberofreflection #fd #accessories #cars ... '
+                           '<b>BringaTrailer</b> #<b>CarsAndBids</b> '
+                           '#CarEnthusiast #CarGram&nbsp;...',
+            'formattedUrl': 'https://www.tiktok.com/discover/difference-between-porsche-991-and-964',
+            'htmlFormattedUrl': 'https://www.tiktok.com/discover/difference-between-<b>porsche</b>-<b>991</b>-and-964',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjeaarwTBoaMt0USMnohylaMC2XYaDLMB3jNOJGfGP-3iV2KBo0gvvGA&s=0',
+                                           'width': '84',
+                                           'height': '150'}],
+                        'metatags': [{'og:image': 'https://p16-sign-sg.tiktokcdn.com/tos-alisg-p-0037/ab0a1ca679164baf82b109d5ab711d22_1721961035~tplv-photomode-share-play.jpeg?lk3s=b59d6b55&x-expires=1736402400&x-signature=V2sRjBiSPZdjRzkYBzMEewMImkw%3D&shp=b59d6b55&shcp=-',
+                                      'og:type': 'website',
+                                      'og:site_name': 'TikTok',
+                                      'al:ios:app_name': 'musical.ly',
+                                      'og:title': 'Difference Between Porsche '
+                                                  '991 and 964 | TikTok',
+                                      'al:android:package': 'com.zhiliaoapp.musically',
+                                      'applicable-device': 'pc, mobile',
+                                      'pumbaa-ctx': 'login=0,ftc=0',
+                                      'google': 'notranslate',
+                                      'al:ios:url': 'snssdk1233://user/profile/?ug_medium=card&refer=facebook&',
+                                      'og:description': '12.7M posts. Discover '
+                                                        'videos related to '
+                                                        'Difference Between '
+                                                        'Porsche 991 and 964 '
+                                                        'on TikTok. See more '
+                                                        'videos about Porsche '
+                                                        'C88 Concept, Mirage '
+                                                        'Porsche, Porsche 118 '
+                                                        'Cayman Price of Yan, '
+                                                        'Porsche Em Mossoró, '
+                                                        'Porsche Cayenne Ski '
+                                                        'Tunnel, La Porsche Vs '
+                                                        '345 Relief.',
+                                      'al:ios:app_store_id': '835599320',
+                                      'al:android:url': 'snssdk1233://user/profile/?ug_medium=card&refer=facebook&',
+                                      'fb:app_id': '597615686992125',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1, '
+                                                  'minimum-scale=1, '
+                                                  'maximum-scale=1, '
+                                                  'user-scalable=no',
+                                      'og:url': 'https://www.tiktok.com/discover/difference-between-porsche-991-and-964',
+                                      'al:android:app_name': 'musical.ly',
+                                      'format-detection': 'telephone=no'}],
+                        'cse_image': [{'src': 'https://www.tiktok.com/api/img/?itemId=7251682612513852718&location=0&aid=1988'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Sapphire Blue Metallic 991.2 991 GT3 \u2060 \u2060 This '
+                     '2018 Porsche 911 ...',
+            'htmlTitle': 'Sapphire Blue Metallic 991.2 <b>991</b> GT3 \u2060 '
+                         '\u2060 This 2018 <b>Porsche 911</b> ...',
+            'link': 'https://www.instagram.com/carsandbids/p/C-n9lvRsQIU/',
+            'displayLink': 'www.instagram.com',
+            'snippet': 'Aug 13, 2024 ... 2435 likes, 9 comments - carsandbids '
+                       'on August 13, 2024: "Sapphire Blue Metallic 991.2 991 '
+                       'GT3 \u2060 \u2060 This 2018 Porsche 911 GT3 is a\xa0'
+                       '...',
+            'htmlSnippet': 'Aug 13, 2024 <b>...</b> 2435 likes, 9 comments - '
+                           '<b>carsandbids</b> on August 13, 2024: '
+                           '&quot;Sapphire Blue Metallic 991.2 <b>991</b> GT3 '
+                           '\u2060 \u2060 This 2018 <b>Porsche 911</b> GT3 is '
+                           'a&nbsp;...',
+            'formattedUrl': 'https://www.instagram.com/carsandbids/p/C-n9lvRsQIU/',
+            'htmlFormattedUrl': 'https://www.instagram.com/<b>carsandbids</b>/p/C-n9lvRsQIU/',
+            'pagemap': {'metatags': [{'og:image': 'https://scontent-atl3-1.cdninstagram.com/v/t51.2885-15/455241806_1201967820926124_5293792076027307445_n.jpg?stp=c191.0.576.575a_dst-jpg_e35_s640x640_tt6&_nc_cat=103&ccb=1-7&_nc_sid=18de74&_nc_ohc=IJM8JCiEHqQQ7kNvgHL-OlE&_nc_zt=23&_nc_ht=scontent-atl3-1.cdninstagram.com&oh=00_AYCYtZYkCuhycJpsSYEyFidn4x9ozDAzyTEeKZWlQKaQQg&oe=677D3856',
+                                      'theme-color': '#FFFFFF',
+                                      'twitter:card': 'summary_large_image',
+                                      'og:site_name': 'Instagram',
+                                      'al:android:package': 'com.instagram.android',
+                                      'bingbot': 'noarchive',
+                                      'medium': 'image',
+                                      'al:ios:url': 'instagram://media?id=3433984115113787924',
+                                      'og:description': '2,435 likes, 9 '
+                                                        'comments - '
+                                                        'carsandbids on August '
+                                                        '13, 2024: "Sapphire '
+                                                        'Blue Metallic 991.2 '
+                                                        '991 GT3 💙\u2060\n'
+                                                        '\u2060\n'
+                                                        'This 2018 Porsche 911 '
+                                                        'GT3 is a facelifted '
+                                                        '991.2 GT3, meaning '
+                                                        "it's powered by a "
+                                                        'naturally aspirated '
+                                                        'flat-6 engine with '
+                                                        '500 horsepower – and '
+                                                        "it's finished in the "
+                                                        'attractive Sapphire '
+                                                        'Blue Metallic. It '
+                                                        'also boasts some '
+                                                        'great equipment, '
+                                                        'including Porsche '
+                                                        'Ceramic Composite '
+                                                        'Brakes AND carbon '
+                                                        'fiber bucket seats. '
+                                                        '\u2060\n'
+                                                        '\u2060\n'
+                                                        'Don’t wait, go bid! '
+                                                        'Listing is live now '
+                                                        'on @carsandbids! '
+                                                        '\u2060\n'
+                                                        '\u2060\n'
+                                                        '#carsandbids #porsche '
+                                                        '#porsche911 #gt3 '
+                                                        '#911gt3 #991 #pcar '
+                                                        '#sapphireblue #cars '
+                                                        '#carsofinstagram".',
+                                      'twitter:image': 'https://scontent-atl3-1.cdninstagram.com/v/t51.2885-15/455241806_1201967820926124_5293792076027307445_n.jpg?stp=c191.0.576.575a_dst-jpg_e35_s640x640_tt6&_nc_cat=103&ccb=1-7&_nc_sid=18de74&_nc_ohc=IJM8JCiEHqQQ7kNvgHL-OlE&_nc_zt=23&_nc_ht=scontent-atl3-1.cdninstagram.com&oh=00_AYCYtZYkCuhycJpsSYEyFidn4x9ozDAzyTEeKZWlQKaQQg&oe=677D3856',
+                                      'al:ios:app_store_id': '389801252',
+                                      'twitter:site': '@instagram',
+                                      'instapp:owner_user_id': '19959014536',
+                                      'og:type': 'article',
+                                      'twitter:title': 'Cars & Bids '
+                                                       '(@carsandbids) • '
+                                                       'Instagram photos and '
+                                                       'videos',
+                                      'al:ios:app_name': 'Instagram',
+                                      'og:title': 'Cars & Bids on Instagram: '
+                                                  '"Sapphire Blue Metallic '
+                                                  '991.2 991 GT3 💙\u2060\n'
+                                                  '\u2060\n'
+                                                  'This 2018 Porsche 911 GT3 '
+                                                  'is a facelifted 991.2 GT3, '
+                                                  "meaning it's powered by a "
+                                                  'naturally aspirated flat-6 '
+                                                  'engine with 500 horsepower '
+                                                  "– and it's finished in the "
+                                                  'attractive Sapphire Blue '
+                                                  'Metallic. It also boasts '
+                                                  'some great equipment, '
+                                                  'including Porsche Ceramic '
+                                                  'Composite Brakes AND carbon '
+                                                  'fiber bucket seats. \u2060\n'
+                                                  '\u2060\n'
+                                                  'Don’t wait, go bid! Listing '
+                                                  'is live now on '
+                                                  '@carsandbids! \u2060\n'
+                                                  '\u2060\n'
+                                                  '#carsandbids #porsche '
+                                                  '#porsche911 #gt3 #911gt3 '
+                                                  '#991 #pcar #sapphireblue '
+                                                  '#cars #carsofinstagram"',
+                                      'twitter:maxage': '86400',
+                                      'color-scheme': 'light',
+                                      'al:android:url': 'https://www.instagram.com/carsandbids/p/C-n9lvRsQIU/',
+                                      'fb:app_id': '124024574287414',
+                                      'apple-mobile-web-app-status-bar-style': 'default',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1, '
+                                                  'minimum-scale=1, '
+                                                  'maximum-scale=1, '
+                                                  'viewport-fit=cover',
+                                      'mobile-web-app-capable': 'yes',
+                                      'og:url': 'https://www.instagram.com/carsandbids/p/C-n9lvRsQIU/',
+                                      'al:android:app_name': 'Instagram'}],
+                        'cse_image': [{'src': 'https://scontent-atl3-1.cdninstagram.com/v/t51.2885-15/455241806_1201967820926124_5293792076027307445_n.jpg?stp=c191.0.576.575a_dst-jpg_e35_s640x640_tt6&_nc_cat=103&ccb=1-7&_nc_sid=18de74&_nc_ohc=IJM8JCiEHqQQ7kNvgHL-OlE&_nc_zt=23&_nc_ht=scontent-atl3-1.cdninstagram.com&oh=00_AYCYtZYkCuhycJpsSYEyFidn4x9ozDAzyTEeKZWlQKaQQg&oe=677D3856'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Alfa Romeo 4C Discussion Board - Cars & Bids',
+            'htmlTitle': 'Alfa Romeo 4C Discussion Board - Cars &amp; Bids',
+            'link': 'https://carsandbids.com/community/KDzWyxoG',
+            'displayLink': 'carsandbids.com',
+            'snippet': 'Porsche 991 911 Community. Porsche 991 911 · BMW 3 '
+                       'Series Community. BMW 3 ... © Copyright 2024 Cars and '
+                       'Bids LLC. Terms of Use Privacy Policy. 2024.8.7-1\xa0'
+                       '...',
+            'htmlSnippet': '<b>Porsche 991 911</b> Community. <b>Porsche 991 '
+                           '911</b> &middot; BMW 3 Series Community. BMW 3 ... '
+                           '© Copyright 2024 <b>Cars and Bids</b> LLC. Terms '
+                           'of Use Privacy Policy. 2024.8.7-1&nbsp;...',
+            'formattedUrl': 'https://carsandbids.com/community/KDzWyxoG',
+            'htmlFormattedUrl': 'https://<b>carsandbids</b>.com/community/KDzWyxoG',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTb7mlnK_V7ElGHvZc9DDfEkBgVl5v3e4ZYeyiaPgdzTK8FceUdgh22aEM&s',
+                                           'width': '275',
+                                           'height': '183'}],
+                        'metatags': [{'image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/91032ad7bbcb6cf72875e8e8207dcfba80173f7c/community/alfa-romeo-4c.jpg',
+                                      'og:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/91032ad7bbcb6cf72875e8e8207dcfba80173f7c/community/alfa-romeo-4c.jpg',
+                                      'theme-color': '#ffffff',
+                                      'og:type': 'website',
+                                      'twitter:title': 'Alfa Romeo 4C '
+                                                       'Discussion Board',
+                                      'twitter:card': 'summary_large_image',
+                                      'og:site_name': 'Cars & Bids',
+                                      'apple-mobile-web-app-title': 'Cars & '
+                                                                    'Bids',
+                                      'og:title': 'Alfa Romeo 4C Discussion '
+                                                  'Board',
+                                      'color-scheme': 'light dark',
+                                      'page-loaded': 'true',
+                                      'og:description': 'The Cars & Bids Alfa '
+                                                        'Romeo 4C community is '
+                                                        'your place to talk, '
+                                                        'share, and interact '
+                                                        'with other '
+                                                        'enthusiasts of cool '
+                                                        'cars from the modern '
+                                                        'era!',
+                                      'twitter:creator': '@carsandbids',
+                                      'twitter:image': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/91032ad7bbcb6cf72875e8e8207dcfba80173f7c/community/alfa-romeo-4c.jpg',
+                                      'twitter:site': '@carsandbids',
+                                      'viewport': 'width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no',
+                                      'twitter:description': 'The Cars & Bids '
+                                                             'Alfa Romeo 4C '
+                                                             'community is '
+                                                             'your place to '
+                                                             'talk, share, and '
+                                                             'interact with '
+                                                             'other '
+                                                             'enthusiasts of '
+                                                             'cool cars from '
+                                                             'the modern era!',
+                                      'og:url': 'https://carsandbids.com/community/alfa-romeo-4c'}],
+                        'cse_image': [{'src': 'https://media.carsandbids.com/cdn-cgi/image/width=2080,quality=70/91032ad7bbcb6cf72875e8e8207dcfba80173f7c/community/alfa-romeo-4c.jpg'}]}},
+           {'kind': 'customsearch#result',
+            'title': 'Trade In Value my 991.2 GTS 2 Porsche Dealer - Rennlist '
+                     '- Porsche ...',
+            'htmlTitle': 'Trade In Value my 991.2 GTS 2 <b>Porsche</b> Dealer '
+                         '- Rennlist - <b>Porsche</b> ...',
+            'link': 'https://rennlist.com/forums/991/1414812-trade-in-value-my-991-2-gts-2-porsche-dealer.html',
+            'displayLink': 'rennlist.com',
+            'snippet': 'Jun 3, 2024 ... 991 - Trade In Value my 991.2 GTS 2 '
+                       'Porsche Dealer - I was ... You could get more from '
+                       'Bring a Trailer or Cars and Bids. I think\xa0...',
+            'htmlSnippet': 'Jun 3, 2024 <b>...</b> <b>991</b> - Trade In Value '
+                           'my 991.2 GTS 2 <b>Porsche</b> Dealer - I was ... '
+                           'You could get more from <b>Bring a Trailer</b> or '
+                           '<b>Cars and Bids</b>. I think&nbsp;...',
+            'formattedUrl': 'https://rennlist.com/.../991/1414812-trade-in-value-my-991-2-gts-2-porsch...',
+            'htmlFormattedUrl': 'https://rennlist.com/.../<b>991</b>/1414812-trade-in-value-my-<b>991</b>-2-gts-2-<b>porsch</b>...',
+            'pagemap': {'metatags': [{'referrer': 'unsafe-url',
+                                      'theme-color': '#6090B3',
+                                      'og:type': 'website',
+                                      'fb:app_id': '137070646311333',
+                                      'og:site_name': 'Rennlist - Porsche '
+                                                      'Discussion Forums',
+                                      'handheldfriendly': 'true',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1.0, '
+                                                  'maximum-scale=1.0, '
+                                                  'minimum-scale=1.0, '
+                                                  'user-scalable=no',
+                                      'og:title': 'Trade In Value my 991.2 GTS '
+                                                  '2 Porsche Dealer - Rennlist '
+                                                  '- Porsche Discussion Forums',
+                                      'fb:page_id': '112249000775',
+                                      'og:url': 'https://rennlist.com/forums/991/1414812-trade-in-value-my-991-2-gts-2-porsche-dealer.html'}]}},
+           {'kind': 'customsearch#result',
+            'title': "It's okay to be cliché with a Porsche 911 GT3",
+            'htmlTitle': 'It&#39;s okay to be cliché with a <b>Porsche 911</b> '
+                         'GT3',
+            'link': 'https://machineswithsouls.com/porsche-911-gt3/',
+            'displayLink': 'machineswithsouls.com',
+            'snippet': 'Feb 17, 2024 ... The 2022 Porsche 911 GT3 Touring vs '
+                       'the 2018 Porsche 911 GT3 Touring. 911-gt3. Photo: Cars '
+                       'and Bids ... The 2018 991 Porsche 911 GT3 Touring. '
+                       '2018\xa0...',
+            'htmlSnippet': 'Feb 17, 2024 <b>...</b> The 2022 <b>Porsche '
+                           '911</b> GT3 Touring vs the 2018 <b>Porsche 911</b> '
+                           'GT3 Touring. <b>911</b>-gt3. Photo: <b>Cars and '
+                           'Bids</b> ... The 2018 <b>991 Porsche 911</b> GT3 '
+                           'Touring. 2018&nbsp;...',
+            'formattedUrl': 'https://machineswithsouls.com/porsche-911-gt3/',
+            'htmlFormattedUrl': 'https://machineswithsouls.com/<b>porsche</b>-<b>911</b>-gt3/',
+            'pagemap': {'cse_thumbnail': [{'src': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSK4S7v0WHxK6j25geIqcdMZKnr207cVJRqAmwZWdFLSO9RawaJomdpAI&s',
+                                           'width': '303',
+                                           'height': '166'}],
+                        'metatags': [{'og:image': 'https://machineswithsouls.com/wp-content/uploads/2024/02/TMOOI-banner-1.jpg',
+                                      'og:type': 'article',
+                                      'article:published_time': '2024-02-17T13:59:51+00:00',
+                                      'og:image:width': '1500',
+                                      'twitter:card': 'summary_large_image',
+                                      'og:site_name': 'Machines With Souls',
+                                      'author': 'machineswithsouls',
+                                      'og:title': "It's okay to be cliché with "
+                                                  'a Porsche 911 GT3',
+                                      'og:image:height': '825',
+                                      'twitter:label1': 'Written by',
+                                      'twitter:label2': 'Est. reading time',
+                                      'og:image:type': 'image/jpeg',
+                                      'msapplication-tileimage': 'https://machineswithsouls.com/wp-content/uploads/2020/11/cropped-machines-with-souls-270x270.jpg',
+                                      'og:description': 'The Porsche 911 GT3 '
+                                                        'Touring is simply the '
+                                                        "best driver's car "
+                                                        'available, but they '
+                                                        'are impossible to '
+                                                        'obtain. The used '
+                                                        'market can help.',
+                                      'article:publisher': 'https://business.facebook.com/machineswithsouls/',
+                                      'twitter:data1': 'machineswithsouls',
+                                      'twitter:data2': '6 minutes',
+                                      'article:modified_time': '2024-04-16T12:25:41+00:00',
+                                      'viewport': 'width=device-width, '
+                                                  'initial-scale=1',
+                                      'onesignal': 'wordpress-plugin',
+                                      'og:locale': 'en_US',
+                                      'google-adsense-platform-domain': 'sitekit.withgoogle.com',
+                                      'google-adsense-platform-account': 'ca-host-pub-2644536267352236',
+                                      'og:url': 'https://machineswithsouls.com/porsche-911-gt3/'}],
+                        'cse_image': [{'src': 'https://machineswithsouls.com/wp-content/uploads/2024/02/TMOOI-banner-1.jpg'}]}}]}
