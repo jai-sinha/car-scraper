@@ -43,10 +43,10 @@ def countdown(ends_at):
 
 def dt_highbid(url):
 	"""
-	Fetches the current highest bid for a car with "DT".
+	Fetches the current highest bid for a listing in "DT" format.
 
 	Args:
-		url: pcarmaret url for "DT" car.
+		url: pcarmarket url for "DT" car.
 
 	Returns:
 		The highest bid.
@@ -61,7 +61,7 @@ def dt_highbid(url):
 	bid = soup.select_one('.pushed_bid_amount').text.strip()
 	return bid
 
-def get_pcarmarket_results(car, out, lock):
+def get_results(car, out, lock):
 	"""
 	Fetches search results from pcarmarket for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -114,4 +114,4 @@ if __name__ == "__main__":
 	out = {}
 	lock = Lock()
 	car = listing.Car("Porsche", "991 911")
-	get_pcarmarket_results(car, out, lock)
+	get_results(car, out, lock)

@@ -1,5 +1,3 @@
-import requests, bs4
-
 class Listing:
 	def __init__(self, title, url, image, time, price, subtitle = None, dt_highbid = None):
 		self.title 	= title
@@ -14,29 +12,39 @@ class Listing:
 		return f"Title: {self.title}\nURL: {self.url}\nImage URL: {self.image}\nCurrent Bid: {self.price}\nTime Remaining: {self.time}"
 
 class Car:
-	def __init__(self, make, model, syear = None, eyear = None, bodystyle = None, trans = None):
+	def __init__(self, make, model, generation=None, syear=None, eyear=None, bodystyle=None, trans=None, query=None):
+		"""
+		All fields are strings except the query, which is a size 2 tuple of strings, and only 
+		make/model are required because the rest aren't all used on every site.
+
+		make: company that produces the car (e.g. Porsche)
+		model: specific model (e.g. 911)
+		generation: name of a specific generation, used on C&B, BaT, and PCAR (991 for a Porsche 911)
+		syear: starting year of search range
+		eyear: ending year of search range
+		bodystyle: e.g. coupe, convertible, sedan (for cars that have multiple options)
+		trans: transmission type, manual or automatic
+		query: tuple of urls to scrape for this specific car on C&B and BaT
+
+		"""
 		self.make = make
 		self.model = model
+		self.generation = generation
 		self.syear = syear
 		self.eyear = eyear
 		self.bodystyle = bodystyle
 		self.trans = trans
+		self.query = query
 	
-	def query(self, site):
-		search_term = f"{site}+{self.make}"
-		for term in self.model.split():
-			search_term+= f"+{term}"
-		
-		res = requests.get(f"https://www.google.com/search?q={search_term}")
-		soup = bs4.BeautifulSoup(res.text, 'html.parser')
-		# first h3 is the first search result item, go back 3 parents to get its href
-		# can't find the url directly because all div classes are nonsense
-		search = soup.select_one('h3')
+	""" 
+	We're probably only using this and __hash__ for the google search cache,
+	which is only being used for BaT, so no need to add year,
+	bodystyle, etc. but generation is required.
+	"""
+	def __eq__(self, other):
+		if isinstance(other, Car):
+			return (self.make==other.make and self.model==other.model and self.generation==other.generation)
+		return False
 
-		# url comes with nonsense attached to back, '/url?q=' attached to front,
-		# nonsense at the end starts with '&' so this just cleans it up.
-		# cleaning up could also be done with re library and "https[^&]*" but this
-		# way is quicker (i think) and doesn't require another library.
-
-		url = search.parent.parent.parent['href']
-		return url[7:url.find('&')]
+	def __hash__(self):
+		return hash((self.make, self.model, self.generation))

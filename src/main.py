@@ -1,14 +1,24 @@
-import listing, cars_and_bids, pcarmarket, bring_a_trailer 
+import listing, const, cars_and_bids, pcarmarket, bring_a_trailer
 import threading
+from diskcache import Cache
 
-car = listing.Car("Porsche", "992 GT3")
+# shouldn't need FanoutCache because cache isn't used in threads
+cache = Cache(const.CACHE_DIR)
+car = listing.Car("Porsche", "911", generation="991")
+if car in cache:
+	car.query = cache[car]
+else:
+	car.get_query()
+	cache.add(car, car.query)
+
 out = {}
 lock = threading.Lock()
 
-bat = threading.Thread(target=bring_a_trailer.get_bring_a_trailer_results(car, out, lock))
-crsnbds = threading.Thread(target=cars_and_bids.get_cars_and_bids_results(car, out, lock))
-pcar = threading.Thread(pcarmarket.get_pcarmarket_results(car, out, lock))
+bat = threading.Thread(bring_a_trailer.get_results(car, out, lock))
+crsnbds = threading.Thread(cars_and_bids.get_results(car, out, lock))
+pcar = threading.Thread(pcarmarket.get_results(car, out, lock))
 
+# threading to increase efficiency in getting/scraping urls
 crsnbds.start()
 pcar.start()
 bat.start()

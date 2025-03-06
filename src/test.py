@@ -1,24 +1,31 @@
-import requests, bs4
+import const, requests, pprint
 
-res = requests.get("https://www.google.com/search?q=bringatrailer+bmw+e90+m3")
-soup = bs4.BeautifulSoup(res.text, 'html.parser')
-# first h3 is the first search result item, go back 3 parents to get its href
-# can't find the url directly because all div classes are nonsense
-search = soup.select_one('h3')
+make = "bmw"
+model = "m3"
+generation = "e90"
 
-# url comes with nonsense attached to back, '/url?q=' attached to front,
-# nonsense at the end starts with '&' so this just cleans it up.
-# cleaning up could also be done with re library and "https[^&]*" but this
-# way is quicker (i think) and doesn't require another library.
 
-url = search.parent.parent.parent['href']
-url = url[7:url.find('&')]
-print(url)
+q = f"{make} {generation} {model} for sale carsandbids"
+params = {
+	'key': const.GOOGLE_API_KEY,
+	'cx': '620f99273bef84934', # my unique search engine key-- use this
+	'q': q
+}
+res = requests.get("https://www.googleapis.com/customsearch/v1?", params=params)
+pprint.pp(res.json())
 
-"""
-Note on getting urls: For cars&bids and BaT, chassis codes like '991' or 'E90'
-are used to specify model generation, and the urls reflect that. On PCAR it
-doesn't really matter because it's a general search, but on all the other sites
-they just go by model year instead of generation, so the searching is super
-different and the urls we want to scrape are also super different.
-"""
+print("-" * 80)
+
+topResult = res.json()['items'][0]
+pprint.pp(topResult)
+
+# upon query success, increment today's api calls count, formatted as
+# "Today's Google API use count: "
+with open(const.ROOT_DIR/"keys"/"api_uses.txt", 'r') as f:
+	s = str(f.read())
+	count = int(s[30:])
+	count += 1
+ 
+with open(const.ROOT_DIR/"keys"/"api_uses.txt", 'w') as f:	
+	s = "Today's Google API use count: " + str(count)
+	f.write(s)
