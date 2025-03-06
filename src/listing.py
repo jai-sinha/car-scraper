@@ -14,17 +14,16 @@ class Listing:
 class Car:
 	def __init__(self, make, model, generation=None, syear=None, eyear=None, bodystyle=None, trans=None, query=None):
 		"""
-		All fields are strings except the query, which is a size 2 tuple of strings, and only 
-		make/model are required because the rest aren't all used on every site.
+		All fields are strings and only make/model are required because the rest aren't all used on every site.
 
 		make: company that produces the car (e.g. Porsche)
 		model: specific model (e.g. 911)
-		generation: name of a specific generation, used on C&B, BaT, and PCAR (991 for a Porsche 911)
+		generation: name of a specific generation, used on C&B, BaT, and PCAR (eg: 991 for a Porsche 911)
 		syear: starting year of search range
 		eyear: ending year of search range
 		bodystyle: e.g. coupe, convertible, sedan (for cars that have multiple options)
 		trans: transmission type, manual or automatic
-		query: tuple of urls to scrape for this specific car on C&B and BaT
+		query: url to scrape for this specific car on BaT
 
 		"""
 		self.make = make
@@ -37,9 +36,7 @@ class Car:
 		self.query = query
 	
 	""" 
-	We're probably only using this and __hash__ for the google search cache,
-	which is only being used for BaT, so no need to add year,
-	bodystyle, etc. but generation is required.
+	We're probably only using this and __hash__ for the google search cache, which is only being used for BaT, so no need to add year, bodystyle, etc. but generation is required.
 	"""
 	def __eq__(self, other):
 		if isinstance(other, Car):

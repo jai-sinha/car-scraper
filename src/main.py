@@ -7,9 +7,6 @@ cache = Cache(const.CACHE_DIR)
 car = listing.Car("Porsche", "911", generation="991")
 if car in cache:
 	car.query = cache[car]
-else:
-	car.get_query()
-	cache.add(car, car.query)
 
 out = {}
 lock = threading.Lock()
@@ -17,6 +14,9 @@ lock = threading.Lock()
 bat = threading.Thread(bring_a_trailer.get_results(car, out, lock))
 crsnbds = threading.Thread(cars_and_bids.get_results(car, out, lock))
 pcar = threading.Thread(pcarmarket.get_results(car, out, lock))
+
+if car not in cache:
+	cache.add(car, car.query)
 
 # threading to increase efficiency in getting/scraping urls
 crsnbds.start()

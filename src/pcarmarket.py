@@ -1,5 +1,5 @@
 import requests, bs4, listing
-from datetime import datetime
+from datetime import datetime, timezone
 from threading import Lock
 
 def query(car: listing.Car) -> str:
@@ -12,9 +12,8 @@ def query(car: listing.Car) -> str:
 	Returns:
 		The pcarmarket search URL for desired car.
 	"""
-	model = car.model.lower().strip().replace(" ", "+")
-	make = car.make.lower()
-	out = "https://www.pcarmarket.com/search/?q=" + make + "+" + model
+	out = f"{car.model}+{car.make}+{car.generation}".lower().strip().replace(" ", "+")
+	out = "https://www.pcarmarket.com/search/?q=" + out
 	return out
 
 def countdown(ends_at):
@@ -27,11 +26,11 @@ def countdown(ends_at):
 	Returns:
 		Remaining time from now until end time in human readable format.
 	"""
-	end_time = datetime.utcfromtimestamp(int(ends_at))
-	now = datetime.utcnow()
-	time_left = end_time - now
+	end_time = datetime.fromtimestamp(int(ends_at), timezone.utc)
+	now = datetime.now(timezone.utc)
+	time_left = (end_time - now).total_seconds()
 
-	hours, remainder = divmod(time_left.total_seconds(), 3600)
+	hours, remainder = divmod(time_left, 3600)
 	minutes, seconds = divmod(remainder, 60)
 	if hours > 24:
 		days = hours/24

@@ -4,8 +4,7 @@ from threading import Lock
 
 def get_query(car: listing.Car):
 	"""
-	Uses the Google Search API to fetch BaT URL for the car, saving us the the work
-	of hardcoding each niche edge-case URL that may come up
+	Uses the Google Search API to fetch BaT URL for the car, saving us the the work of hardcoding each niche edge-case URL that may come up
 	
 	Returns:
 		BaT URL for the given car as as string
@@ -21,8 +20,7 @@ def get_query(car: listing.Car):
 	results = res.json()
 	for item in results['items']:
 		"""
-		Check custom search results until the correct link is found, using the
-		car's generation to find matches if possible or its model if not
+		Check custom search results until the correct link is found, using the car's generation to find matches if possible or its model if not
 		"""
 		if car.generation and car.generation.casefold() in item['title'].casefold():
 			return item['link']
@@ -74,16 +72,14 @@ def countdown(url):
 	
 def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
-	Fetches search results from bring a trailer for a given car,
-	extracts listing details, and stores them in a shared dictionary.
+	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a shared dictionary.
 
 	Args:
 		car: The desired car to search.
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
-	q = get_query(car)
-	# q = "https://bringatrailer.com/bmw/e90-e92-m3/"
+	q = car.query if car.query else get_query(car)
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
@@ -91,8 +87,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		print('Error fetching BaT results: %s' %e)
 
 	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-
-	items = soup.select('.auctions-column')
+	items = soup.select('.listing-card')
 	for item in items:
 		title = item.select_one('h3 a').text.strip()
 		url = item.select_one('h3 a')['href']
@@ -104,14 +99,14 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		with lock:
 			out[key] = listing.Listing(title, url, image, time, bid)
 
-		print(f"Title: {title}")
-		print(f"URL: {url}")
-		print(f"Current Bid: {bid}")
-		print(f"Time Remaining: {time}")
-		print("-" * 40)
+		# print(f"Title: {title}")
+		# print(f"URL: {url}")
+		# print(f"Current Bid: {bid}")
+		# print(f"Time Remaining: {time}")
+		# print("-" * 40)
 	
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	car = listing.Car("BMW", "M3", "E90")
+	car = listing.Car("Porsche", "911", "991")
 	get_results(car, out, lock)
