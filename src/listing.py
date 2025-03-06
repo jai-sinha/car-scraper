@@ -1,5 +1,3 @@
-import requests, json, const
-
 class Listing:
 	def __init__(self, title, url, image, time, price, subtitle = None, dt_highbid = None):
 		self.title 	= title
@@ -40,7 +38,7 @@ class Car:
 	
 	""" 
 	We're probably only using this and __hash__ for the google search cache,
-	which is only being used for BaT and carsandbids, so no need to add year,
+	which is only being used for BaT, so no need to add year,
 	bodystyle, etc. but generation is required.
 	"""
 	def __eq__(self, other):
@@ -50,55 +48,3 @@ class Car:
 
 	def __hash__(self):
 		return hash((self.make, self.model, self.generation))
-	
-	def get_query(self):
-		"""
-		Uses the Google Search API to fetch urls for BaT and cars&bids listing
-		pages, saving us the work of hardcoding each edge-case url of which there
-		are many. Runs two searches, one for BaT and one for C&B to make the
-		result scraping easier.
-		
-		Returns:
-			URLs of BaT and Cars&Bids for the specific make/model/generation, as a
-			tuple of strings with BaT first.
-		"""
-		urls = ("","")
-
-		# Run the BaT search, save result
-		q = f"{self.make} {self.generation} {self.model} for sale bringatrailer"
-		params = {
-			'key': const.GOOGLE_API_KEY,
-			'cx': '620f99273bef84934', # my unique search engine key-- use this
-			'q': q
-		}
-		res = requests.get("https://www.googleapis.com/customsearch/v1?", params=params)
-		print(res.json())
-
-		results = json.loads(res.json())
-		for items in results['items']:
-			# TODO: find the url that corresponds to the BaT page for this car,
-			# and insert into urls[0]
-			pass
-
-		# Run the C&B search, save result
-		q = f"{self.make} {self.generation} {self.model} for sale carsandbids"
-		res = requests.get("https://www.googleapis.com/customsearch/v1?", params=params)
-		print(res.json())
-
-		results = json.loads(res.json())
-		for items in results['items']:
-			# TODO: find the url that corresponds to the C&B page for this car,
-			# and insert into urls[1]
-			pass
-
-		# upon query success, increment today's api calls count, formatted as
-		# "Today's Google API use count: "
-		with open("../keys/api_uses.txt", 'r+') as f:
-			s = str(f.read())
-			count = int(s[30:])
-			count += 1
-			s = s[:30] + str(count)
-			f.write(s)
-
-		# once both urls are found, save them in the car's query field
-		self.query = urls

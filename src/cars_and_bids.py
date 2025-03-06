@@ -21,8 +21,8 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 	options = Options()
 	options.headless = True
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-	
-	q = car.query[1]
+	q = f"{car.make} {car.model} {car.generation}".replace(" ", "%20")
+	q = "https://carsandbids.com/search?q=" + q
 	driver.get(q)
 
 	WebDriverWait(driver, 10).until(
@@ -31,7 +31,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 
 	soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')
 	
-	items = soup.select('.auctions-list:not(.past-auctions)')
+	items = soup.select('ul.auctions-list:not(.past-auctions) li.auction-item')
 	for item in items:
 		title = item.select_one('a.hero')['title']
 		subtitle = item.select_one('p.auction-subtitle').text.strip()
@@ -43,7 +43,6 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		key = "Cars & Bids: " + title
 		with lock:
 			out[key] = listing.Listing(title, url, image, time, bid, subtitle)
-		
 		# print(f"Title: {title}")
 		# print(f"Subtitle: {subtitle}")
 		# print(f"URL: {url}")
@@ -57,5 +56,5 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	car = listing.Car("Porsche", "991 911")
+	car = listing.Car("BMW", "M3", "E90")
 	get_results(car, out, lock)
