@@ -1,31 +1,47 @@
+from flask import Flask, request, jsonify
 import listing, const, cars_and_bids, pcarmarket, bring_a_trailer
 import threading
 from diskcache import Cache
 
 # shouldn't need FanoutCache because cache isn't used in threads
 cache = Cache(const.CACHE_DIR)
-car = listing.Car("Porsche", "911", generation="991")
-if car in cache:
-	car.query = cache[car]
+app = Flask(__name__)
 
-out = {}
-lock = threading.Lock()
+@app.route("/GET", methods=["GET"])
+def get():
+	make = request.args.get("make") 
+	model = request.args.get("model")
+	generation = request.args.get("generation")
 
-bat = threading.Thread(bring_a_trailer.get_results(car, out, lock))
-crsnbds = threading.Thread(cars_and_bids.get_results(car, out, lock))
-pcar = threading.Thread(pcarmarket.get_results(car, out, lock))
+	# make sure at least these three parameters exist (for now)
+	if not make or not model or not generation:
+		return jsonify({"error": "Missing parameters"}), 400 
 
-if car not in cache:
-	cache.add(car, car.query)
+	car = listing.Car(make, model, generation=generation)
+	if car in cache:
+		car.query = cache[car]
 
-# threading to increase efficiency in getting/scraping urls
-crsnbds.start()
-pcar.start()
-bat.start()
-crsnbds.join()
-pcar.join()
-bat.join()
+	out = {}
+	lock = threading.Lock()
 
-for item in out:
-	print(item)
-	print("-" * 80)
+	# init threads
+	bat = threading.Thread(target=bring_a_trailer.get_results, args=(car, out, lock))
+	cb = threading.Thread(target=cars_and_bids.get_results, args=(car, out, lock))
+	pcar = threading.Thread(target=pcarmarket.get_results, args=(car, out, lock))
+
+	if car not in cache:
+		cache.add(car, car.query)
+
+	# start and join threads
+	cb.start()
+	pcar.start()
+	bat.start()
+	cb.join()
+	pcar.join()
+	bat.join()
+
+	# jsonify response
+	return jsonify({key: value.__dict__ for key, value in out.items()})
+
+if __name__ == "__main__":
+	app.run(debug=True, port=5000)
