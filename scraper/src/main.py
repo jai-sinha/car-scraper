@@ -1,13 +1,13 @@
-from flask import Flask, request, jsonify
 import listing, const, cars_and_bids, pcarmarket, bring_a_trailer
 import threading
+from flask import Flask, request, jsonify
 from diskcache import Cache
 
 # shouldn't need FanoutCache because cache isn't used in threads
 cache = Cache(const.CACHE_DIR)
 app = Flask(__name__)
 
-@app.route("/GET", methods=["GET"])
+@app.route("/search", methods=["GET"])
 def get():
 	make = request.args.get("make") 
 	model = request.args.get("model")
