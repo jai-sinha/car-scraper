@@ -31,7 +31,7 @@ def get_query(car: listing.Car):
 
 def countdown(url):
 	"""
-	Calculates remaining time from specified end time in human readable format.
+	Calculates remaining time from specified end time in human readable format. Opens a separate soup parser because we have to go into the listing to get the time-- not scrapable from the main page.
 
 	Args:
 		url: Specific listing containing auction end time info.
@@ -95,9 +95,10 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		bid = item.select_one('.bidding-bid .bid-formatted').text.strip()
 		time = countdown(url)
 
+		bid = bid[4:] # as of 3/2025 BaT inserts "USD " into the prices, so this removes that 
 		key = "BaT: " + title
 		with lock:
-			out[key] = listing.Listing(title, url, image, time, bid)
+			out[key] = listing.Listing(key, url, image, time, bid)
 
 		# print(f"Title: {title}")
 		# print(f"URL: {url}")

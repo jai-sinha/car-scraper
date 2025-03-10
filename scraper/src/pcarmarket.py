@@ -90,17 +90,19 @@ def get_results(car, out, lock):
 		if "DT" in title:
 			buyNow = item.select_one('.buyNowHomeDetails').text.strip()
 			highBid = dt_highbid(url)
+			buyNow = buyNow[buyNow.find("$"):] # remove the text that says "high bid" or "buy now"
 			with lock:
-				out[key] = listing.Listing(title, url, image, "DT", buyNow, dt_highbid=highBid)
+				out[key] = listing.Listing(key, url, image, "DT", buyNow, dt_highbid=highBid)
 
 		# else, just get high bid and time remaining
 		else:
 			bid = item.select_one('.auction-bid').text.strip()
+			bid = bid[bid.find("$"):] 
 			countdown_element = soup.select_one('.countdownTimer')
 			ends_at = countdown_element.get('data-ends-at')
 			time = countdown(ends_at)
 			with lock:
-				out[key] = listing.Listing(title, url, image, time, bid)
+				out[key] = listing.Listing(key, url, image, time, bid)
 		
 		# print(f"Title: {title}")
 		# print(f"URL: {url}")
