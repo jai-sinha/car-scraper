@@ -42,7 +42,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 
 		key = "Cars & Bids: " + title
 		with lock:
-			out[key] = listing.Listing(title, url, image, time, bid, subtitle)
+			out[key] = listing.Listing(key, url, image, time, bid, subtitle)
 			
 		# print(f"Title: {title}")
 		# print(f"Subtitle: {subtitle}")

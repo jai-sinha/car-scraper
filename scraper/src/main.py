@@ -16,7 +16,7 @@ def get():
 	generation = request.args.get("generation")
 
 	# make sure at least these three parameters exist (for now)
-	if not make or not model or not generation:
+	if not make or not model:
 		return jsonify({"error": "Missing parameters"}), 400 
 
 	car = listing.Car(make, model, generation=generation)
