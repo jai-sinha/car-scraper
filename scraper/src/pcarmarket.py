@@ -38,7 +38,7 @@ def countdown(ends_at):
 	elif hours < 1:
 		return f"{int(minutes)}m {int(seconds)}s"
 	else:
-		return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
+		return f"{int(hours)}h {int(minutes)}m"
 
 def dt_highbid(url):
 	"""
@@ -97,7 +97,8 @@ def get_results(car, out, lock):
 		# else, just get high bid and time remaining
 		else:
 			bid = item.select_one('.auction-bid').text.strip()
-			bid = bid[bid.find("$"):] 
+			# this would return "." when there are no bids, we want ""
+			bid = bid[bid.find("$"):] if bid.find("$") > 0 else "" 
 			countdown_element = soup.select_one('.countdownTimer')
 			ends_at = countdown_element.get('data-ends-at')
 			time = countdown(ends_at)

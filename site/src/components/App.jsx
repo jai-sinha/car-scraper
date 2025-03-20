@@ -12,14 +12,14 @@ const App = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
-	// Fetch data from API
+	// Fetch data from API-- not using useEffect because we don't want this to run on component mount, only when triggered by pressing "search"
 	const fetchCarData = async () => {
 		setLoading(true);
 		setError(null);
 		setData(null);
 
 		try {
-			const url = `http://127.0.0.1:5000/GET?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&generation=${encodeURIComponent(generation)}`;
+			const url = `http://127.0.0.1:5000/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&generation=${encodeURIComponent(generation)}`;
 			const response = await fetch(url);
 
 			if (!response.ok) {
@@ -37,7 +37,7 @@ const App = () => {
 
 	return <Container fluid>
 		<div style={{ margin: ".25rem" }}>
-			<h1>Car Search</h1>
+			<h1>Search Bring a Trailer, Cars & Bids, and PCARMARKET</h1>
 			<Form>
 				<Form.Label htmlFor="make"></Form.Label>
 				<Form.Control
@@ -65,13 +65,14 @@ const App = () => {
 				/>
 				<br />
 				<Button size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
-					{loading ? "Loading..." : "Submit"}
+					{loading ? "Loading..." : "Search"}
 				</Button>
 				<Button size="lg" id="button" variant="secondary" onClick={() => {
-						setMake('');
-						setModel('');
-						setGeneration('');
-					}}> Reset Search
+					setMake('');
+					setModel('');
+					setGeneration('');
+					setData(null);
+				}}> Reset Search
 				</Button>
 			</Form>
 			<br></br>

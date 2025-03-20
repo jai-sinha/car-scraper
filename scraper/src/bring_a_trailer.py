@@ -63,7 +63,7 @@ def countdown(url):
 			elif hours < 1:
 				return f"{int(minutes)}m {int(seconds)}s"
 			else:
-				return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
+				return f"{int(hours)}h {int(minutes)}m"
 		else:
 			return "Auction ended"
 	else:
