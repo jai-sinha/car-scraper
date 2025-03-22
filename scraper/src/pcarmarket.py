@@ -1,20 +1,7 @@
 import requests, bs4, listing
 from datetime import datetime, timezone
 from threading import Lock
-
-def query(car: listing.Car) -> str:
-	"""
-	Makes the search URL for a make and model.
-
-	Args:
-		car: The desired car to search.
-
-	Returns:
-		The pcarmarket search URL for desired car.
-	"""
-	out = f"{car.model}+{car.make}+{car.generation}".lower().strip().replace(" ", "+")
-	out = "https://www.pcarmarket.com/search/?q=" + out
-	return out
+from urllib.parse import quote
 
 def countdown(ends_at):
 	"""
@@ -36,7 +23,7 @@ def countdown(ends_at):
 		days = hours/24
 		return f"{int(days)}d"
 	elif hours < 1:
-		return f"{int(minutes)}m {int(seconds)}s"
+		return f"{int(minutes)}m"
 	else:
 		return f"{int(hours)}h {int(minutes)}m"
 
@@ -60,7 +47,7 @@ def dt_highbid(url):
 	bid = soup.select_one('.pushed_bid_amount').text.strip()
 	return bid
 
-def get_results(car, out, lock):
+def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
 	Fetches search results from pcarmarket for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -70,7 +57,9 @@ def get_results(car, out, lock):
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
-	q = query(car)
+	print(car.make, car.model, car.generation)
+	q = quote(car.make) + quote(car.generation) + quote(car.model)
+	q = "https://www.pcarmarket.com/search/?q=" + q
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
@@ -105,15 +94,15 @@ def get_results(car, out, lock):
 			with lock:
 				out[key] = listing.Listing(key, url, image, time, bid)
 		
-		# print(f"Title: {title}")
-		# print(f"URL: {url}")
-		# # print(f"Image URL: {image}")
-		# print(f"{bid}")
-		# print(f"Time Left: {time}")
-		# print("-" * 40)
+		print(f"Title: {title}")
+		print(f"URL: {url}")
+		# print(f"Image URL: {image}")
+		print(f"{bid}")
+		print(f"Time Left: {time}")
+		print("-" * 40)
 
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	car = listing.Car("Porsche", "991 911")
+	car = listing.Car("Porsche", "911", "991")
 	get_results(car, out, lock)

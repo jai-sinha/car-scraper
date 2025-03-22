@@ -1,11 +1,12 @@
 import { Card } from "react-bootstrap";
+import '../index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 export default function CarSummary(props) {
 
-	return <Card style={{margin: "0.25rem"}}>
-		<Card.Img variant="top" src={props.image} />
+	return <Card>
+		<Card.Img className="rounded-1" variant="top" src={props.image} />
 		<Card.Body>
 			<Card.Title>
 				<a href={props.url} rel="noopener noreferrer" target="_blank">{props.title}</a>

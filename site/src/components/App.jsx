@@ -35,7 +35,7 @@ const App = () => {
 		}
 	};
 
-	return <Container fluid>
+	return <Container style={{ maxWidth: "1200px" }}>
 		<div style={{ margin: ".25rem" }}>
 			<h1>Search Bring a Trailer, Cars & Bids, and PCARMARKET</h1>
 			<Form>
@@ -64,10 +64,10 @@ const App = () => {
 					onChange={(e) => setGeneration(e.target.value)}
 				/>
 				<br />
-				<Button size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
+				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
 					{loading ? "Loading..." : "Search"}
 				</Button>
-				<Button size="lg" id="button" variant="secondary" onClick={() => {
+				<Button size="lg" variant="secondary" onClick={() => {
 					setMake('');
 					setModel('');
 					setGeneration('');

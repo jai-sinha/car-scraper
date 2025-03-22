@@ -6,8 +6,12 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	monospace;
+.card {
+	margin: .25rem;
+	border-width: 0;
+ }
+ 
+.card:hover {
+	border-width: .5px;
+	border-color:lightgray;
 }
-
