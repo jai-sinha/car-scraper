@@ -1,12 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 from urllib.parse import quote
@@ -29,17 +26,19 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 	options.add_argument("--disable-gpu")
 	options.add_argument("--no-sandbox")
 	options.add_argument("--disable-dev-shm-usage")
+	options.add_argument("--disable-blink-features=AutomationControlled")
 
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 	
 	# encode car info for url
-	q = quote(car.make) + quote(car.generation) + quote(car.model)
+	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = "%20".join(q)
 	q = "https://carsandbids.com/search?q=" + q
 	driver.get(q)
 
 	# wait for html to load in before parsing
 	WebDriverWait(driver, 3).until(
-		EC.presence_of_element_located((By.CLASS_NAME, "auctions-list"))
+		EC.visibility_of_element_located((By.CSS_SELECTOR, "ul.auctions-list li"))
 	)
 
 	soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')

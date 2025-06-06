@@ -57,9 +57,11 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
-	print(car.make, car.model, car.generation)
-	q = quote(car.make) + quote(car.generation) + quote(car.model)
+	# print(car.make, car.model, car.generation)
+	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = "%20".join(q)
 	q = "https://www.pcarmarket.com/search/?q=" + q
+	print(q)
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
@@ -94,12 +96,12 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 			with lock:
 				out[key] = listing.Listing(key, url, image, time, bid)
 		
-		print(f"Title: {title}")
-		print(f"URL: {url}")
-		# print(f"Image URL: {image}")
-		print(f"{bid}")
-		print(f"Time Left: {time}")
-		print("-" * 40)
+		# print(f"Title: {title}")
+		# print(f"URL: {url}")
+		# # print(f"Image URL: {image}")
+		# print(f"{bid}")
+		# print(f"Time Left: {time}")
+		# print("-" * 40)
 
 if __name__ == "__main__":
 	out = {}
