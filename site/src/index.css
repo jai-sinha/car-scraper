@@ -1,0 +1,17 @@
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+	'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+	sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.card {
+	margin: .25rem;
+	border-width: 0;
+ }
+ 
+.card:hover {
+	border-width: .5px;
+	border-color:lightgray;
+}

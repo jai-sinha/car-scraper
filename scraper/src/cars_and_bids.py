@@ -5,12 +5,14 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+
+from urllib.parse import quote
 from threading import Lock
 import bs4, listing
 
 def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
-	Fetches search results from cars and bids for a given car,
+	Fetches search results from Cars & Bids for a given car,
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
@@ -18,15 +20,25 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
+	# options to make sure chrome window doesn't pop up when running
 	options = Options()
-	options.headless = True
+	options.add_argument("--headless=new")
+	options.add_argument("--disable-gpu")
+	options.add_argument("--no-sandbox")
+	options.add_argument("--disable-dev-shm-usage")
+	options.add_argument("--disable-blink-features=AutomationControlled")
+
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-	q = f"{car.make} {car.model} {car.generation}".replace(" ", "%20")
+	
+	# encode car info for url
+	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = "%20".join(q)
 	q = "https://carsandbids.com/search?q=" + q
 	driver.get(q)
 
-	WebDriverWait(driver, 10).until(
-		EC.presence_of_element_located((By.CLASS_NAME, "auctions-list"))
+	# wait for html to load in before parsing
+	WebDriverWait(driver, 3).until(
+		EC.visibility_of_element_located((By.CSS_SELECTOR, "ul.auctions-list li"))
 	)
 
 	soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')
@@ -42,7 +54,7 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 
 		key = "Cars & Bids: " + title
 		with lock:
-			out[key] = listing.Listing(title, url, image, time, bid, subtitle)
+			out[key] = listing.Listing(key, url, image, time, bid, subtitle)
 			
 		# print(f"Title: {title}")
 		# print(f"Subtitle: {subtitle}")

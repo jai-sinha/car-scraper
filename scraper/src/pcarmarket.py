@@ -1,20 +1,7 @@
 import requests, bs4, listing
 from datetime import datetime, timezone
 from threading import Lock
-
-def query(car: listing.Car) -> str:
-	"""
-	Makes the search URL for a make and model.
-
-	Args:
-		car: The desired car to search.
-
-	Returns:
-		The pcarmarket search URL for desired car.
-	"""
-	out = f"{car.model}+{car.make}+{car.generation}".lower().strip().replace(" ", "+")
-	out = "https://www.pcarmarket.com/search/?q=" + out
-	return out
+from urllib.parse import quote
 
 def countdown(ends_at):
 	"""
@@ -36,9 +23,9 @@ def countdown(ends_at):
 		days = hours/24
 		return f"{int(days)}d"
 	elif hours < 1:
-		return f"{int(minutes)}m {int(seconds)}s"
+		return f"{int(minutes)}m"
 	else:
-		return f"{int(hours)}h {int(minutes)}m {int(seconds)}s"
+		return f"{int(hours)}h {int(minutes)}m"
 
 def dt_highbid(url):
 	"""
@@ -60,7 +47,7 @@ def dt_highbid(url):
 	bid = soup.select_one('.pushed_bid_amount').text.strip()
 	return bid
 
-def get_results(car, out, lock):
+def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
 	Fetches search results from pcarmarket for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -70,7 +57,11 @@ def get_results(car, out, lock):
 		out: Shared dictionary with listing details.
 		lock: Threading lock.
 	"""
-	q = query(car)
+	# print(car.make, car.model, car.generation)
+	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = "%20".join(q)
+	q = "https://www.pcarmarket.com/search/?q=" + q
+	print(q)
 	res = requests.get(q)
 	try:
 		res.raise_for_status()
@@ -90,17 +81,20 @@ def get_results(car, out, lock):
 		if "DT" in title:
 			buyNow = item.select_one('.buyNowHomeDetails').text.strip()
 			highBid = dt_highbid(url)
+			buyNow = buyNow[buyNow.find("$"):] # remove the text that says "high bid" or "buy now"
 			with lock:
-				out[key] = listing.Listing(title, url, image, "DT", buyNow, dt_highbid=highBid)
+				out[key] = listing.Listing(key, url, image, "DT", buyNow, dt_highbid=highBid)
 
 		# else, just get high bid and time remaining
 		else:
 			bid = item.select_one('.auction-bid').text.strip()
+			# this would return "." when there are no bids, we want ""
+			bid = bid[bid.find("$"):] if bid.find("$") > 0 else "" 
 			countdown_element = soup.select_one('.countdownTimer')
 			ends_at = countdown_element.get('data-ends-at')
 			time = countdown(ends_at)
 			with lock:
-				out[key] = listing.Listing(title, url, image, time, bid)
+				out[key] = listing.Listing(key, url, image, time, bid)
 		
 		# print(f"Title: {title}")
 		# print(f"URL: {url}")
@@ -112,5 +106,5 @@ def get_results(car, out, lock):
 if __name__ == "__main__":
 	out = {}
 	lock = Lock()
-	car = listing.Car("Porsche", "991 911")
+	car = listing.Car("Porsche", "911", "991")
 	get_results(car, out, lock)
