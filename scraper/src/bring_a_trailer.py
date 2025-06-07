@@ -23,33 +23,31 @@ def countdown(url, browser):
 		
 		# Get the data-until attribute value using JavaScript
 		data_until = page.evaluate("""
-				() => {
-					const countdown = document.querySelector('.listing-available-countdown');
-					return countdown ? countdown.getAttribute('data-until') : null;
-				}
+			() => {
+				const countdown = document.querySelector('.listing-available-countdown');
+				return countdown ? countdown.getAttribute('data-until') : null;
+			}
 		""")
 		
-		# maybe replace this with pandas?
 		if data_until:
-				end_time = datetime.fromtimestamp(int(data_until), timezone.utc)
-				now = datetime.now(timezone.utc)
-				time_left = (end_time - now).total_seconds()
-				
-				if time_left > 0:
-					hours, remainder = divmod(time_left, 3600)
-					minutes, seconds = divmod(remainder, 60)
-					if hours > 24:
-						days = hours/24
-						return f"{int(days)}d"
-					elif hours < 1:
-						return f"{int(minutes)}m {int(seconds)}s"
-					else:
-						return f"{int(hours)}h {int(minutes)}m"
-				else:
-					return "Auction ended"
+			time_left = int(data_until) - int(datetime.now(timezone.utc).timestamp())
+			
+			if time_left <= 0:
+				return "Auction ended"
+			
+			hours = time_left // 3600
+			minutes = (time_left % 3600) // 60
+			seconds = time_left % 60
+			
+			if hours >= 24:
+				return f"{hours // 24}d"
+			elif hours >= 1:
+				return f"{hours}h {minutes}m"
+			else:
+				return f"{minutes}m {seconds}s"
 		else:
-				print("Countdown element not found")
-				return "0"
+			print("Countdown element not found")
+			return "0"
 				
 	except Exception as e:
 		print(f"Error fetching countdown for BaT: {e}")
