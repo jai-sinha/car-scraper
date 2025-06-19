@@ -25,8 +25,8 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 		page = browser.new_page()
 		
 		try:
-			page.goto(search_url, timeout=500)
-			page.wait_for_selector("ul.auctions-list", timeout=5000)
+			page.goto(search_url, timeout=2000)
+			page.wait_for_selector("ul.auctions-list", timeout=2000)
 
 			# html_content = page.content()
 			# print("FULL PAGE HTML:")
@@ -46,28 +46,23 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 				}
 			""")
 			
-			# Process each listing
+			# Process each listing, all live listings and the 30 most recent closed
+			# will be visible, so remove the closed ones from the count/processing
 			print(f"Found {len(listings_data) - 30} auction listings")
 			for data in listings_data:
 				if not data['title'] or not data['url'] or not data['timeRemaining']:
 					continue
 				
-				# Clean up bid text
-				bid = data['bid']
-				if bid.startswith("$"):
-					# Remove $ and any commas
-					bid = bid.replace("$", "").replace(",", "")
-				
 				# Create listing
 				key = "C&B: " + data['title']
 				with lock:
-					out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], bid)
+					out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], data['bid'])
 				
 				
 				# Print extracted data
 				print(f"Title: {data['title']}")
 				print(f"URL: {data['url']}")
-				print(f"Current Bid: {bid}")
+				print(f"Current Bid: {data['bid']}")
 				print(f"Time Remaining: {data['timeRemaining']}")
 				print("-" * 50)
 
