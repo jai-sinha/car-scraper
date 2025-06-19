@@ -21,8 +21,30 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 	print(search_url)
 
 	with sync_playwright() as p:
-		browser = p.chromium.launch(headless=False)
-		page = browser.new_page()
+
+		# avoid headless detection (important!!)
+		browser = p.chromium.launch(
+			headless=True,
+			args=[
+					'--no-sandbox',
+					'--disable-setuid-sandbox',
+					'--disable-dev-shm-usage',
+					'--disable-accelerated-2d-canvas',
+					'--no-first-run',
+					'--no-zygote',
+					'--disable-gpu',
+					'--disable-web-security',
+					'--disable-features=VizDisplayCompositor'
+			]
+		)
+		context = browser.new_context(
+			user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+			viewport={'width': 1920, 'height': 1080},
+			locale='en-US',
+			timezone_id='America/New_York'
+		)
+    
+		page = context.new_page()
 		
 		try:
 			page.goto(search_url, timeout=2000)
@@ -50,21 +72,23 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 			# will be visible, so remove the closed ones from the count/processing
 			print(f"Found {len(listings_data) - 30} auction listings")
 			for data in listings_data:
-				if not data['title'] or not data['url'] or not data['timeRemaining']:
+				if not data['title'] or not data['timeRemaining']:
 					continue
 				
 				# Create listing
 				key = "C&B: " + data['title']
+				url = "carsandbids.com" + data['url']
 				with lock:
-					out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], data['bid'])
+					out[key] = listing.Listing(key, url, data['image'], data['timeRemaining'], data['bid'])
 				
 				
 				# Print extracted data
-				print(f"Title: {data['title']}")
-				print(f"URL: {data['url']}")
-				print(f"Current Bid: {data['bid']}")
-				print(f"Time Remaining: {data['timeRemaining']}")
-				print("-" * 50)
+				# print(f"Title: {data['title']}")
+				# print(f"URL: {url}")
+				# print(f"Image URL: {data['image']}")
+				# print(f"Current Bid: {data['bid']}")
+				# print(f"Time Remaining: {data['timeRemaining']}")
+				# print("-" * 50)
 
 		except Exception as e:
 			print(f"Error scraping auctions: {e}")

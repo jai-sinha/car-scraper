@@ -28,25 +28,6 @@ def countdown(ends_at):
 	else:
 		return f"{int(hours)}h {int(minutes)}m"
 
-# def dt_highbid(url):
-# 	"""
-# 	Fetches the current highest bid for a listing in "DT" format.
-
-# 	Args:
-# 		url: pcarmarket url for "DT" car.
-
-# 	Returns:
-# 		The highest bid.
-# 	"""
-# 	res = requests.get(url)
-# 	try:
-# 		res.raise_for_status()
-# 	except Exception as e:
-# 		print("Error fetching PCARMARKET high bid: %s" %e)
-	
-# 	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-# 	bid = soup.select_one('.pushed_bid_amount').text.strip()
-# 	return bid
 
 def get_results(car: listing.Car, out: dict, lock: Lock):
 	"""
@@ -102,18 +83,19 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 					timeRemaining = countdown(data['timeRemaining'])
 
 				title = data['title'][13:] if data['title'].startswith("MarketPlace: ") else data['title']
-				
+
 				# Create listing
 				key = "PCAR: " + title
 				with lock:
 					out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
 				
 				# Print extracted data
-				print(f"Title: {title}")
-				print(f"URL: {data['url']}")
-				print(f"Current Bid: {bid}")
-				print(f"Time Remaining: {timeRemaining}")
-				print("-" * 50)
+				# print(f"Title: {title}")
+				# print(f"URL: {data['url']}")
+				# print(f"Image URL: {data['image']}")
+				# print(f"Current Bid: {bid}")
+				# print(f"Time Remaining: {timeRemaining}")
+				# print("-" * 50)
 
 		except Exception as e:
 			print(f"Error scraping auctions: {e}")
@@ -127,35 +109,3 @@ if __name__ == "__main__":
 	lock = Lock()
 	car = listing.Car("Porsche", "911", "991")
 	get_results(car, out, lock)
-
-	# for item in items:
-	# 	title = item.select_one('h2 a').text.strip()
-	# 	url = "https://www.pcarmarket.com" + item.select_one('h2 a')['href']
-	# 	image = item.select_one('.feat_img')['src']
-		
-	# 	key = "PCARMARKET: " + title
-	# 	# if DT, get Buy Now price, high bid
-	# 	if "DT" in title:
-	# 		buyNow = item.select_one('.buyNowHomeDetails').text.strip()
-	# 		highBid = dt_highbid(url)
-	# 		buyNow = buyNow[buyNow.find("$"):] # remove the text that says "high bid" or "buy now"
-	# 		with lock:
-	# 			out[key] = listing.Listing(key, url, image, "DT", buyNow, dt_highbid=highBid)
-
-	# 	# else, just get high bid and time remaining
-	# 	else:
-	# 		bid = item.select_one('.auction-bid').text.strip()
-	# 		# this would return "." when there are no bids, we want ""
-	# 		bid = bid[bid.find("$"):] if bid.find("$") > 0 else "" 
-	# 		countdown_element = soup.select_one('.countdownTimer')
-	# 		ends_at = countdown_element.get('data-ends-at')
-	# 		time = countdown(ends_at)
-	# 		with lock:
-	# 			out[key] = listing.Listing(key, url, image, time, bid)
-		
-		# print(f"Title: {title}")
-		# print(f"URL: {url}")
-		# # print(f"Image URL: {image}")
-		# print(f"{bid}")
-		# print(f"Time Left: {time}")
-		# print("-" * 40)
