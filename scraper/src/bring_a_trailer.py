@@ -1,59 +1,9 @@
 from playwright.async_api import async_playwright
-from datetime import datetime, timezone
 from urllib.parse import quote
 import asyncio
 import listing
 
-async def countdown(url, browser):
-	"""
-	Calculates remaining time from specified end time in human readable format.
-	Opens a separate page because we have to go into the listing to get the time--
-	not scrapable from the main page.
-	
-	Args:
-		url: Specific listing containing auction end time info.
-		browser: Playwright async browser instance
-	Returns:
-		Time remaining in auction as a D/HH/MM/SS string
-	"""
-
-	page = await browser.new_page()
-	
-	try:
-		await page.goto(url, timeout=30000)
-		
-		# Get the data-until attribute value using JavaScript
-		data_until = await page.evaluate("""
-			() => {
-				const countdown = document.querySelector('.listing-available-countdown');
-				return countdown ? countdown.getAttribute('data-until') : null;
-			}
-		""")
-		
-		if data_until:
-			time_left = int(data_until) - int(datetime.now(timezone.utc).timestamp())
-			
-			if time_left <= 0:
-				return "Auction ended"
-			
-			hours = time_left // 3600
-			minutes = (time_left % 3600) // 60
-			seconds = time_left % 60
-			
-			if hours >= 24:
-				return f"{hours // 24}d"
-			elif hours >= 1:
-				return f"{hours}h {minutes}m"
-			else:
-				return f"{minutes}m {seconds}s"
-		else:
-			print("Countdown element not found")
-			return "0"
-				
-	except Exception as e:
-		print(f"Error fetching countdown for BaT: {e}")
-		return "Error"
-
+TIMEOUT = 10000
 
 async def get_results(car: listing.Car, browser):
 	"""
@@ -73,7 +23,7 @@ async def get_results(car: listing.Car, browser):
 	page = await browser.new_page()
 	
 	try:
-		await page.goto(search_url, timeout=30000)
+		await page.goto(search_url, timeout=TIMEOUT)
 		
 		# check filter input value to confirm search filtering has occurred
 		search_terms = f"{car.make} {car.generation} {car.model}"
@@ -84,7 +34,7 @@ async def get_results(car: listing.Car, browser):
 			timeout=6000
 		)
 
-		await page.wait_for_selector('.listing-card', timeout=10000)
+		await page.wait_for_selector('.listing-card', timeout=TIMEOUT)
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -112,6 +62,7 @@ async def get_results(car: listing.Car, browser):
 				bid = bid[4:]
 			
 			# Create listing
+			url = f"https://{data['url']}"
 			key = "BaT: " + data['title']
 			out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], bid)
 			
@@ -122,6 +73,7 @@ async def get_results(car: listing.Car, browser):
 			print(f"Time Remaining: {data['timeRemaining']}")
 			print("-" * 50)
 
+		# Return dict of BaT results
 		return out				
 
 	except Exception as e:

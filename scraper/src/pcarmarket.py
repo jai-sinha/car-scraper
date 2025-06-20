@@ -4,6 +4,8 @@ from urllib.parse import quote
 import asyncio
 import listing
 
+TIMEOUT = 10000
+
 def countdown(ends_at):
 	"""
 	Calculates remaining time from specified end time in human readable format.
@@ -48,8 +50,8 @@ async def get_results(car: listing.Car, browser):
 
 	page = await browser.new_page()
 	try:
-		await page.goto(search_url, timeout=10000)
-		await page.wait_for_selector('.post.clearfix.searchResult', timeout=2000)
+		await page.goto(search_url, timeout=TIMEOUT)
+		await page.wait_for_selector('.post.clearfix.searchResult', timeout=TIMEOUT)
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -68,38 +70,43 @@ async def get_results(car: listing.Car, browser):
 			}
 		""")
 
-		out = {}
 		print(f"Found {len(listings_data)} auction listings")
+		out = {}
+
 		for data in listings_data:
 			if not data['title'] or not data['url']:
 				continue
 			
-			# Check if this is a live auction or in MarketPlace
-			timeRemaining = "N/A"
-			bid = f"{data['buyNow']} (MarketPlace)"
-			if data['bid']:
+			# Check if this is a live auction
+			if data['bid']: 
 				bid = data['bid']
 				timeRemaining = countdown(data['timeRemaining'])
+				title = data['title']
 
-			title = data['title'][13:] if data['title'].startswith("MarketPlace: ") else data['title']
-			url = f"pcarmarket.com{data['url']}"
+			# Or if it's in MarketPlace
+			else:
+				bid = f"{data['buyNow']} (MarketPlace)"
+				timeRemaining = "N/A"
+				title = data['title'][13:]
+
 			# Create listing
-			key = "PCAR: " + title
+			url = f"https://pcarmarket.com{data['url']}"
+			key = f"PCAR: {title}"
 			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid)
 			
-			# Print extracted data
-			print(f"Title: {title}")
-			print(f"URL: {url}")
+			# print(f"Title: {title}")
+			# print(f"URL: {url}")
 			# print(f"Image URL: {data['image']}")
-			print(f"Current Bid: {bid}")
-			print(f"Time Remaining: {timeRemaining}")
-			print("-" * 50)
+			# print(f"Current Bid: {bid}")
+			# print(f"Time Remaining: {timeRemaining}")
+			# print("-" * 50)
 
+		# Return dict of PCAR results
 		return out
 
 	except Exception as e:
-		print(f"Error scraping auctions: {e}")
-		return []
+		print(f"Error scraping PCAR auctions: {e}")
+		return {}
 	
 
 if __name__ == "__main__":
