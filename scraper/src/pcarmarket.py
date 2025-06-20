@@ -1,7 +1,7 @@
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 from datetime import datetime, timezone
-from threading import Lock
 from urllib.parse import quote
+import asyncio
 import listing
 
 def countdown(ends_at):
@@ -12,7 +12,7 @@ def countdown(ends_at):
 		ends_at: Time at which countdown ends at in unix time format.
 
 	Returns:
-		Remaining time from now until end time in human readable format.
+		Time remaining in auction as a D/HH/MM/SS string
 	"""
 	end_time = datetime.fromtimestamp(int(ends_at), timezone.utc)
 	now = datetime.now(timezone.utc)
@@ -22,22 +22,23 @@ def countdown(ends_at):
 	minutes, seconds = divmod(remainder, 60)
 	if hours > 24:
 		days = hours/24
-		return f"{int(days)}d"
+		return f"{int(days)} days"
 	elif hours < 1:
-		return f"{int(minutes)}m"
+		return f"{int(minutes)} minutes"
 	else:
-		return f"{int(hours)}h {int(minutes)}m"
+		return f"{int(hours)}:{int(minutes)}"
 
 
-def get_results(car: listing.Car, out: dict, lock: Lock):
+async def get_results(car: listing.Car, browser):
 	"""
 	Fetches search results from pcarmarket for a given car,
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
 		car: The desired car to search.
-		out: Shared dictionary with listing details.
-		lock: Threading lock.
+		browser: Playwright async browser
+	Returns:
+		All discovered listings as a dict
 	"""
 	# print(car.make, car.model, car.generation)
 	q = quote(car.make), quote(car.generation), quote(car.model)
@@ -45,67 +46,72 @@ def get_results(car: listing.Car, out: dict, lock: Lock):
 	search_url = "https://www.pcarmarket.com/search/?q=" + q
 	print(search_url)
 
-	with sync_playwright() as p:
-		browser = p.chromium.launch(headless=True)
-		page = browser.new_page()
+	page = await browser.new_page()
+	try:
+		await page.goto(search_url, timeout=10000)
+		await page.wait_for_selector('.post.clearfix.searchResult', timeout=2000)
 
-		try:
-			page.goto(search_url, timeout=10000)
-			page.wait_for_selector('.post.clearfix.searchResult', timeout=2000)
+		listings_data = await page.evaluate("""
+			() => {
+			const items = document.querySelectorAll('.post.clearfix.searchResult');
+			return Array.from(items).map(item => ({
+				title: item.querySelector('h2 a')?.textContent?.trim() || '',
+				url: item.querySelector('h2 a')?.getAttribute('href') || '',
+				bid: item.querySelector('.auction-bid strong')?.nextSibling?.textContent?.trim() || '',
+				buyNow: item.querySelector('.buyNowHomeDetails strong')?.nextSibling?.textContent?.trim() || '',
+				timeRemaining: (() => {
+					const countdown = item.querySelector('.countdownTimer');
+					return countdown ? countdown.getAttribute('data-ends-at') : null;
+				})(),
+				image: item.querySelector('img.feat_img')?.getAttribute('src') || ''
+			}));
+			}
+		""")
 
-			listings_data = page.evaluate("""
-				() => {
-				const items = document.querySelectorAll('.post.clearfix.searchResult');
-				return Array.from(items).map(item => ({
-					title: item.querySelector('h2 a')?.textContent?.trim() || '',
-					url: item.querySelector('h2 a')?.getAttribute('href') || '',
-					bid: item.querySelector('.auction-bid strong')?.nextSibling?.textContent?.trim() || '',
-					buyNow: item.querySelector('.buyNowHomeDetails strong')?.nextSibling?.textContent?.trim() || '',
-					timeRemaining: (() => {
-						const countdown = item.querySelector('.countdownTimer');
-						return countdown ? countdown.getAttribute('data-ends-at') : null;
-					})(),
-					image: item.querySelector('img.feat_img')?.getAttribute('src') || ''
-				}));
-				}
-			""")
+		out = {}
+		print(f"Found {len(listings_data)} auction listings")
+		for data in listings_data:
+			if not data['title'] or not data['url']:
+				continue
+			
+			# Check if this is a live auction or in MarketPlace
+			timeRemaining = "N/A"
+			bid = f"{data['buyNow']} (MarketPlace)"
+			if data['bid']:
+				bid = data['bid']
+				timeRemaining = countdown(data['timeRemaining'])
 
-			print(f"Found {len(listings_data)} auction listings")
-			for data in listings_data:
-				if not data['title'] or not data['url']:
-					continue
-				
-				# Check if this is a live auction or in MarketPlace
-				timeRemaining = "N/A"
-				bid = f"{data['buyNow']} (MarketPlace)"
-				if data['bid']:
-					bid = data['bid']
-					timeRemaining = countdown(data['timeRemaining'])
+			title = data['title'][13:] if data['title'].startswith("MarketPlace: ") else data['title']
+			url = f"pcarmarket.com{data['url']}"
+			# Create listing
+			key = "PCAR: " + title
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid)
+			
+			# Print extracted data
+			print(f"Title: {title}")
+			print(f"URL: {url}")
+			# print(f"Image URL: {data['image']}")
+			print(f"Current Bid: {bid}")
+			print(f"Time Remaining: {timeRemaining}")
+			print("-" * 50)
 
-				title = data['title'][13:] if data['title'].startswith("MarketPlace: ") else data['title']
+		return out
 
-				# Create listing
-				key = "PCAR: " + title
-				with lock:
-					out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
-				
-				# Print extracted data
-				# print(f"Title: {title}")
-				# print(f"URL: {data['url']}")
-				# print(f"Image URL: {data['image']}")
-				# print(f"Current Bid: {bid}")
-				# print(f"Time Remaining: {timeRemaining}")
-				# print("-" * 50)
-
-		except Exception as e:
-			print(f"Error scraping auctions: {e}")
-			return []
-		
-		finally:
-			browser.close()
+	except Exception as e:
+		print(f"Error scraping auctions: {e}")
+		return []
+	
 
 if __name__ == "__main__":
-	out = {}
-	lock = Lock()
-	car = listing.Car("Porsche", "911", "991")
-	get_results(car, out, lock)
+	async def test():
+		async with async_playwright() as p:
+			browser = await p.chromium.launch(headless=True)
+
+			try:
+				car = listing.Car("Porsche", "911", "991")
+				result = await get_results(car, browser)
+
+			finally:
+				await browser.close()
+	
+	asyncio.run(test())

@@ -1,10 +1,10 @@
-from playwright.sync_api import sync_playwright
-import listing
+from playwright.async_api import async_playwright
 from datetime import datetime, timezone
-from threading import Lock
 from urllib.parse import quote
+import asyncio
+import listing
 
-def countdown(url, browser):
+async def countdown(url, browser):
 	"""
 	Calculates remaining time from specified end time in human readable format.
 	Opens a separate page because we have to go into the listing to get the time--
@@ -12,17 +12,18 @@ def countdown(url, browser):
 	
 	Args:
 		url: Specific listing containing auction end time info.
+		browser: Playwright async browser instance
 	Returns:
-		Remaining time from now until end time in human readable format.
+		Time remaining in auction as a D/HH/MM/SS string
 	"""
 
-	page = browser.new_page()
+	page = await browser.new_page()
 	
 	try:
-		page.goto(url, timeout=30000)
+		await page.goto(url, timeout=30000)
 		
 		# Get the data-until attribute value using JavaScript
-		data_until = page.evaluate("""
+		data_until = await page.evaluate("""
 			() => {
 				const countdown = document.querySelector('.listing-available-countdown');
 				return countdown ? countdown.getAttribute('data-until') : null;
@@ -54,82 +55,91 @@ def countdown(url, browser):
 		return "Error"
 
 
-def get_results(car: listing.Car, out: dict, lock: Lock):
+async def get_results(car: listing.Car, browser):
 	"""
-	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a shared dictionary.
+	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
 	Args:
 		car: The desired car to search.
-		out: Shared dictionary with listing details.
-		lock: Threading lock.
+		browser: Playwright async browser
+	Returns:
+		All discovered listings as a dict
 	"""
 	q = quote(car.make), quote(car.generation), quote(car.model)
 	q = "+".join(q)
 	search_url = "https://bringatrailer.com/auctions/?search=" + q
 	
-	with sync_playwright() as p:
-		browser = p.chromium.launch(headless=True)
-		page = browser.new_page()
+
+	page = await browser.new_page()
+	
+	try:
+		await page.goto(search_url, timeout=30000)
 		
-		try:
-			page.goto(search_url, timeout=30000)
-			
-			# check filter input value to confirm search filtering has occurred
-			search_terms = f"{car.make} {car.generation} {car.model}"
-			page.wait_for_function(
-				f'''
-				document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
-				''',
-				timeout=6000
-			)
+		# check filter input value to confirm search filtering has occurred
+		search_terms = f"{car.make} {car.generation} {car.model}"
+		await page.wait_for_function(
+			f'''
+			document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
+			''',
+			timeout=6000
+		)
 
-			page.wait_for_selector('.listing-card', timeout=10000)
+		await page.wait_for_selector('.listing-card', timeout=10000)
 
-			listings_data = page.evaluate("""
-				() => {
-					const cards = document.querySelectorAll('.listing-card');
-					return Array.from(cards).map(card => ({
-						title: card.querySelector('h3')?.textContent?.trim() || '',
-						url: card.href || '',
-						image: card.querySelector('.thumbnail img')?.src || '',
-						bid: card.querySelector('.bidding-bid .bid-formatted')?.textContent?.trim() || 'No bid'
-					}));
-				}
-			""")
+		listings_data = await page.evaluate("""
+			() => {
+				const items = document.querySelectorAll('.listing-card');
+				return Array.from(items).map(item => ({
+					title: item.querySelector('h3')?.textContent?.trim() || '',
+					url: item.href || '',
+					image: item.querySelector('.thumbnail img')?.src || '',
+					bid: item.querySelector('.bidding-bid .bid-formatted')?.textContent?.trim() || '',
+					timeRemaining: item.querySelector('.countdown-text')?.textContent?.trim() || ''
+				}));
+			}
+		""")
+		
+		print(f"Found {len(listings_data)} listings")
+		out = {}
+
+		for data in listings_data:
+			if not data['title'] or not data['url']:
+				continue
+				
+			# Clean up bid text
+			bid = data['bid']
+			if bid.startswith("USD "):
+				bid = bid[4:]
 			
-			print(f"Found {len(listings_data)} listings")
+			# Create listing
+			key = "BaT: " + data['title']
+			out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], bid)
 			
-			for data in listings_data:
-				if not data['title'] or not data['url']:
-					continue
-					
-				# Clean up bid text
-				bid = data['bid']
-				if bid.startswith("USD "):
-					bid = bid[4:]
-				
-				# Get countdown time
-				time_remaining = countdown(data['url'], browser)
-				
-				# Store in shared dictionary
-				key = "BaT: " + data['title']
-				with lock:
-					out[key] = listing.Listing(key, data['url'], data['image'], time_remaining, bid)
-				
-				print(f"Title: {data['title']}")
-				print(f"URL: {data['url']}")
-				print(f"Current Bid: {bid}")
-				print(f"Time Remaining: {time_remaining}")
-				print("-" * 40)
-					
-		except Exception as e:
-			print(f'Error fetching BaT results: {e}')
-		finally:
-			browser.close()
+			print(f"Title: {data['title']}")
+			print(f"URL: {data['url']}")
+			print(f"Image: {data['image']}")
+			print(f"Current Bid: {bid}")
+			print(f"Time Remaining: {data['timeRemaining']}")
+			print("-" * 50)
+
+		return out				
+
+	except Exception as e:
+		print(f'Error fetching BaT results: {e}')
+		return {}
+
 
 if __name__ == "__main__":
-	out = {}
-	lock = Lock()
-	car = listing.Car("Porsche", "911", "991")
-	get_results(car, out, lock)
+	async def test():
+		async with async_playwright() as p:
+			browser = await p.chromium.launch(headless=True)
+
+			try:
+				car = listing.Car("Porsche", "911", "991")
+				result = await get_results(car, browser)
+
+			finally:
+				await browser.close()
+	
+	asyncio.run(test())
 	
