@@ -5,27 +5,31 @@ import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser):
+async def get_results(car: listing.Car, browser, debug=False):
 	"""
 	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
 	Args:
 		car: The desired car to search.
 		browser: Playwright async browser
+		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
+
+	# Encode car info for url
 	q = quote(car.make), quote(car.generation), quote(car.model)
 	q = "+".join(q)
 	search_url = "https://bringatrailer.com/auctions/?search=" + q
+	if debug:
+		print(search_url)
 	
 
 	page = await browser.new_page()
-	
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
 		
-		# check filter input value to confirm search filtering has occurred
+		# Check filter input value to confirm search filtering has occurred
 		search_terms = f"{car.make} {car.generation} {car.model}"
 		await page.wait_for_function(
 			f'''
@@ -48,10 +52,12 @@ async def get_results(car: listing.Car, browser):
 				}));
 			}
 		""")
-		
-		print(f"Found {len(listings_data)} listings")
-		out = {}
 
+		# Process each listing
+		if debug:
+			print(f"Found {len(listings_data)} listings")
+
+		out = {}
 		for data in listings_data:
 			if not data['title'] or not data['url']:
 				continue
@@ -60,18 +66,28 @@ async def get_results(car: listing.Car, browser):
 			bid = data['bid']
 			if bid.startswith("USD "):
 				bid = bid[4:]
+
+			# Clean up time, removing seconds
+			timeRemaining = data['timeRemaining']
+			if ":" in timeRemaining:
+				if timeRemaining.count(":") > 1:
+					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
+				else:
+					timeRemaining = f"{timeRemaining[:2]}m"
+			elif "days" not in timeRemaining:
+				timeRemaining = "0m"
 			
 			# Create listing
-			url = f"https://{data['url']}"
 			key = "BaT: " + data['title']
-			out[key] = listing.Listing(key, data['url'], data['image'], data['timeRemaining'], bid)
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
 			
-			print(f"Title: {data['title']}")
-			print(f"URL: {data['url']}")
-			print(f"Image: {data['image']}")
-			print(f"Current Bid: {bid}")
-			print(f"Time Remaining: {data['timeRemaining']}")
-			print("-" * 50)
+			if debug:
+				print(f"Title: {data['title']}")
+				print(f"URL: {data['url']}")
+				print(f"Image: {data['image']}")
+				print(f"Current Bid: {bid}")
+				print(f"Time Remaining: {timeRemaining}")
+				print("-" * 50)
 
 		# Return dict of BaT results
 		return out				
@@ -88,7 +104,7 @@ if __name__ == "__main__":
 
 			try:
 				car = listing.Car("Porsche", "911", "991")
-				result = await get_results(car, browser)
+				result = await get_results(car, browser, debug=True)
 
 			finally:
 				await browser.close()

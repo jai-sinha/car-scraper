@@ -5,7 +5,7 @@ import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser):
+async def get_results(car: listing.Car, browser, debug=False):
 	"""
 	Fetches search results from Cars & Bids for a given car,
 	extracts listing details, and stores them in a shared dictionary.
@@ -13,27 +13,23 @@ async def get_results(car: listing.Car, browser):
 	Args:
 		car: The desired car to search.
 		browser: Playwright async browser
+		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
 
-	# encode car info for url
+	# Encode car info for url
 	q = quote(car.make), quote(car.generation), quote(car.model)
 	q = "%20".join(q)
 	search_url = "https://carsandbids.com/search?q=" + q
-	print(search_url)
+	if debug:
+		print(search_url)
 
 	page = await browser.new_page()
-		
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
 		await page.wait_for_selector("ul.auctions-list", timeout=TIMEOUT)
 
-		# html_content = page.content()
-		# print("FULL PAGE HTML:")
-		# print(html_content)
-
-		# Extract the data
 		listings_data = await page.evaluate("""
 			() => {
 				const items = document.querySelectorAll('ul.auctions-list li.auction-item');
@@ -50,9 +46,10 @@ async def get_results(car: listing.Car, browser):
 		# Process each listing
 		# All live listings and the 30 most recent closed ones will be visible,
 		# so remove the closed ones from the count/processing
-		print(f"Found {len(listings_data) - 30} auction listings")
-		out = {}
+		if debug:
+			print(f"Found {len(listings_data) - 30} auction listings")
 
+		out = {}
 		for data in listings_data:
 			if not data['title'] or not data['timeRemaining']:
 				continue
@@ -61,13 +58,14 @@ async def get_results(car: listing.Car, browser):
 			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
 			out[key] = listing.Listing(key, url, data['image'], data['timeRemaining'], data['bid'])
-						
-			print(f"Title: {data['title']}")
-			print(f"URL: {url}")
-			print(f"Image URL: {data['image']}")
-			print(f"Current Bid: {data['bid']}")
-			print(f"Time Remaining: {data['timeRemaining']}")
-			print("-" * 50)
+
+			if debug:			
+				print(f"Title: {data['title']}")
+				print(f"URL: {url}")
+				print(f"Image URL: {data['image']}")
+				print(f"Current Bid: {data['bid']}")
+				print(f"Time Remaining: {data['timeRemaining']}")
+				print("-" * 50)
 
 		# Return dict of C&B results
 		return out
@@ -103,7 +101,7 @@ if __name__ == "__main__":
 
 			try:
 				car = listing.Car("Porsche", "911", "991")
-				result = await get_results(car, browser)
+				result = await get_results(car, browser, debug=True)
 
 			finally:
 				await browser.close()
