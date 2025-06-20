@@ -1,5 +1,4 @@
 from playwright.async_api import async_playwright
-from urllib.parse import quote
 import asyncio
 import listing
 
@@ -17,10 +16,14 @@ async def get_results(car: listing.Car, browser, debug=False):
 		All discovered listings as a dict
 	"""
 
-	# Encode car info for url
-	q = quote(car.make), quote(car.generation), quote(car.model)
-	q = "+".join(q)
-	search_url = "https://bringatrailer.com/auctions/?search=" + q
+	# Encode car info for url, BaT uses "+" instead of "%20"
+	query = []
+	for value in vars(car).values():
+		if value:
+			query.append(value.replace(" ", "+"))
+
+	query = "+".join(query)
+	search_url = "https://bringatrailer.com/auctions/?search=" + query
 	if debug:
 		print(search_url)
 	
@@ -30,15 +33,28 @@ async def get_results(car: listing.Car, browser, debug=False):
 		await page.goto(search_url, timeout=TIMEOUT)
 		
 		# Check filter input value to confirm search filtering has occurred
-		search_terms = f"{car.make} {car.generation} {car.model}"
+		search_terms = f"{car.make} {car.model}"
 		await page.wait_for_function(
 			f'''
 			document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
 			''',
-			timeout=6000
+			timeout=TIMEOUT
 		)
 
-		await page.wait_for_selector('.listing-card', timeout=TIMEOUT)
+		# Then confirm there are live auctions matching the filter
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('.listing-card') ||
+							document.querySelector('#auctions_filtered_message_none');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('.listing-card'):
+			if debug:
+				print("No listings found")
+			return {}
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -103,7 +119,7 @@ if __name__ == "__main__":
 			browser = await p.chromium.launch(headless=True)
 
 			try:
-				car = listing.Car("Porsche", "911", "991")
+				car = listing.Car("Porsche", "356 Pre-A")
 				result = await get_results(car, browser, debug=True)
 
 			finally:

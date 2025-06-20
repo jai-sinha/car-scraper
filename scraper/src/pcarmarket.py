@@ -1,6 +1,5 @@
 from playwright.async_api import async_playwright
 from datetime import datetime, timezone
-from urllib.parse import quote
 import asyncio
 import listing
 
@@ -20,7 +19,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 	"""
 
 	# Encode car info for url
-	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = car.encode()
 	q = "%20".join(q)
 	search_url = "https://www.pcarmarket.com/search/?q=" + q
 	if debug:
@@ -29,7 +28,22 @@ async def get_results(car: listing.Car, browser, debug=False):
 	page = await browser.new_page()
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
-		await page.wait_for_selector('.post.clearfix.searchResult', timeout=TIMEOUT)
+
+		# Check to see if any results exist
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('.post.clearfix.searchResult') !== null ||
+							document.body.textContent.includes('No results were found in auctions matching your query');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('.post.clearfix.searchResult'):
+			if debug:
+				print("No listings found")
+			return {}
+		
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -120,7 +134,7 @@ if __name__ == "__main__":
 			browser = await p.chromium.launch(headless=True)
 
 			try:
-				car = listing.Car("Porsche", "911", "991")
+				car = listing.Car("Porsche", "356 Pre-A")
 				result = await get_results(car, browser, debug=True)
 
 			finally:

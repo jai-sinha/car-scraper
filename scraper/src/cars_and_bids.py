@@ -19,7 +19,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 	"""
 
 	# Encode car info for url
-	q = quote(car.make), quote(car.generation), quote(car.model)
+	q = car.encode()
 	q = "%20".join(q)
 	search_url = "https://carsandbids.com/search?q=" + q
 	if debug:
@@ -28,7 +28,19 @@ async def get_results(car: listing.Car, browser, debug=False):
 	page = await browser.new_page()
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
-		await page.wait_for_selector("ul.auctions-list", timeout=TIMEOUT)
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('ul.auctions-list') !== null ||
+							document.body.textContent.includes('No live auctions');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('ul.auctions-list'):
+			if debug:
+				print("No listings found")
+			return {}
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -92,7 +104,7 @@ if __name__ == "__main__":
 						'--disable-features=VizDisplayCompositor'
 				]
 			)
-			browser = await browser.new_context(
+			context = await browser.new_context(
 				user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 				viewport={'width': 1920, 'height': 1080},
 				locale='en-US',
@@ -100,8 +112,8 @@ if __name__ == "__main__":
 			)
 
 			try:
-				car = listing.Car("Porsche", "911", "991")
-				result = await get_results(car, browser, debug=True)
+				car = listing.Car("Mercedes", "356")
+				result = await get_results(car, context, debug=True)
 
 			finally:
 				await browser.close()
