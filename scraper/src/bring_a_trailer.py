@@ -1,90 +1,129 @@
-import requests, bs4, listing, const
-from datetime import datetime, timezone
-from threading import Lock
-from urllib.parse import quote
+from playwright.async_api import async_playwright
+import asyncio
+import listing
 
-def countdown(url):
+TIMEOUT = 10000
+
+async def get_results(car: listing.Car, browser, debug=False):
 	"""
-	Calculates remaining time from specified end time in human readable format. Opens a separate soup parser because we have to go into the listing to get the time-- not scrapable from the main page.
-
-	Args:
-		url: Specific listing containing auction end time info.
-
-	Returns:
-		Remaining time from now until end time in human readable format.
-	"""
-	res = requests.get(url)
-	try:
-		res.raise_for_status()
-	except Exception as e:
-		print("Error fetching countdown for BaT: %s" %e)
-
-	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-
-	countdown_element = soup.select_one('.listing-available-countdown')
-	if countdown_element:
-		data_until = countdown_element.get('data-until')
-		end_time = datetime.fromtimestamp(int(data_until), timezone.utc)
-		now = datetime.now(timezone.utc)
-		time_left = (end_time - now).total_seconds()
-
-		if time_left > 0:
-			hours, remainder = divmod(time_left, 3600)
-			minutes, seconds = divmod(remainder, 60)
-			if hours > 24:
-				days = hours/24
-				return f"{int(days)}d"
-			elif hours < 1:
-				return f"{int(minutes)}m {int(seconds)}s"
-			else:
-				return f"{int(hours)}h {int(minutes)}m"
-		else:
-			return "Auction ended"
-	else:
-		print("Element not found")
-		return 0
-	
-def get_results(car: listing.Car, out: dict, lock: Lock):
-	"""
-	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a shared dictionary.
+	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
 	Args:
 		car: The desired car to search.
-		out: Shared dictionary with listing details.
-		lock: Threading lock.
+		browser: Playwright async browser
+		debug: Print all info
+	Returns:
+		All discovered listings as a dict
 	"""
-	q = quote(car.make), quote(car.generation), quote(car.model)
-	q = "+".join(q)
-	q = "https://bringatrailer.com/auctions/?search=" + q
-	res = requests.get(q)
-	try:
-		res.raise_for_status()
-	except Exception as e:
-		print('Error fetching BaT results: %s' %e)
 
-	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-	items = soup.select('.listing-card')
-	print(items)
-	# for item in items:
-	# 	title = item.select_one('h3').text.strip()
-	# 	url = item.select_one('h3 a')['href']
-	# 	image = item.select_one('.thumbnail img')['src']
-	# 	bid = item.select_one('.bidding-bid .bid-formatted').text.strip()
-	# 	time = countdown(url)
+	# Encode car info for url, BaT uses "+" instead of "%20"
+	query = []
+	for value in vars(car).values():
+		if value:
+			query.append(value.replace(" ", "+"))
 
-	# 	bid = bid[4:] # as of 3/2025 BaT inserts "USD " into the prices, so we remove it 
-	# 	key = "BaT: " + title
-	# 	with lock:
-	# 		out[key] = listing.Listing(key, url, image, time, bid)
-
-		# print(f"Title: {title}")
-		# print(f"URL: {url}")
-		# print(f"Current Bid: {bid}")
-		# print(f"Time Remaining: {time}")
-		# print("-" * 40)
+	query = "+".join(query)
+	search_url = "https://bringatrailer.com/auctions/?search=" + query
+	if debug:
+		print(search_url)
 	
+
+	page = await browser.new_page()
+	try:
+		await page.goto(search_url, timeout=TIMEOUT)
+		
+		# Check filter input value to confirm search filtering has occurred
+		search_terms = f"{car.make} {car.model}"
+		await page.wait_for_function(
+			f'''
+			document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
+			''',
+			timeout=TIMEOUT
+		)
+
+		# Then confirm there are live auctions matching the filter
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('.listing-card') ||
+							document.querySelector('#auctions_filtered_message_none');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('.listing-card'):
+			if debug:
+				print("No listings found")
+			return {}
+
+		listings_data = await page.evaluate("""
+			() => {
+				const items = document.querySelectorAll('.listing-card');
+				return Array.from(items).map(item => ({
+					title: item.querySelector('h3')?.textContent?.trim() || '',
+					url: item.href || '',
+					image: item.querySelector('.thumbnail img')?.src || '',
+					bid: item.querySelector('.bidding-bid .bid-formatted')?.textContent?.trim() || '',
+					timeRemaining: item.querySelector('.countdown-text')?.textContent?.trim() || ''
+				}));
+			}
+		""")
+
+		# Process each listing
+		if debug:
+			print(f"Found {len(listings_data)} listings")
+
+		out = {}
+		for data in listings_data:
+			if not data['title'] or not data['url']:
+				continue
+				
+			# Clean up bid text
+			bid = data['bid']
+			if bid.startswith("USD "):
+				bid = bid[4:]
+
+			# Clean up time, removing seconds
+			timeRemaining = data['timeRemaining']
+			if ":" in timeRemaining:
+				if timeRemaining.count(":") > 1:
+					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
+				else:
+					timeRemaining = f"{timeRemaining[:2]}m"
+			elif "days" not in timeRemaining:
+				timeRemaining = "0m"
+			
+			# Create listing
+			key = "BaT: " + data['title']
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
+			
+			if debug:
+				print(f"Title: {data['title']}")
+				print(f"URL: {data['url']}")
+				print(f"Image: {data['image']}")
+				print(f"Current Bid: {bid}")
+				print(f"Time Remaining: {timeRemaining}")
+				print("-" * 50)
+
+		# Return dict of BaT results
+		return out				
+
+	except Exception as e:
+		print(f'Error fetching BaT results: {e}')
+		return {}
+
+
 if __name__ == "__main__":
-	out = {}
-	lock = Lock()
-	car = listing.Car("Porsche", "911", "991")
-	get_results(car, out, lock)
+	async def test():
+		async with async_playwright() as p:
+			browser = await p.chromium.launch(headless=True)
+
+			try:
+				car = listing.Car("Porsche", "356 Pre-A")
+				result = await get_results(car, browser, debug=True)
+
+			finally:
+				await browser.close()
+	
+	asyncio.run(test())
+	

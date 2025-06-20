@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 class Listing:
 	def __init__(self, title, url, image, time, price, subtitle = None, dt_highbid = None):
 		self.title 	= title
@@ -23,8 +25,6 @@ class Car:
 		eyear: ending year of search range
 		bodystyle: e.g. coupe, convertible, sedan (for cars that have multiple options)
 		trans: transmission type, manual or automatic
-		query: url to scrape for this specific car on BaT
-
 		"""
 		self.make = make
 		self.model = model
@@ -33,15 +33,17 @@ class Car:
 		self.eyear = eyear
 		self.bodystyle = bodystyle
 		self.trans = trans
-		self.query = query
 	
-	""" 
-	We're probably only using this and __hash__ for the google search cache, which is only being used for BaT, so no need to add year, bodystyle, etc. but generation is required.
-	"""
-	def __eq__(self, other):
-		if isinstance(other, Car):
-			return (self.make==other.make and self.model==other.model and self.generation==other.generation)
-		return False
+	def encode(self):
+		"""
+		Encodes all existing fields for search queries
 
-	def __hash__(self):
-		return hash((self.make, self.model, self.generation))
+		Returns:
+			List of URL-encoded fields
+		"""
+		out = []
+		for name, value in vars(self).items():
+			if value:
+				out.append(quote(value))
+
+		return out

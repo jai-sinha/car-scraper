@@ -1,8 +1,108 @@
-import requests, bs4, listing
+from playwright.async_api import async_playwright
 from datetime import datetime, timezone
-from threading import Lock
-from urllib.parse import quote
+import asyncio
+import listing
 
+TIMEOUT = 10000
+
+async def get_results(car: listing.Car, browser, debug=False):
+	"""
+	Fetches search results from pcarmarket for a given car,
+	extracts listing details, and stores them in a shared dictionary.
+
+	Args:
+		car: The desired car to search.
+		browser: Playwright async browser
+		debug: Print all info
+	Returns:
+		All discovered listings as a dict
+	"""
+
+	# Encode car info for url
+	q = car.encode()
+	q = "%20".join(q)
+	search_url = "https://www.pcarmarket.com/search/?q=" + q
+	if debug:
+		print(search_url)
+
+	page = await browser.new_page()
+	try:
+		await page.goto(search_url, timeout=TIMEOUT)
+
+		# Check to see if any results exist
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('.post.clearfix.searchResult') !== null ||
+							document.body.textContent.includes('No results were found in auctions matching your query');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('.post.clearfix.searchResult'):
+			if debug:
+				print("No listings found")
+			return {}
+		
+
+		listings_data = await page.evaluate("""
+			() => {
+			const items = document.querySelectorAll('.post.clearfix.searchResult');
+			return Array.from(items).map(item => ({
+				title: item.querySelector('h2 a')?.textContent?.trim() || '',
+				url: item.querySelector('h2 a')?.getAttribute('href') || '',
+				bid: item.querySelector('.auction-bid strong')?.nextSibling?.textContent?.trim() || '',
+				buyNow: item.querySelector('.buyNowHomeDetails strong')?.nextSibling?.textContent?.trim() || '',
+				timeRemaining: (() => {
+					const countdown = item.querySelector('.countdownTimer');
+					return countdown ? countdown.getAttribute('data-ends-at') : null;
+				})(),
+				image: item.querySelector('img.feat_img')?.getAttribute('src') || ''
+			}));
+			}
+		""")
+
+		# Process each listing
+		if debug:
+			print(f"Found {len(listings_data)} auction listings")
+
+		out = {}
+		for data in listings_data:
+			if not data['title'] or not data['url']:
+				continue
+			
+			# Check if this is a live auction
+			if data['bid']: 
+				bid = data['bid']
+				timeRemaining = countdown(data['timeRemaining'])
+				title = data['title']
+
+			# Or if it's in MarketPlace
+			else:
+				bid = f"{data['buyNow']} (MarketPlace)"
+				timeRemaining = "N/A"
+				title = data['title'][13:]
+
+			# Create listing
+			url = f"https://pcarmarket.com{data['url']}"
+			key = f"PCAR: {title}"
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid)
+			
+			if debug:
+				print(f"Title: {title}")
+				print(f"URL: {url}")
+				print(f"Image URL: {data['image']}")
+				print(f"Current Bid: {bid}")
+				print(f"Time Remaining: {timeRemaining}")
+				print("-" * 50)
+
+		# Return dict of PCAR results
+		return out
+
+	except Exception as e:
+		print(f"Error scraping PCAR auctions: {e}")
+		return {}
+	
 def countdown(ends_at):
 	"""
 	Calculates remaining time from specified end time in human readable format.
@@ -11,7 +111,7 @@ def countdown(ends_at):
 		ends_at: Time at which countdown ends at in unix time format.
 
 	Returns:
-		Remaining time from now until end time in human readable format.
+		Time remaining in auction as a D/HH/MM/SS string
 	"""
 	end_time = datetime.fromtimestamp(int(ends_at), timezone.utc)
 	now = datetime.now(timezone.utc)
@@ -21,90 +121,23 @@ def countdown(ends_at):
 	minutes, seconds = divmod(remainder, 60)
 	if hours > 24:
 		days = hours/24
-		return f"{int(days)}d"
+		return f"{int(days)} days"
 	elif hours < 1:
 		return f"{int(minutes)}m"
 	else:
 		return f"{int(hours)}h {int(minutes)}m"
 
-def dt_highbid(url):
-	"""
-	Fetches the current highest bid for a listing in "DT" format.
-
-	Args:
-		url: pcarmarket url for "DT" car.
-
-	Returns:
-		The highest bid.
-	"""
-	res = requests.get(url)
-	try:
-		res.raise_for_status()
-	except Exception as e:
-		print("Error fetching PCARMARKET high bid: %s" %e)
-	
-	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-	bid = soup.select_one('.pushed_bid_amount').text.strip()
-	return bid
-
-def get_results(car: listing.Car, out: dict, lock: Lock):
-	"""
-	Fetches search results from pcarmarket for a given car,
-	extracts listing details, and stores them in a shared dictionary.
-
-	Args:
-		car: The desired car to search.
-		out: Shared dictionary with listing details.
-		lock: Threading lock.
-	"""
-	# print(car.make, car.model, car.generation)
-	q = quote(car.make), quote(car.generation), quote(car.model)
-	q = "%20".join(q)
-	q = "https://www.pcarmarket.com/search/?q=" + q
-	print(q)
-	res = requests.get(q)
-	try:
-		res.raise_for_status()
-	except Exception as e:
-		print("Error fetching PCARMARKET results: %s" %e)
-	
-	soup = bs4.BeautifulSoup(res.text, 'html.parser')
-
-	items = soup.select('.post.clearfix.searchResult')
-	for item in items:
-		title = item.select_one('h2 a').text.strip()
-		url = "https://www.pcarmarket.com" + item.select_one('h2 a')['href']
-		image = item.select_one('.feat_img')['src']
-		
-		key = "PCARMARKET: " + title
-		# if DT, get Buy Now price, high bid
-		if "DT" in title:
-			buyNow = item.select_one('.buyNowHomeDetails').text.strip()
-			highBid = dt_highbid(url)
-			buyNow = buyNow[buyNow.find("$"):] # remove the text that says "high bid" or "buy now"
-			with lock:
-				out[key] = listing.Listing(key, url, image, "DT", buyNow, dt_highbid=highBid)
-
-		# else, just get high bid and time remaining
-		else:
-			bid = item.select_one('.auction-bid').text.strip()
-			# this would return "." when there are no bids, we want ""
-			bid = bid[bid.find("$"):] if bid.find("$") > 0 else "" 
-			countdown_element = soup.select_one('.countdownTimer')
-			ends_at = countdown_element.get('data-ends-at')
-			time = countdown(ends_at)
-			with lock:
-				out[key] = listing.Listing(key, url, image, time, bid)
-		
-		# print(f"Title: {title}")
-		# print(f"URL: {url}")
-		# # print(f"Image URL: {image}")
-		# print(f"{bid}")
-		# print(f"Time Left: {time}")
-		# print("-" * 40)
 
 if __name__ == "__main__":
-	out = {}
-	lock = Lock()
-	car = listing.Car("Porsche", "911", "991")
-	get_results(car, out, lock)
+	async def test():
+		async with async_playwright() as p:
+			browser = await p.chromium.launch(headless=True)
+
+			try:
+				car = listing.Car("Porsche", "356 Pre-A")
+				result = await get_results(car, browser, debug=True)
+
+			finally:
+				await browser.close()
+	
+	asyncio.run(test())
