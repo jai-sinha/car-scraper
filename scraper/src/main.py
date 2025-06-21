@@ -2,32 +2,53 @@ import listing
 from run_all import run_scrapers
 from quart import Quart, request, jsonify
 from quart_cors import cors
-from quart_sqlalchemy import QuartSQLAlchemy
 import bcrypt
 import jwt
+import os
 from functools import wraps
 from datetime import datetime, timedelta, timezone
+from quart_sqlalchemy import SQLAlchemyConfig
+from quart_sqlalchemy.framework import QuartSQLAlchemy
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, DateTime
 
 app = Quart(__name__)
 app = cors(app)
-app.config['SECRET_KEY'] = 'your-secret-key-change-this'  # Change this in production
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
+app.config["SECRET_KEY"] = app.secret_key
 
-db = QuartSQLAlchemy(app)
+db = QuartSQLAlchemy(
+	config=SQLAlchemyConfig(
+		binds=dict(
+				default=dict(
+					engine=dict(
+						url="sqlite:///users.db",
+						echo=True,
+						connect_args=dict(check_same_thread=False),
+					),
+					session=dict(
+						expire_on_commit=False,
+					),
+				)
+		)
+	),
+	app=app,
+)
 
 # User model
 class User(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(100), unique=True, nullable=False)
-	password_hash = db.Column(db.String(100), nullable=False)
-	created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+	__tablename__ = "users"
 
-	def check_password(self, password):
-		return bcrypt.checkpw(password.encode('utf-8'), self.password_hash)
+	id: Mapped[int] = mapped_column(primary_key=True)
+	email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+	password_hash: Mapped[str] = mapped_column(String(100), nullable=False)
+	created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
 
-	def set_password(self, password):
-		self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+	def check_password(self, password: str) -> bool:
+		return bcrypt.checkpw(password.encode('utf-8'), self.password_hash.encode('utf-8'))
+
+	def set_password(self, password: str) -> None:
+		self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 # JWT decorator for protected routes
 def token_required(f):
