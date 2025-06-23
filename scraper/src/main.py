@@ -15,8 +15,7 @@ from datetime import datetime, timezone
 
 app = Quart(__name__)
 app.secret_key = "secret key"
-app = cors(app)
-
+app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
 # Database setup
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
 engine = create_engine(DATABASE_URL)
@@ -155,10 +154,10 @@ def get_user_by_id(user_id):
 def login_required(f):
 	"""Decorator to require login for protected routes"""
 	@wraps(f)
-	def decorated_function(*args, **kwargs):
+	async def decorated_function(*args, **kwargs):  # Make this async
 		if 'user_id' not in session:
 			return jsonify({'error': 'Authentication required'}), 401
-		return f(*args, **kwargs)
+		return await f(*args, **kwargs)  # Add await here
 	return decorated_function
 
 @app.route('/register', methods=['POST'])
@@ -233,7 +232,7 @@ async def login():
 
 @app.route('/me', methods=['GET'])
 @login_required
-def get_current_user():
+async def get_current_user():
 	"""Get current user information"""
 	try:
 		user_id = session['user_id']
@@ -247,14 +246,15 @@ def get_current_user():
 		}), 200
 		
 	except Exception as e:
+		print(f"Me error: {e}")
 		return jsonify({'error': 'Failed to get user information'}), 500
 
 @app.route('/delete_user', methods=['DELETE'])
 @login_required
-def delete_user():
+async def delete_user():
 	"""Delete current user account"""
 	try:
-		data = request.get_json()
+		data = await request.get_json()
 		password = data.get('password', '') if data else ''
 		
 		if not password:
@@ -280,11 +280,12 @@ def delete_user():
 		return jsonify({'message': 'User account deleted successfully'}), 200
 		
 	except Exception as e:
+		print(f"Delete error: {e}")
 		return jsonify({'error': 'Failed to delete user account'}), 500
 
 @app.route('/logout', methods=['POST'])
 @login_required
-def logout():
+async def logout():
 	"""Logout user"""
 	session.clear()
 	return jsonify({'message': 'Logged out successfully'}), 200

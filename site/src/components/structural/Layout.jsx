@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Nav, Navbar, Button, Form } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import LoginStatusContext from "../contexts/LoginStatusContext";
 import LoginModal from "../auth/LoginModal"
@@ -23,42 +23,46 @@ function Layout(props) {
 		setShowLoginModal(true);
 	};
 
-	const handleLogin = (credentials) => {
+	async function handleLogin(credentials) {
 		console.log('Login attempted with:', credentials);
-	 
-		// Here you would typically make an API call to authenticate
-		// For now, we'll simulate a successful login
-		const mockUser = {
-			username: credentials.username,
-			email: credentials.username.includes('@') ? credentials.username : `${credentials.username}@example.com`,
-			loginTime: new Date().toISOString()
-		};
-		
-		setLoginStatus(mockUser);
-		setShowLoginModal(false);
-		
-		// You can add actual authentication logic here
-		// Example:
-		// try {
-		//   const response = await fetch('/api/login', {
-		//     method: 'POST',
-		//     headers: { 'Content-Type': 'application/json' },
-		//     body: JSON.stringify(credentials)
-		//   });
-		//   const userData = await response.json();
-		//   if (response.ok) {
-		//     setLoginStatus(userData);
-		//     setShowLoginModal(false);
-		//   } else {
-		//     alert('Login failed: ' + userData.message);
-		//   }
-		// } catch (error) {
-		//   alert('Login error: ' + error.message);
-		// }
+
+		try {
+			const response = await fetch('http://127.0.0.1:5000/login', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify(credentials)
+			});
+			const userData = await response.json();
+			console.log(userData);
+			if (response.ok) {
+				setLoginStatus(userData.user);
+				setShowLoginModal(false);
+			} else {
+				alert('Login failed: ' + userData.message);
+			}
+			} catch (error) {
+			alert('Login error: ' + error.message);
+		}
 	};
 
-	const handleLogout = () => {
-		setLoginStatus(null);
+	async function handleLogout() {
+		try {
+			const response = await fetch('http://127.0.0.1:5000/logout', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: "include"
+			});
+			const userData = await response.json();
+			console.log(userData);
+			if (response.ok) {
+				setLoginStatus(null);
+			} else {
+				alert('Logout failed: ' + userData.error);
+			}
+			} catch (error) {
+			alert('Logout error: ' + error.message);
+		}
 	};
 
   return (

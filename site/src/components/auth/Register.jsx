@@ -25,31 +25,28 @@ function Register() {
 			return;
 		}
 
-	// 	fetch(
-	// 		"https://cs571api.cs.wisc.edu/rest/s25/hw6/register",
-	// 		{
-	// 			method: "POST",
-	// 			headers: {
-	// 			"Content-Type": "application/json",
-	// 			"X-CS571-ID": CS571.getBadgerId(),
-	// 			},
-	// 			credentials: "include",
-	// 			body: JSON.stringify({ username, pin }),
-	// 		}
-	// 	).then(res => {
-	// 		if (res.status === 200) {
-	// 			alert("Registration successful!");
-	// 			setLoginStatus({ username }); // Store login info
-	// 			sessionStorage.setItem("loginStatus", JSON.stringify({ username }));
-	// 			navigate("/");
-	// 		} else if (res.status === 409) {
-	// 			alert("That username has already been taken!");
-	// 		} else {
-	// 			alert("An unexpected error occurred. Please try again.");
-	// 		}
-	// 	}).catch(error => {
-	// 		alert(`Failed to register. Please check your internet connection. Error: ${error}`);
-	// 	})
+		const credentials = JSON.stringify({ email, username, password });
+		console.log('Registration attempted with:', credentials);
+
+		try {
+			const response = await fetch('http://127.0.0.1:5000/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: credentials
+			});
+			const userData = await response.json();
+			console.log(userData);
+			if (response.ok) {
+				setLoginStatus(userData.user);
+				navigate("/")
+			} else {
+				alert('Registration failed: ' + userData.error);
+			}
+			} catch (error) {
+			alert('Registration error: ' + error.message);
+		}
+
 	};
 
 

@@ -3,14 +3,14 @@ import { Nav, Button, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 function LoginModal({ show, onHide, onLogin }) {
-	const [username, setUsername] = useState('');
+	const [email_or_username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
 
 	const handleLogin = (e) => {
 		e.preventDefault();
 		// Call the onLogin function passed from parent
-		onLogin({ username, password });
+		onLogin({ email_or_username, password });
 		// Reset form
 		setUsername('');
 		setPassword('');
@@ -76,7 +76,7 @@ function LoginModal({ show, onHide, onLogin }) {
 					<Form onSubmit={handleLogin}>
 						<Form.Label htmlFor="username">Username</Form.Label>
 						<Form.Control
-							value={username}
+							value={email_or_username}
 							onChange={(e) => setUsername(e.target.value)}
 							size="sm"
 							placeholder=""
