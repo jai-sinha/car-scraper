@@ -1,5 +1,4 @@
 from playwright.async_api import async_playwright
-from urllib.parse import quote
 import asyncio
 import listing
 
@@ -65,18 +64,28 @@ async def get_results(car: listing.Car, browser, debug=False):
 		for data in listings_data:
 			if not data['title'] or not data['timeRemaining']:
 				continue
+
+			# Clean up time, removing seconds
+			timeRemaining = data['timeRemaining']
+			if ":" in timeRemaining:
+				if timeRemaining.count(":") > 1:
+					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
+				else:
+					timeRemaining = f"{timeRemaining[:2]}m"
+			elif "days" not in timeRemaining:
+				timeRemaining = "0m"
 			
 			# Create listing
 			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
-			out[key] = listing.Listing(key, url, data['image'], data['timeRemaining'], data['bid'])
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'])
 
 			if debug:			
 				print(f"Title: {data['title']}")
 				print(f"URL: {url}")
 				print(f"Image URL: {data['image']}")
 				print(f"Current Bid: {data['bid']}")
-				print(f"Time Remaining: {data['timeRemaining']}")
+				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
 
 		# Return dict of C&B results
