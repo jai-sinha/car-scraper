@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Nav, Button, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginModal({ show, onHide, onLogin }) {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const navigate = useNavigate();
 
 	const handleLogin = (e) => {
 		e.preventDefault();
@@ -13,6 +14,7 @@ function LoginModal({ show, onHide, onLogin }) {
 		// Reset form
 		setUsername('');
 		setPassword('');
+		navigate('/');
 	};
 
 	const handleClose = () => {
@@ -61,15 +63,18 @@ function LoginModal({ show, onHide, onLogin }) {
 						fontSize: '14px'
 					}}>
 						<span>Don't have an account? </span>
-						<Nav.Link as={Link} to="/register" style={{
-						color: '#007bff',
-						}}>
-						Sign up here
+						<Nav.Link 
+							as={Link} 
+							to="register" 
+							onClick={handleClose} 
+							style={{ color: '#007bff' }}
+						>
+							Sign up here
 						</Nav.Link>
 					</div>
 
 					<Form onSubmit={handleLogin}>
-						<Form.Label htmlFor="username or email">Username</Form.Label>
+						<Form.Label htmlFor="username">Username</Form.Label>
 						<Form.Control
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
@@ -89,7 +94,22 @@ function LoginModal({ show, onHide, onLogin }) {
 							required
 						/>
 						</div>
-
+						{/* <div style={{
+							marginBottom: '1.5rem',
+							fontSize: '14px'
+							}}>
+							<span style={{ color: '#333' }}>(Forgot your password? </span>
+							<a 
+								href="#" 
+								style={{
+									color: '#007bff',
+									textDecoration: 'none'
+								}}
+							>
+								Click Here
+							</a>
+							<span style={{ color: '#333' }}>)</span>
+						</div> */}
 						<div style={{
 						display: 'flex',
 						gap: '.25rem',
@@ -110,9 +130,9 @@ function LoginModal({ show, onHide, onLogin }) {
 						</div>
 					</Form>
 				</div>
-				</div>
 			</div>
-  );
+		</div>
+	);
 }
 
 export default LoginModal;
