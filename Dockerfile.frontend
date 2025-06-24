@@ -1,0 +1,12 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files first for better caching
+COPY site/package*.json ./
+RUN npm install
+
+EXPOSE 5173
+
+# Don't copy code - it will be mounted as volume
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

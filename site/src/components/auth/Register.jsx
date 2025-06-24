@@ -3,6 +3,8 @@ import { Form, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import LoginStatusContext from "../contexts/LoginStatusContext";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Register() {
 
 	const [email, setEmail] = useState('');
@@ -29,7 +31,7 @@ function Register() {
 		console.log('Registration attempted with:', credentials);
 
 		try {
-			const response = await fetch('http://127.0.0.1:5000/register', {
+			const response = await fetch(`${API_URL}/register`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
