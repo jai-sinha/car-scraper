@@ -74,7 +74,7 @@ function LoginModal({ show, onHide, onLogin }) {
 					</div>
 
 					<Form onSubmit={handleLogin}>
-						<Form.Label htmlFor="username">Username</Form.Label>
+						<Form.Label htmlFor="username">Username or Email</Form.Label>
 						<Form.Control
 							value={email_or_username}
 							onChange={(e) => setUsername(e.target.value)}

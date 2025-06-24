@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const BadgerLoginStatusContext = createContext([]);
+const LoginStatusContext = createContext([]);
 
-export default BadgerLoginStatusContext;
+export default LoginStatusContext;

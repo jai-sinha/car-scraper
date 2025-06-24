@@ -3,7 +3,6 @@ from run_all import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import sqlalchemy.orm
 from sqlalchemy.exc import IntegrityError
