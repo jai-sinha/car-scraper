@@ -4,11 +4,40 @@ import { Link, Outlet } from "react-router-dom";
 import LoginStatusContext from "../contexts/LoginStatusContext";
 import LoginModal from "../auth/LoginModal"
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Layout(props) {
-	const storedLoginStatus = JSON.parse(sessionStorage.getItem("loginStatus"));
-	const [loginStatus, setLoginStatus] = useState(storedLoginStatus || null);
+	const storedLoginStatus = sessionStorage.getItem("loginStatus");
+	const [loginStatus, setLoginStatus] = useState(
+		storedLoginStatus ? JSON.parse(storedLoginStatus) : null
+	);
 	const [showLoginModal, setShowLoginModal] = useState(false);
 
+	useEffect(() => {
+		checkAuthStatus();
+	}, []);
+
+	const checkAuthStatus = async () => {
+		try {
+			const response = await fetch(`${API_URL}/me`, {
+				method: 'GET',
+				credentials: 'include'
+			});
+			
+			if (response.ok) {
+				const userData = await response.json();
+				setLoginStatus(userData.user);
+			} else {
+				setLoginStatus(null);
+				sessionStorage.removeItem("loginStatus");
+			}
+		} catch (error) {
+			console.error('Auth check failed:', error);
+			setLoginStatus(null);
+		} finally {
+			// setIsLoading(false);
+		}
+	};
 	// Update sessionStorage whenever loginStatus changes
 	useEffect(() => {
 		if (loginStatus) {
@@ -27,7 +56,7 @@ function Layout(props) {
 		console.log('Login attempted with:', credentials);
 
 		try {
-			const response = await fetch('http://127.0.0.1:5000/login', {
+			const response = await fetch(`${API_URL}/login`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
@@ -48,7 +77,7 @@ function Layout(props) {
 
 	async function handleLogout() {
 		try {
-			const response = await fetch('http://127.0.0.1:5000/logout', {
+			const response = await fetch(`${API_URL}/logout`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: "include"

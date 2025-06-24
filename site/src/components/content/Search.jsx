@@ -3,6 +3,8 @@ import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import CarSummary from "./CarSummary"
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Search = () => {
 	const [make, setMake] = useState("");
 	const [model, setModel] = useState("");
@@ -19,7 +21,7 @@ const Search = () => {
 		setData(null);
 
 		try {
-			const url = `http://127.0.0.1:5000/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&generation=${encodeURIComponent(generation)}`;
+			const url = `${API_URL}/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&generation=${encodeURIComponent(generation)}`;
 			const response = await fetch(url);
 
 			if (!response.ok) {
