@@ -2,11 +2,8 @@
 
 ## Overview:
 
-This project is intended as a tool to make searching for a specific cool car easier! It should not be used for (or take away) the timeless joy of randomly browsing cool cars. But basically with (sort of) one click, it pulls and outputs results from a number of commonly-used websites, saving the user from the repetitive task of cross-checking the same make/model/year/etc over and over while searching for the right one to buy.
+This project is intended as a tool to make searching for a specific cool car easier! It should not be used for (or take away from) the timeless joy of randomly browsing cool cars. But basically with (sort of) one click, it pulls and outputs results from a number of commonly-used websites, saving you from the unending task of repeatedly cross-checking the same make/model/year/etc while searching for the right one to buy.
 
-## Instructions:
-First, create a virtual environment in the `scraper` directory with `python3 -m venv .venv`. Start it with `source .venv/bin/activate`, and run `pip install -r requirements.txt`. Go into the `src` directory, and run `python3 main.py`. Your server should be up and running!
+## Developer Instructions:
 
-Lastly, to get the site up, go back into the main `car-scraper` directory, and then into `/site`. Make sure you have npm installed, and run `npm install` and `npm run dev`. The second command should give you a clickable link to localhost:5173, which will take you to your Car Scraper!
-
-Enjoy :)
+First, make sure you have Docker installed, either by going [here](https://www.docker.com/products/docker-desktop/) or via `brew install --cask docker`. Then, login to your account on the CLI (via `docker login -u *your username*`) or the desktop app. Once logged in, run `docker compose up --build` in the project root directory, or `docker compose up -d` for subsequent runs after initial build. Use the scraper by opening http://localhost:5173 in your browser, or making API calls at http://127.0.0.1:5001/.
