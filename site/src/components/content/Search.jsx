@@ -1,9 +1,9 @@
-import "../App.css"
+import "../../App.css"
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import CarSummary from "./CarSummary"
 
-const App = () => {
+const Search = () => {
 	const [make, setMake] = useState("");
 	const [model, setModel] = useState("");
 	const [generation, setGeneration] = useState("");
@@ -97,4 +97,4 @@ const App = () => {
 	</Container>
 };
 
-export default App;
+export default Search;
