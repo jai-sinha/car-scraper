@@ -13,31 +13,6 @@ function Layout(props) {
 	);
 	const [showLoginModal, setShowLoginModal] = useState(false);
 
-	useEffect(() => {
-		checkAuthStatus();
-	}, []);
-
-	const checkAuthStatus = async () => {
-		try {
-			const response = await fetch(`${API_URL}/me`, {
-				method: 'GET',
-				credentials: 'include'
-			});
-			
-			if (response.ok) {
-				const userData = await response.json();
-				setLoginStatus(userData.user);
-			} else {
-				setLoginStatus(null);
-				sessionStorage.removeItem("loginStatus");
-			}
-		} catch (error) {
-			console.error('Auth check failed:', error);
-			setLoginStatus(null);
-		} finally {
-			// setIsLoading(false);
-		}
-	};
 	// Update sessionStorage whenever loginStatus changes
 	useEffect(() => {
 		if (loginStatus) {
@@ -68,7 +43,7 @@ function Layout(props) {
 				setLoginStatus(userData.user);
 				setShowLoginModal(false);
 			} else {
-				alert('Login failed: ' + userData.message);
+				alert('Login failed: ' + userData.error);
 			}
 			} catch (error) {
 			alert('Login error: ' + error.message);

@@ -24,6 +24,7 @@ services:
     volumes:
       - ./site:/app
       - /app/node_modules
+      - ./users.db:/app/users.db
     depends_on:
       - backend
     restart: unless-stopped
