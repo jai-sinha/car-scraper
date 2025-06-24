@@ -15,6 +15,8 @@ from datetime import datetime, timezone
 
 app = Quart(__name__)
 app.secret_key = "secret key"
+
+# Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
 # Database setup
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
@@ -246,7 +248,6 @@ async def get_current_user():
 		}), 200
 		
 	except Exception as e:
-		print(f"Me error: {e}")
 		return jsonify({'error': 'Failed to get user information'}), 500
 
 @app.route('/delete_user', methods=['DELETE'])
@@ -276,11 +277,9 @@ async def delete_user():
 		
 		# Clear session
 		session.clear()
-		
 		return jsonify({'message': 'User account deleted successfully'}), 200
 		
 	except Exception as e:
-		print(f"Delete error: {e}")
 		return jsonify({'error': 'Failed to delete user account'}), 500
 
 @app.route('/logout', methods=['POST'])
