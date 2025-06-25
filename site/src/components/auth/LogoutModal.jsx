@@ -16,67 +16,43 @@ function LogoutModal({ show, onHide, onLogout }) {
 	if (!show) return null;
 
 	return (
-		<div style={{
-		position: 'fixed',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		zIndex: 1050
-		}}>
-			<div style={{
-			backgroundColor: 'white',
-			borderRadius: '8px',
-			boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-			width: '100%',
-			maxWidth: '500px',
-			margin: '0 1rem'
-			}}>
+		<div 
+			className="position-fixed top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center"
+			style={{ zIndex: 1050 }}
+		>
+			<div 
+				className="bg-white rounded w-100 mx-3" 
+				style={{
+					boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+					maxWidth: '500px'
+				}}
+			>
 				{/* Modal Body */}
-				<div style={{
-					paddingBottom: '1rem',
-					paddingTop: "1rem"
-				}}>
-					<h2 style={{
-						fontSize: '1.25rem',
-						fontWeight: '600',
-						textAlign: 'center',
-					}}>
+				<div className="py-3">
+					<h4 className="text-center fw-semibold">
 						Log Out
-					</h2>
+					</h4>
 					
-					<div style={{
-						textAlign: 'center',
-						fontSize: '14px',
-						marginBottom: '1rem',
-					}}>
+					<div className="text-center small mb-3">
 						<span>Are you sure?</span>
 					</div>
 
-					<div style={{
-					display: 'flex',
-					gap: '.25rem',
-					alignItems:'center',
-					justifyContent: 'center',
-					}}>
-					<Button
-						onClick={handleLogout}
-					>
-						Yeah
-					</Button>
-					<Button
-						variant='secondary'
-						onClick={handleClose}
-					>
-						Nah
-					</Button>
+					<div className="d-flex gap-1 justify-content-center align-items-center">
+						<Button
+							onClick={handleLogout}
+						>
+							Yeah
+						</Button>
+						<Button
+							variant='secondary'
+							onClick={handleClose}
+						>
+							Nah
+						</Button>
 					</div>
 				</div>
-				</div>
 			</div>
+		</div>
   );
 }
 

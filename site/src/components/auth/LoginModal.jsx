@@ -26,42 +26,22 @@ function LoginModal({ show, onHide, onLogin }) {
 	if (!show) return null;
 
 	return (
-		<div style={{
-		position: 'fixed',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'center',
-		zIndex: 1050
-		}}>
-			<div style={{
-			backgroundColor: 'white',
-			borderRadius: '8px',
-			boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-			width: '100%',
-			maxWidth: '500px',
-			margin: '0 1rem'
-			}}>
-				{/* Modal Body */}
-				<div style={{
-					paddingBottom: '1rem',
-					paddingTop: "1rem"
-				}}>
-					<h2 style={{
-						fontSize: '1.25rem',
-						fontWeight: '600',
-						textAlign: 'center',
-					}}>
+		<div 
+			className="position-fixed top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center"
+			style={{ zIndex: 1050 }}
+		>
+			<div 
+				className="bg-white rounded w-100 mx-3" 
+				style={{
+					boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+					maxWidth: '500px'
+				}}
+			>
+				<div className="py-3">
+					<h4 className="text-center fw-semibold">
 						Log In
-					</h2>
-					
-					<div style={{
-						textAlign: 'center',
-						fontSize: '14px'
-					}}>
+					</h4>
+					<div className="text-center small">
 						<span>Don't have an account? </span>
 						<Nav.Link 
 							as={Link} 
@@ -79,21 +59,18 @@ function LoginModal({ show, onHide, onLogin }) {
 							value={email_or_username}
 							onChange={(e) => setUsername(e.target.value)}
 							size="sm"
-							placeholder=""
 							required
 						/>
 
-						<div style={{ marginBottom: '1rem' }}>
 						<Form.Label htmlFor="password">Password</Form.Label>
 						<Form.Control
-							type="password"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							size="sm"
-							placeholder=""
 							required
+							type="password"
+							className="mb-3"
 						/>
-						</div>
 						{/* <div style={{
 							marginBottom: '1.5rem',
 							fontSize: '14px'
@@ -110,23 +87,18 @@ function LoginModal({ show, onHide, onLogin }) {
 							</a>
 							<span style={{ color: '#333' }}>)</span>
 						</div> */}
-						<div style={{
-						display: 'flex',
-						gap: '.25rem',
-						alignItems:'center',
-						justifyContent: 'center',
-						}}>
-						<Button
-							onClick={handleLogin}
-						>
-							Log In
-						</Button>
-						<Button
-							variant='secondary'
-							onClick={handleClose}
-						>
-							Cancel
-						</Button>
+						<div className="d-flex gap-1 justify-content-center align-items-center">
+							<Button
+								onClick={handleLogin}
+							>
+								Log In
+							</Button>
+							<Button
+								variant='secondary'
+								onClick={handleClose}
+							>
+								Cancel
+							</Button>
 						</div>
 					</Form>
 				</div>

@@ -29,7 +29,9 @@ const Search = () => {
 			}
 
 			const result = await response.json();
-			setData(result);
+			console.log("Searched URL:", url);
+			console.log(result);
+			setData(Array.isArray(result) ? result : []);
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -83,7 +85,7 @@ const Search = () => {
 			{data && (
 				<Row>
 					{data.length === 0 ? (
-						<p>No live listings match this search!</p>
+						<p className='text-center'>No live listings match this search!</p>
 					) : (
 						Object.values(data).map(car => (
 							<Col xs={12} md={6} lg={4} key={car.url}>
