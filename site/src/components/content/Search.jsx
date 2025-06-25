@@ -9,8 +9,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Search = () => {
 	const [query, setQuery] = useState('');
-	const [yearFrom, setYearFrom] = useState(1800);
-	const [yearTo, setYearTo] = useState(2025);
 	const [includeKeywords, setIncludeKeywords] = useState('');
 	const [excludeKeywords, setExcludeKeywords] = useState('');
 
@@ -50,29 +48,37 @@ const Search = () => {
 		}
 	};
 
-	const handleYearFilter = () => {
-		if (yearFrom && yearTo) {
-			const from = parseInt(yearFrom);
-			const to = parseInt(yearTo);
-			if (from > to) {
-				alert("Year 'From' cannot be greater than 'To'.");
-				return;
-			}
-			const filtered = Object.fromEntries(
-				Object.entries(data).filter(([key, car]) => {
-					const year = parseInt(car.year);
-					return year >= from && year <= to;
-				})
-			);
-        setFilteredData(filtered);
-		} else {
-			alert("Please enter both 'From' and 'To' years.");
+	const handleYearFilter = (yearFrom, yearTo) => {
+		yearFrom = yearFrom ? yearFrom : '1800'; // Default to 1800 if not set
+		yearTo = yearTo ? yearTo : '2025'; // Default to 2025 if not set
+
+		const from = parseInt(yearFrom);
+		const to = parseInt(yearTo);
+		if (from > to) {
+			alert("Year 'From' cannot be greater than 'To'.");
+			return;
 		}
+
+		if (!data) {
+			alert("No data to filter. Please search first.");
+			return;
+		}
+
+		const filtered = Object.fromEntries(
+			Object.entries(data).filter(([key, car]) => {
+				const year = parseInt(car.year);
+				return year >= from && year <= to;
+			})
+		);
+
+		if (Object.keys(filtered).length === 0) { 
+			alert("No cars found in the specified year range.");
+			return;
+		}
+		setFilteredData(filtered);
  	}
 
 	const handleYearClear = () => {
-		setYearFrom('');
-		setYearTo('');
 		setFilteredData(null);
 	};
 
@@ -116,10 +122,6 @@ const Search = () => {
 				/>
 				<div className="d-flex gap-2 mt-2 mb-3">
 					<YearRangeFilter
-						yearFrom={yearFrom}
-						yearTo={yearTo}
-						setYearFrom={setYearFrom}
-						setYearTo={setYearTo}
 						onFilter={handleYearFilter}
 						onClear={handleYearClear}
 					/>
@@ -139,8 +141,7 @@ const Search = () => {
 					setQuery('');
 					setData(null);
 					setFilteredData(null);
-					setYearFrom('');
-	  				setYearTo('');
+					handleYearClear();
 				}}> Reset Search
 				</Button>
 			</Form>
@@ -150,21 +151,21 @@ const Search = () => {
 			{(filteredData && Object.keys(filteredData).length > 0) ? (
 				<Row>
 					{Object.values(filteredData).map(car => (
-							<Col xs={12} md={6} lg={4} key={car.url}>
-								<CarSummary {...car} />
-							</Col>
+						<Col xs={12} md={6} lg={4} key={car.url}>
+							<CarSummary {...car} />
+						</Col>
 					))}
 				</Row>
 			) : data && (
 				<Row>
 					{Object.keys(data).length === 0 ? (
-							<p className='text-center'>No live listings match this search!</p>
+						<p className='text-center'>No live listings match this search!</p>
 					) : (
-							Object.values(data).map(car => (
-								<Col xs={12} md={6} lg={4} key={car.url}>
-									<CarSummary {...car} />
-								</Col>
-							))
+						Object.values(data).map(car => (
+							<Col xs={12} md={6} lg={4} key={car.url}>
+								<CarSummary {...car} />
+							</Col>
+						))
 					)}
 				</Row>
 			)}

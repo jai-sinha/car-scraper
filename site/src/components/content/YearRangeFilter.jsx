@@ -1,6 +1,10 @@
 import { Button, Dropdown, Form } from "react-bootstrap";
+import React, { useState } from "react";
 
-const YearRangeFilter = ({ yearFrom, yearTo, setYearFrom, setYearTo, onFilter, onClear }) => {
+const YearRangeFilter = ({ onFilter, onClear }) => {
+	const [yearFrom, setYearFrom] = useState('');
+	const [yearTo, setYearTo] = useState('');
+
 	return (
 		<Dropdown>
 			<Dropdown.Toggle variant="outline-secondary" id="dropdown-years">
@@ -23,8 +27,16 @@ const YearRangeFilter = ({ yearFrom, yearTo, setYearFrom, setYearTo, onFilter, o
 						placeholder="2025"
 						onChange={(e) => setYearTo(e.target.value)}
 					/>
-					<Button size="md" className="mt-2 me-2" onClick={onFilter}>Filter</Button>
-					<Button size="md" variant="secondary" className="mt-2" onClick={onClear}>
+					<Button size="md" className="mt-2 me-2" 
+						onClick={() => onFilter(yearFrom, yearTo)}>
+						Filter
+					</Button>
+					<Button size="md" variant="secondary" className="mt-2" 
+						onClick={() => {
+							onClear();
+							setYearFrom('');
+							setYearTo('');
+						}}>
 						Undo Filter
 					</Button>
 				</div>
