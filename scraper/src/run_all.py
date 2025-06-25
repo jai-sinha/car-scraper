@@ -46,7 +46,7 @@ async def run_scrapers(query):
 if __name__ == "__main__":
 	async def test():
 		from urllib.parse import quote
-		query = quote("Porsche 911 991")
+		query = quote("997 911")
 		results = await run_scrapers(query)
 		print(results)
 

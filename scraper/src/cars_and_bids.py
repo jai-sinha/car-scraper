@@ -1,4 +1,5 @@
 from playwright.async_api import async_playwright
+import re
 import asyncio
 import listing
 
@@ -62,6 +63,10 @@ async def get_results(query, browser, debug=False):
 			if not data['title'] or not data['timeRemaining']:
 				continue
 
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
+		
 			# Format, removing seconds, and lowercasing "Days" if present
 			timeRemaining = data['timeRemaining'].lower()
 			if ":" in timeRemaining:
@@ -75,12 +80,12 @@ async def get_results(query, browser, debug=False):
 			# Create listing
 			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'])
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'], year)
 
 			if debug:			
 				print(f"Title: {data['title']}")
 				print(f"URL: {url}")
-				print(f"Image URL: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {data['bid']}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
@@ -95,9 +100,6 @@ async def get_results(query, browser, debug=False):
 
 if __name__ == "__main__":
 	async def test():
-		import time
-		start = time.perf_counter()
-
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(
 				headless=True,
@@ -122,15 +124,10 @@ if __name__ == "__main__":
 
 			try:
 				from urllib.parse import quote
-				query = quote("honda s2000")
+				query = quote("997 911")
 				await get_results(query, context, debug=True)
 
 			finally:
 				await browser.close()
-
-		end = time.perf_counter()
-		execution_time = end - start
-		print(f"\nTotal execution time: {execution_time:.2f} seconds")
-		# 1.87 seconds
 	
 	asyncio.run(test())

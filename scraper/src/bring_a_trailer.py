@@ -1,4 +1,5 @@
 from playwright.async_api import async_playwright
+import re
 import asyncio
 import listing
 
@@ -9,7 +10,7 @@ async def get_results(query, browser, debug=False):
 	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
 	Args:
-		car: The desired car to search.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
@@ -72,6 +73,10 @@ async def get_results(query, browser, debug=False):
 		for data in listings_data:
 			if not data['title'] or not data['url']:
 				continue
+
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
 				
 			# Clean up bid text
 			bid = data['bid']
@@ -90,12 +95,12 @@ async def get_results(query, browser, debug=False):
 			
 			# Create listing
 			key = "BaT: " + data['title']
-			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid, year)
 			
 			if debug:
 				print(f"Title: {data['title']}")
 				print(f"URL: {data['url']}")
-				print(f"Image: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {bid}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)

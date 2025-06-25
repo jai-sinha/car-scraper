@@ -1,5 +1,6 @@
 from playwright.async_api import async_playwright
 from datetime import datetime, timezone
+import re
 import asyncio
 import listing
 
@@ -11,7 +12,7 @@ async def get_results(query, browser, debug=False):
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
-		car: The desired car to search, formatted as a URL-encoded string.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
@@ -69,6 +70,10 @@ async def get_results(query, browser, debug=False):
 			if not data['title'] or not data['url']:
 				continue
 			
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
+
 			# Check if this is a live auction
 			if data['bid']: 
 				bid = data['bid']
@@ -84,12 +89,12 @@ async def get_results(query, browser, debug=False):
 			# Create listing
 			url = f"https://pcarmarket.com{data['url']}"
 			key = f"PCAR: {title}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid)
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid, year)
 			
 			if debug:
 				print(f"Title: {title}")
 				print(f"URL: {url}")
-				print(f"Image URL: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {bid}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
