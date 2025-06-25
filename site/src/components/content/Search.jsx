@@ -1,14 +1,21 @@
 import "../../App.css"
-import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import { Button, Container, Form, Dropdown, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import CarSummary from "./CarSummary"
+import YearRangeFilter from "./YearRangeFilter";
+import KeywordFilter from "./KeywordFilter";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Search = () => {
 	const [query, setQuery] = useState('');
+	const [yearFrom, setYearFrom] = useState(1800);
+	const [yearTo, setYearTo] = useState(2025);
+	const [includeKeywords, setIncludeKeywords] = useState('');
+	const [excludeKeywords, setExcludeKeywords] = useState('');
 
 	const [data, setData] = useState(null);
+	const [filteredData, setFilteredData] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -29,7 +36,13 @@ const Search = () => {
 			const result = await response.json();
 			console.log("Searched URL:", url);
 			console.log(result);
-			setData(processData(result));
+			const sortedData = Object.entries(result)
+				.sort(([, a], [, b]) => parseTimeToHours(a.time) - parseTimeToHours(b.time))
+				.reduce((obj, [key, value]) => ({ 
+					...obj, 
+					[key]: value
+				}), {});
+			setData(sortedData);
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -37,23 +50,41 @@ const Search = () => {
 		}
 	};
 
-	const processData = (data) => {
-		const extractYear = (title) => {
-			const yearMatch = title.match(/\b(19|20)\d{2}\b/);
-			return yearMatch ? parseInt(yearMatch[0]) : null;
-		};
+	const handleYearFilter = () => {
+		if (yearFrom && yearTo) {
+			const from = parseInt(yearFrom);
+			const to = parseInt(yearTo);
+			if (from > to) {
+				alert("Year 'From' cannot be greater than 'To'.");
+				return;
+			}
+			const filtered = Object.fromEntries(
+				Object.entries(data).filter(([key, car]) => {
+					const year = parseInt(car.year);
+					return year >= from && year <= to;
+				})
+			);
+        setFilteredData(filtered);
+		} else {
+			alert("Please enter both 'From' and 'To' years.");
+		}
+ 	}
 
-		const sortedData = Object.entries(data)
-			.sort(([, a], [, b]) => parseTimeToHours(a.time) - parseTimeToHours(b.time))
-			.reduce((obj, [key, value]) => ({ 
-				...obj, 
-				[key]: {
-				...value,
-				year: extractYear(value.title)
-				}
-			}), {});
+	const handleYearClear = () => {
+		setYearFrom('');
+		setYearTo('');
+		setFilteredData(null);
+	};
 
-		return sortedData;
+	const handleKeywordFilter = () => {
+		// Implement keyword filtering logic here
+		console.log("Keyword filter not implemented yet");
+	};
+
+	const handleKeywordClear = () => {
+		setIncludeKeywords('');
+		setExcludeKeywords('');
+		setFilteredData(null);
 	};
 
 	const parseTimeToHours = (timeString) => {	
@@ -83,31 +114,57 @@ const Search = () => {
 					placeholder="Search (e.g. '991 911', 'BMW E9', 'Mercedes W113 SL')"
 					onChange={(e) => setQuery(e.target.value)}
 				/>
-				<br />
+				<div className="d-flex gap-2 mt-2 mb-3">
+					<YearRangeFilter
+						yearFrom={yearFrom}
+						yearTo={yearTo}
+						setYearFrom={setYearFrom}
+						setYearTo={setYearTo}
+						onFilter={handleYearFilter}
+						onClear={handleYearClear}
+					/>
+					<KeywordFilter
+						includeKeywords={includeKeywords}
+						excludeKeywords={excludeKeywords}
+						setIncludeKeywords={setIncludeKeywords}
+						setExcludeKeywords={setExcludeKeywords}
+						onFilter={handleKeywordFilter}
+						onClear={handleKeywordClear}
+					/>
+				</div>
 				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
 					{loading ? "Loading..." : "Search"}
 				</Button>
 				<Button size="lg" variant="secondary" onClick={() => {
 					setQuery('');
 					setData(null);
+					setFilteredData(null);
+					setYearFrom('');
+	  				setYearTo('');
 				}}> Reset Search
 				</Button>
 			</Form>
 			<br></br>
 			{error && <p style={{ color: "red" }}>Error: {error}</p>}
 
-			{data && (
+			{(filteredData && Object.keys(filteredData).length > 0) ? (
+				<Row>
+					{Object.values(filteredData).map(car => (
+							<Col xs={12} md={6} lg={4} key={car.url}>
+								<CarSummary {...car} />
+							</Col>
+					))}
+				</Row>
+			) : data && (
 				<Row>
 					{Object.keys(data).length === 0 ? (
-						<p className='text-center'>No live listings match this search!</p>
+							<p className='text-center'>No live listings match this search!</p>
 					) : (
-						Object.values(data).map(car => (
-							<Col xs={12} md={6} lg={4} key={car.url}>
-								<CarSummary 
-									{...car}
-								/>
-							</Col>
-						))
+							Object.values(data).map(car => (
+								<Col xs={12} md={6} lg={4} key={car.url}>
+									<CarSummary {...car} />
+								</Col>
+							))
 					)}
 				</Row>
 			)}

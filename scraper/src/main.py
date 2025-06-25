@@ -1,4 +1,3 @@
-import listing
 from run_all import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
@@ -9,7 +8,6 @@ from sqlalchemy.exc import IntegrityError
 import bcrypt
 import re
 from functools import wraps
-import os
 from datetime import datetime, timezone
 
 app = Quart(__name__)
@@ -18,7 +16,7 @@ app.secret_key = "secret key"
 # Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
 # Database setup
-DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
+DATABASE_URL = 'sqlite:///users.db'
 engine = create_engine(DATABASE_URL)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = sqlalchemy.orm.declarative_base()
