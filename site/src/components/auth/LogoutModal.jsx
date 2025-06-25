@@ -1,15 +1,16 @@
 import { Nav, Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function LogoutModal({ show, onHide }) {
+function LogoutModal({ show, onHide, onLogout }) {
 
 	const handleClose = () => {
 		onHide();
 	};
 
-	const handleLogout = () => {
-		// do something
-		console.log("Hey someone logged out") 
+	const handleLogout = (e) => {
+		e.preventDefault();
+		onLogout();
+		onHide();
 	}
 
 	if (!show) return null;
@@ -49,9 +50,10 @@ function LogoutModal({ show, onHide }) {
 					
 					<div style={{
 						textAlign: 'center',
-						fontSize: '14px'
+						fontSize: '14px',
+						marginBottom: '1rem',
 					}}>
-						<span>Are you sure? </span>
+						<span>Are you sure?</span>
 					</div>
 
 					<div style={{
@@ -63,13 +65,13 @@ function LogoutModal({ show, onHide }) {
 					<Button
 						onClick={handleLogout}
 					>
-						Yeah I'm Sure
+						Yeah
 					</Button>
 					<Button
 						variant='secondary'
 						onClick={handleClose}
 					>
-						No Wait I Want To Stay
+						Nah
 					</Button>
 					</div>
 				</div>

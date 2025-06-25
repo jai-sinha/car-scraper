@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import LoginStatusContext from "../contexts/LoginStatusContext";
 import LoginModal from "../auth/LoginModal"
+import LogoutModal from "../auth/LogoutModal"
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,7 @@ function Layout(props) {
 		storedLoginStatus ? JSON.parse(storedLoginStatus) : null
 	);
 	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [showLogoutModal, setShowLogoutModal] = useState(false);
 
 	// Update sessionStorage whenever loginStatus changes
 	useEffect(() => {
@@ -25,6 +27,11 @@ function Layout(props) {
 	const handleLoginClick = (e) => {
 		e.preventDefault();
 		setShowLoginModal(true);
+	};
+
+	const handleLogoutClick = (e) => {
+		e.preventDefault();
+		setShowLogoutModal(true);
 	};
 
 	async function handleLogin(credentials) {
@@ -78,7 +85,7 @@ function Layout(props) {
 					{!loginStatus ? (
 						<Nav.Link as={Link} href="#" onClick={handleLoginClick}>Login</Nav.Link>
 						) : (
-						<Nav.Link as={Link} href="#" onClick={handleLogout}>Logout</Nav.Link>
+						<Nav.Link as={Link} href="#" onClick={handleLogoutClick}>Logout</Nav.Link>
 						)
 					}
 			 	</Nav>
@@ -100,6 +107,11 @@ function Layout(props) {
 			show={showLoginModal}
 			onHide={() => setShowLoginModal(false)}
 			onLogin={handleLogin}
+		/>
+		<LogoutModal 
+			show={showLogoutModal}
+			onHide={() => setShowLogoutModal(false)}
+			onLogout={handleLogout}
 		/>
 	 </div>
   );
