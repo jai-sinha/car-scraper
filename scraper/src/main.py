@@ -296,18 +296,10 @@ async def startup():
 
 @app.route("/search", methods=["GET"])
 async def get_search():
-	make = request.args.get("make")
-	model = request.args.get("model")
-	generation = request.args.get("generation")
-	car = listing.Car(make, model, generation)
-	
-	# Make sure at least these parameters exist
-	if not make or not model:
-		return jsonify({"error": "Missing parameters"}), 400
+	query = request.args.get("query")
 	
 	try:
-		results = await run_scrapers(car)
-		
+		results = await run_scrapers(query)
 		# Convert to serializable format for Car objects
 		serializable_results = {}
 		for key, value in results.items():
@@ -316,7 +308,7 @@ async def get_search():
 			else:
 				serializable_results[key] = value
 		
-		return jsonify(serializable_results)
+		return jsonify(serializable_results), 200
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500

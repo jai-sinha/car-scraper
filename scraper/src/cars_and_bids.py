@@ -4,23 +4,20 @@ import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser, debug=False):
+async def get_results(query, browser, debug=False):
 	"""
 	Fetches search results from Cars & Bids for a given car,
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
-		car: The desired car to search.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
 
-	# Encode car info for url
-	q = car.encode()
-	q = "%20".join(q)
-	search_url = "https://carsandbids.com/search?q=" + q
+	search_url = "https://carsandbids.com/search?q=" + query
 	if debug:
 		print(search_url)
 
@@ -65,8 +62,8 @@ async def get_results(car: listing.Car, browser, debug=False):
 			if not data['title'] or not data['timeRemaining']:
 				continue
 
-			# Clean up time, removing seconds
-			timeRemaining = data['timeRemaining']
+			# Format, removing seconds, and lowercasing "Days" if present
+			timeRemaining = data['timeRemaining'].lower()
 			if ":" in timeRemaining:
 				if timeRemaining.count(":") > 1:
 					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
@@ -98,6 +95,9 @@ async def get_results(car: listing.Car, browser, debug=False):
 
 if __name__ == "__main__":
 	async def test():
+		import time
+		start = time.perf_counter()
+
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(
 				headless=True,
@@ -121,10 +121,16 @@ if __name__ == "__main__":
 			)
 
 			try:
-				car = listing.Car("Mercedes", "356")
-				result = await get_results(car, context, debug=True)
+				from urllib.parse import quote
+				query = quote("honda s2000")
+				await get_results(query, context, debug=True)
 
 			finally:
 				await browser.close()
+
+		end = time.perf_counter()
+		execution_time = end - start
+		print(f"\nTotal execution time: {execution_time:.2f} seconds")
+		# 1.87 seconds
 	
 	asyncio.run(test())

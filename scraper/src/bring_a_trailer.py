@@ -4,7 +4,7 @@ import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser, debug=False):
+async def get_results(query, browser, debug=False):
 	"""
 	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
@@ -17,12 +17,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 	"""
 
 	# Encode car info for url, BaT uses "+" instead of "%20"
-	query = []
-	for value in vars(car).values():
-		if value:
-			query.append(value.replace(" ", "+"))
-
-	query = "+".join(query)
+	query = query.replace("%20", "+")
 	search_url = "https://bringatrailer.com/auctions/?search=" + query
 	if debug:
 		print(search_url)
@@ -33,7 +28,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 		await page.goto(search_url, timeout=TIMEOUT)
 		
 		# Check filter input value to confirm search filtering has occurred
-		search_terms = f"{car.make} {car.model}"
+		search_terms = f"{query.replace('+', ' ')}"
 		await page.wait_for_function(
 			f'''
 			document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
@@ -83,7 +78,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 			if bid.startswith("USD "):
 				bid = bid[4:]
 
-			# Clean up time, removing seconds
+			# Format time, removing seconds
 			timeRemaining = data['timeRemaining']
 			if ":" in timeRemaining:
 				if timeRemaining.count(":") > 1:
@@ -119,8 +114,9 @@ if __name__ == "__main__":
 			browser = await p.chromium.launch(headless=True)
 
 			try:
-				car = listing.Car("Porsche", "356 Pre-A")
-				result = await get_results(car, browser, debug=True)
+				from urllib.parse import quote
+				query = quote("911 991")
+				await get_results(query, browser, debug=True)
 
 			finally:
 				await browser.close()

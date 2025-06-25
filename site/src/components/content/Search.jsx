@@ -6,11 +6,9 @@ import CarSummary from "./CarSummary"
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Search = () => {
-	const [make, setMake] = useState("");
-	const [model, setModel] = useState("");
-	const [generation, setGeneration] = useState("");
+	const [query, setQuery] = useState('');
 
-	const [data, setData] = useState(null);
+	const [data, setData] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -21,7 +19,7 @@ const Search = () => {
 		setData(null);
 
 		try {
-			const url = `${API_URL}/search?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&generation=${encodeURIComponent(generation)}`;
+			const url = `${API_URL}/search?query=${encodeURIComponent(query)}`;
 			const response = await fetch(url);
 
 			if (!response.ok) {
@@ -31,7 +29,7 @@ const Search = () => {
 			const result = await response.json();
 			console.log("Searched URL:", url);
 			console.log(result);
-			setData(Array.isArray(result) ? result : []);
+			setData(result);
 		} catch (err) {
 			setError(err.message);
 		} finally {
@@ -43,39 +41,21 @@ const Search = () => {
 		<div style={{ margin: ".25rem" }}>
 			<h1>Search Bring a Trailer, Cars & Bids, and PCARMARKET</h1>
 			<Form>
-				<Form.Label htmlFor="make"></Form.Label>
+				<Form.Label htmlFor="query"></Form.Label>
 				<Form.Control
 					size="lg" 
-					id="make"
-					value={make}
-					placeholder="Make"
-					onChange={(e) => setMake(e.target.value)}
-				/>
-				<Form.Label htmlFor="model"></Form.Label>
-				<Form.Control
-					size="lg" 
-					id="model"
-					value={model}
-					placeholder="Model"
-					onChange={(e) => setModel(e.target.value)}
-				/>
-				<Form.Label htmlFor="generation"></Form.Label>
-				<Form.Control
-					size="lg" 
-					id="generation"
-					value={generation}
-					placeholder="Generation"
-					onChange={(e) => setGeneration(e.target.value)}
+					id="query"
+					value={query}
+					placeholder="Search (e.g. '991 911', 'BMW E9', 'Mercedes W113 SL')"
+					onChange={(e) => setQuery(e.target.value)}
 				/>
 				<br />
 				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
 					{loading ? "Loading..." : "Search"}
 				</Button>
 				<Button size="lg" variant="secondary" onClick={() => {
-					setMake('');
-					setModel('');
-					setGeneration('');
-					setData(null);
+					setQuery('');
+					setData([]);
 				}}> Reset Search
 				</Button>
 			</Form>

@@ -23,17 +23,3 @@ class Car:
 		self.make = make
 		self.model = model
 		self.generation = generation
-	
-	def encode(self):
-		"""
-		Encodes all existing fields for search queries
-
-		Returns:
-			List of URL-encoded fields
-		"""
-		out = []
-		for _, value in vars(self).items():
-			if value:
-				out.append(quote(value))
-
-		return out
