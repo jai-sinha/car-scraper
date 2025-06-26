@@ -1,26 +1,24 @@
 from playwright.async_api import async_playwright
+import re
 import asyncio
 import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser, debug=False):
+async def get_results(query, browser, debug=False):
 	"""
 	Fetches search results from Cars & Bids for a given car,
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
-		car: The desired car to search.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
 
-	# Encode car info for url
-	q = car.encode()
-	q = "%20".join(q)
-	search_url = "https://carsandbids.com/search?q=" + q
+	search_url = "https://carsandbids.com/search?q=" + query
 	if debug:
 		print(search_url)
 
@@ -65,25 +63,32 @@ async def get_results(car: listing.Car, browser, debug=False):
 			if not data['title'] or not data['timeRemaining']:
 				continue
 
-			# Clean up time, removing seconds
-			timeRemaining = data['timeRemaining']
-			if ":" in timeRemaining:
-				if timeRemaining.count(":") > 1:
-					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
-				else:
-					timeRemaining = f"{timeRemaining[:2]}m"
-			elif "days" not in timeRemaining:
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
+		
+			# Format, removing seconds, and lowercasing "Day" if present
+			timeRemaining = str(data['timeRemaining']).lower()
+			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
+				pass
+			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
+				parts = timeRemaining.split(":")
+				if len(parts) == 3:  # hours:minutes:seconds
+					timeRemaining = f"{parts[0]}h {parts[1]}m"
+				elif len(parts) == 2 and int(parts[0]) > 0:  # minutes:seconds (and minutes > 0)
+					timeRemaining = f"{parts[0]}m"
+			else: # No colons and no days means just seconds remaining
 				timeRemaining = "0m"
 			
 			# Create listing
 			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'])
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'], year)
 
 			if debug:			
 				print(f"Title: {data['title']}")
 				print(f"URL: {url}")
-				print(f"Image URL: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {data['bid']}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
@@ -121,8 +126,9 @@ if __name__ == "__main__":
 			)
 
 			try:
-				car = listing.Car("Mercedes", "356")
-				result = await get_results(car, context, debug=True)
+				from urllib.parse import quote
+				query = quote("997 911")
+				await get_results(query, context, debug=True)
 
 			finally:
 				await browser.close()

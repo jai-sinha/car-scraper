@@ -1,15 +1,16 @@
 from playwright.async_api import async_playwright
+import re
 import asyncio
 import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser, debug=False):
+async def get_results(query, browser, debug=False):
 	"""
 	Fetches search results from bring a trailer for a given car, extracts listing details, and stores them in a dictionary.
 
 	Args:
-		car: The desired car to search.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
@@ -17,12 +18,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 	"""
 
 	# Encode car info for url, BaT uses "+" instead of "%20"
-	query = []
-	for value in vars(car).values():
-		if value:
-			query.append(value.replace(" ", "+"))
-
-	query = "+".join(query)
+	query = query.replace("%20", "+")
 	search_url = "https://bringatrailer.com/auctions/?search=" + query
 	if debug:
 		print(search_url)
@@ -33,7 +29,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 		await page.goto(search_url, timeout=TIMEOUT)
 		
 		# Check filter input value to confirm search filtering has occurred
-		search_terms = f"{car.make} {car.model}"
+		search_terms = f"{query.replace('+', ' ')}"
 		await page.wait_for_function(
 			f'''
 			document.querySelector("input[data-bind=\\"textInput: filterTerm\\"]").value.includes("{search_terms}")
@@ -77,30 +73,37 @@ async def get_results(car: listing.Car, browser, debug=False):
 		for data in listings_data:
 			if not data['title'] or not data['url']:
 				continue
+
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
 				
 			# Clean up bid text
-			bid = data['bid']
+			bid = str(data['bid'])
 			if bid.startswith("USD "):
 				bid = bid[4:]
 
-			# Clean up time, removing seconds
-			timeRemaining = data['timeRemaining']
-			if ":" in timeRemaining:
-				if timeRemaining.count(":") > 1:
-					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
-				else:
-					timeRemaining = f"{timeRemaining[:2]}m"
-			elif "days" not in timeRemaining:
+			# Format time, removing seconds
+			timeRemaining = str(data['timeRemaining'])
+			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
+				pass
+			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
+				parts = timeRemaining.split(":")
+				if len(parts) == 3:  # hours:minutes:seconds
+					timeRemaining = f"{parts[0]}h {parts[1]}m"
+				elif len(parts) == 2:  # minutes:seconds
+					timeRemaining = f"{parts[0]}m"
+			else: # No colons and no days means just seconds remaining
 				timeRemaining = "0m"
 			
 			# Create listing
 			key = "BaT: " + data['title']
-			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid)
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid, year)
 			
 			if debug:
 				print(f"Title: {data['title']}")
 				print(f"URL: {data['url']}")
-				print(f"Image: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {bid}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
@@ -119,8 +122,9 @@ if __name__ == "__main__":
 			browser = await p.chromium.launch(headless=True)
 
 			try:
-				car = listing.Car("Porsche", "356 Pre-A")
-				result = await get_results(car, browser, debug=True)
+				from urllib.parse import quote
+				query = quote("911 991")
+				await get_results(query, browser, debug=True)
 
 			finally:
 				await browser.close()

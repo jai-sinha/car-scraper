@@ -12,12 +12,9 @@ export default function CarSummary(props) {
 				<a href={props.url} rel="noopener noreferrer" target="_blank">{props.title}</a>
 			</Card.Title>
 			<Card.Text>
-				<p>
-					{props.title.includes("DT") ? "DT Price: " : "Current Bid: "} 
-					<strong>{props.price ? props.price : "No Bids"}</strong>
-					<br></br> 
-					{props.title.includes("DT") ? "In DT" : "Time left: "} <strong>{props.time == "DT" || props.time}</strong>
-				</p>
+				Current Bid: <strong>{props.price ? props.price : "No Bids"}</strong>
+				<br />
+				Time left: <strong>{props.time}</strong>
 			</Card.Text>
 		</Card.Body>
 	</Card>

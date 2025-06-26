@@ -1,4 +1,3 @@
-import listing
 from run_all import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
@@ -9,7 +8,6 @@ from sqlalchemy.exc import IntegrityError
 import bcrypt
 import re
 from functools import wraps
-import os
 from datetime import datetime, timezone
 
 app = Quart(__name__)
@@ -18,7 +16,7 @@ app.secret_key = "secret key"
 # Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
 # Database setup
-DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///users.db')
+DATABASE_URL = 'sqlite:///users.db'
 engine = create_engine(DATABASE_URL)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = sqlalchemy.orm.declarative_base()
@@ -296,18 +294,10 @@ async def startup():
 
 @app.route("/search", methods=["GET"])
 async def get_search():
-	make = request.args.get("make")
-	model = request.args.get("model")
-	generation = request.args.get("generation")
-	car = listing.Car(make, model, generation)
-	
-	# Make sure at least these parameters exist
-	if not make or not model:
-		return jsonify({"error": "Missing parameters"}), 400
+	query = request.args.get("query")
 	
 	try:
-		results = await run_scrapers(car)
-		
+		results = await run_scrapers(query)
 		# Convert to serializable format for Car objects
 		serializable_results = {}
 		for key, value in results.items():
@@ -316,7 +306,7 @@ async def get_search():
 			else:
 				serializable_results[key] = value
 		
-		return jsonify(serializable_results)
+		return jsonify(serializable_results), 200
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500

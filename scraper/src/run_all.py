@@ -1,8 +1,8 @@
 import asyncio
 from playwright.async_api import async_playwright
-import listing, cars_and_bids, pcarmarket, bring_a_trailer
+import cars_and_bids, pcarmarket, bring_a_trailer
 
-async def run_scrapers(car):
+async def run_scrapers(query):
 	"""Run all scrapers asynchronously and return combined results"""
 	async with async_playwright() as p:
 		browser = await p.chromium.launch(
@@ -29,9 +29,9 @@ async def run_scrapers(car):
 		
 		try:
 			results = await asyncio.gather(
-				bring_a_trailer.get_results(car, context),
-				pcarmarket.get_results(car, context),
-				cars_and_bids.get_results(car, context)
+				bring_a_trailer.get_results(query, context),
+				pcarmarket.get_results(query, context),
+				cars_and_bids.get_results(query, context)
 			)
 		finally:
 			await browser.close()
@@ -45,8 +45,9 @@ async def run_scrapers(car):
 
 if __name__ == "__main__":
 	async def test():
-		car = listing.Car("Porsche", "911", "991")
-		results = await run_scrapers(car)
+		from urllib.parse import quote
+		query = quote("997 911")
+		results = await run_scrapers(query)
 		print(results)
 
 	asyncio.run(test())

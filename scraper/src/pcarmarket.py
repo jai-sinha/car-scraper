@@ -1,17 +1,18 @@
 from playwright.async_api import async_playwright
 from datetime import datetime, timezone
+import re
 import asyncio
 import listing
 
 TIMEOUT = 10000
 
-async def get_results(car: listing.Car, browser, debug=False):
+async def get_results(query, browser, debug=False):
 	"""
 	Fetches search results from pcarmarket for a given car,
 	extracts listing details, and stores them in a shared dictionary.
 
 	Args:
-		car: The desired car to search.
+		query: The desired car to search, formatted as a URL-encoded string.
 		browser: Playwright async browser
 		debug: Print all info
 	Returns:
@@ -19,9 +20,7 @@ async def get_results(car: listing.Car, browser, debug=False):
 	"""
 
 	# Encode car info for url
-	q = car.encode()
-	q = "%20".join(q)
-	search_url = "https://www.pcarmarket.com/search/?q=" + q
+	search_url = "https://www.pcarmarket.com/search/?q=" + query
 	if debug:
 		print(search_url)
 
@@ -71,6 +70,10 @@ async def get_results(car: listing.Car, browser, debug=False):
 			if not data['title'] or not data['url']:
 				continue
 			
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
+
 			# Check if this is a live auction
 			if data['bid']: 
 				bid = data['bid']
@@ -86,12 +89,12 @@ async def get_results(car: listing.Car, browser, debug=False):
 			# Create listing
 			url = f"https://pcarmarket.com{data['url']}"
 			key = f"PCAR: {title}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid)
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid, year)
 			
 			if debug:
 				print(f"Title: {title}")
 				print(f"URL: {url}")
-				print(f"Image URL: {data['image']}")
+				print(f"Year: {year}")
 				print(f"Current Bid: {bid}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
@@ -111,17 +114,19 @@ def countdown(ends_at):
 		ends_at: Time at which countdown ends at in unix time format.
 
 	Returns:
-		Time remaining in auction as a D/HH/MM/SS string
+		Time remaining in auction as a formatted string
 	"""
 	end_time = datetime.fromtimestamp(int(ends_at), timezone.utc)
 	now = datetime.now(timezone.utc)
 	time_left = (end_time - now).total_seconds()
 
 	hours, remainder = divmod(time_left, 3600)
-	minutes, seconds = divmod(remainder, 60)
-	if hours > 24:
+	minutes, _ = divmod(remainder, 60)
+	if hours > 48:
 		days = hours/24
 		return f"{int(days)} days"
+	elif hours > 24:
+		return "1 day"
 	elif hours < 1:
 		return f"{int(minutes)}m"
 	else:
@@ -134,8 +139,9 @@ if __name__ == "__main__":
 			browser = await p.chromium.launch(headless=True)
 
 			try:
-				car = listing.Car("Porsche", "356 Pre-A")
-				result = await get_results(car, browser, debug=True)
+				from urllib.parse import quote
+				query = quote("Porsche 911 991")
+				await get_results(query, browser, debug=True)
 
 			finally:
 				await browser.close()
