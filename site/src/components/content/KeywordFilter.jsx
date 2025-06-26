@@ -1,8 +1,13 @@
 import { Button, Dropdown, Form } from "react-bootstrap";
+import React, { useState } from "react";
 
-const KeywordFilter = ({ includeKeywords, excludeKeywords, setIncludeKeywords, setExcludeKeywords, onFilter, onClear }) => {
+const KeywordFilter = ({ onFilter, onClear }) => {
+	const [includeKeywords, setIncludeKeywords] = useState('');
+	const [excludeKeywords, setExcludeKeywords] = useState('');
+	const [show, setShow] = useState(false);
+
 	return (
-		<Dropdown>
+		<Dropdown show={show} onToggle={(isOpen) => setShow(isOpen)}>
 			<Dropdown.Toggle variant="outline-secondary" id="dropdown-keywords">
 				Keywords
 			</Dropdown.Toggle>
@@ -23,8 +28,17 @@ const KeywordFilter = ({ includeKeywords, excludeKeywords, setIncludeKeywords, s
 						placeholder="Exclude (e.g. 'convertible, gt3')"
 						onChange={(e) => setExcludeKeywords(e.target.value)}
 					/>
-					<Button size="md" className="mt-2 me-2" onClick={onFilter}>Filter</Button>
-					<Button size="md" variant="secondary" className="mt-2" onClick={onClear}>
+					<Button size="md" className="mt-2 me-2" 
+						onClick={() => {onFilter(includeKeywords, excludeKeywords); setShow(false);}}>
+						Filter
+					</Button>
+					<Button size="md" variant="secondary" className="mt-2" 
+						onClick={() => {
+							onClear()
+							setExcludeKeywords('');
+							setIncludeKeywords('');
+							setShow(false);
+						}}>
 						Undo Filter
 					</Button>
 				</div>

@@ -67,14 +67,17 @@ async def get_results(query, browser, debug=False):
 			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
 			year = int(year_match.group(0)) if year_match else None
 		
-			# Format, removing seconds, and lowercasing "Days" if present
-			timeRemaining = data['timeRemaining'].lower()
-			if ":" in timeRemaining:
-				if timeRemaining.count(":") > 1:
-					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
-				else:
-					timeRemaining = f"{timeRemaining[:2]}m"
-			elif "days" not in timeRemaining:
+			# Format, removing seconds, and lowercasing "Day" if present
+			timeRemaining = str(data['timeRemaining']).lower()
+			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
+				pass
+			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
+				parts = timeRemaining.split(":")
+				if len(parts) == 3:  # hours:minutes:seconds
+					timeRemaining = f"{parts[0]}h {parts[1]}m"
+				elif len(parts) == 2:  # minutes:seconds
+					timeRemaining = f"{parts[0]}m"
+			else: # No colons and no days means just seconds remaining
 				timeRemaining = "0m"
 			
 			# Create listing

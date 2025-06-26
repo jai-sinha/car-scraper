@@ -79,18 +79,21 @@ async def get_results(query, browser, debug=False):
 			year = int(year_match.group(0)) if year_match else None
 				
 			# Clean up bid text
-			bid = data['bid']
+			bid = str(data['bid'])
 			if bid.startswith("USD "):
 				bid = bid[4:]
 
 			# Format time, removing seconds
-			timeRemaining = data['timeRemaining']
-			if ":" in timeRemaining:
-				if timeRemaining.count(":") > 1:
-					timeRemaining = f"{timeRemaining[:2]}h {timeRemaining[3:5]}m"
-				else:
-					timeRemaining = f"{timeRemaining[:2]}m"
-			elif "days" not in timeRemaining:
+			timeRemaining = str(data['timeRemaining'])
+			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
+				pass
+			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
+				parts = timeRemaining.split(":")
+				if len(parts) == 3:  # hours:minutes:seconds
+					timeRemaining = f"{parts[0]}h {parts[1]}m"
+				elif len(parts) == 2:  # minutes:seconds
+					timeRemaining = f"{parts[0]}m"
+			else: # No colons and no days means just seconds remaining
 				timeRemaining = "0m"
 			
 			# Create listing

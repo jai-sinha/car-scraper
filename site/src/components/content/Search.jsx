@@ -9,11 +9,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Search = () => {
 	const [query, setQuery] = useState('');
-	const [includeKeywords, setIncludeKeywords] = useState('');
-	const [excludeKeywords, setExcludeKeywords] = useState('');
 
 	const [data, setData] = useState(null);
 	const [filteredData, setFilteredData] = useState(null);
+	const [resetKey, setResetKey] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
@@ -78,19 +77,9 @@ const Search = () => {
 		setFilteredData(filtered);
  	}
 
-	const handleYearClear = () => {
-		setFilteredData(null);
-	};
-
-	const handleKeywordFilter = () => {
+	const handleKeywordFilter = (include, exclude) => {
 		// Implement keyword filtering logic here
-		console.log("Keyword filter not implemented yet");
-	};
-
-	const handleKeywordClear = () => {
-		setIncludeKeywords('');
-		setExcludeKeywords('');
-		setFilteredData(null);
+		// filter data based on include/exclude keywords
 	};
 
 	const parseTimeToHours = (timeString) => {	
@@ -119,19 +108,23 @@ const Search = () => {
 					value={query}
 					placeholder="Search (e.g. '991 911', 'BMW E9', 'Mercedes W113 SL')"
 					onChange={(e) => setQuery(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'Enter') {
+							e.preventDefault();
+							fetchCarData();
+						}
+					}}
 				/>
 				<div className="d-flex gap-2 mt-2 mb-3">
 					<YearRangeFilter
+						key={`year-${resetKey}`}
 						onFilter={handleYearFilter}
-						onClear={handleYearClear}
+						onClear={() => {setFilteredData(null)}}
 					/>
 					<KeywordFilter
-						includeKeywords={includeKeywords}
-						excludeKeywords={excludeKeywords}
-						setIncludeKeywords={setIncludeKeywords}
-						setExcludeKeywords={setExcludeKeywords}
+						key={`keyword-${resetKey}`}
 						onFilter={handleKeywordFilter}
-						onClear={handleKeywordClear}
+						onClear={() => {setFilteredData(null)}}
 					/>
 				</div>
 				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
@@ -141,7 +134,7 @@ const Search = () => {
 					setQuery('');
 					setData(null);
 					setFilteredData(null);
-					handleYearClear();
+					setResetKey(prev => prev + 1);
 				}}> Reset Search
 				</Button>
 			</Form>
