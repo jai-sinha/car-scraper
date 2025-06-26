@@ -16,6 +16,9 @@ const Search = () => {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
+	const [yearFilter, setYearFilter] = useState(null);
+	const [keywordFilter, setKeywordFilter] = useState(null);
+
 	// Fetch data from API-- not using useEffect because we don't want this to run on component mount, only when triggered by pressing "search"
 	const fetchCarData = async () => {
 		setLoading(true);
@@ -45,6 +48,47 @@ const Search = () => {
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const applyFilters = (sourceData, yearParams = yearFilter, keywordParams = keywordFilter) => {
+		let result = sourceData;
+
+		// Apply year filter if active
+		if (yearParams) {
+			const { from, to } = yearParams;
+			result = Object.fromEntries(
+				Object.entries(result).filter(([key, car]) => {
+					const year = parseInt(car.year);
+					return year >= from && year <= to;
+				})
+			);
+		}
+
+		// Apply keyword filter if active
+		if (keywordParams) {
+			const { includeKeywords, excludeKeywords } = keywordParams;
+			result = Object.fromEntries(
+				Object.entries(result).filter(([key, car]) => {
+					const searchText = `${car.title || ''}`.toLowerCase();
+					
+					// Check include keywords (ALL must be present)
+					let includeMatch = true;
+					if (includeKeywords.length > 0) {
+						includeMatch = includeKeywords.every(keyword => searchText.includes(keyword));
+					}
+					
+					// Check exclude keywords (NONE should be present)
+					let excludeMatch = false;
+					if (excludeKeywords.length > 0) {
+						excludeMatch = excludeKeywords.some(keyword => searchText.includes(keyword));
+					}
+					
+					return includeMatch && !excludeMatch;
+				})
+			);
+		}
+		
+		return result;
 	};
 
 	const handleYearFilter = (yearFrom, yearTo) => {
@@ -78,8 +122,59 @@ const Search = () => {
  	}
 
 	const handleKeywordFilter = (include, exclude) => {
-		// Implement keyword filtering logic here
-		// filter data based on include/exclude keywords
+		// Validate inputs
+		if (!include?.trim() && !exclude?.trim()) {
+			alert("Please provide at least one keyword to filter by");
+			return;
+		}
+
+		if (!data) {
+			alert("No data to filter. Please search first.");
+			return;
+		}
+
+		// Process keywords
+		const includeKeywords = include ? include.toLowerCase().split(',').map(k => k.trim()).filter(k => k) : [];
+		const excludeKeywords = exclude ? exclude.toLowerCase().split(',').map(k => k.trim()).filter(k => k) : [];
+
+		// Save keyword filter parameters
+		const keywordParams = { includeKeywords, excludeKeywords };
+		setKeywordFilter(keywordParams);
+
+		// Apply all filters
+		const filtered = applyFilters(data, yearFilter, keywordParams);
+
+		if (Object.keys(filtered).length === 0) {
+			alert("No cars found matching the current filters.");
+			return;
+		}
+		setFilteredData(filtered);
+	};
+
+	// Clear year filter only
+	const clearYearFilter = () => {
+		setYearFilter(null);
+		if (keywordFilter) {
+			// Reapply keyword filter only
+			const filtered = applyFilters(data, null, keywordFilter);
+			setFilteredData(Object.keys(filtered).length > 0 ? filtered : null);
+		} else {
+			// No other filters active
+			setFilteredData(null);
+		}
+	};
+
+	// Clear keyword filter only
+	const clearKeywordFilter = () => {
+		setKeywordFilter(null);
+		if (yearFilter) {
+			// Reapply year filter only
+			const filtered = applyFilters(data, yearFilter, null);
+			setFilteredData(Object.keys(filtered).length > 0 ? filtered : null);
+		} else {
+			// No other filters active
+			setFilteredData(null);
+		}
 	};
 
 	const parseTimeToHours = (timeString) => {	
@@ -119,12 +214,12 @@ const Search = () => {
 					<YearRangeFilter
 						key={`year-${resetKey}`}
 						onFilter={handleYearFilter}
-						onClear={() => {setFilteredData(null)}}
+						onClear={clearYearFilter}
 					/>
 					<KeywordFilter
 						key={`keyword-${resetKey}`}
 						onFilter={handleKeywordFilter}
-						onClear={() => {setFilteredData(null)}}
+						onClear={clearKeywordFilter}
 					/>
 				</div>
 				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>

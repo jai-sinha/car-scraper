@@ -75,7 +75,7 @@ async def get_results(query, browser, debug=False):
 				parts = timeRemaining.split(":")
 				if len(parts) == 3:  # hours:minutes:seconds
 					timeRemaining = f"{parts[0]}h {parts[1]}m"
-				elif len(parts) == 2:  # minutes:seconds
+				elif len(parts) == 2 and int(parts[0]) > 0:  # minutes:seconds (and minutes > 0)
 					timeRemaining = f"{parts[0]}m"
 			else: # No colons and no days means just seconds remaining
 				timeRemaining = "0m"
