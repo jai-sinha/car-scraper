@@ -5,6 +5,8 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session
 import sqlalchemy.orm
 from sqlalchemy.exc import IntegrityError
+import redis
+import json
 import bcrypt
 import re
 from functools import wraps
@@ -12,6 +14,7 @@ from datetime import datetime, timezone
 
 app = Quart(__name__)
 app.secret_key = "secret key"
+REDIS_HOST = "redis" # Docker service name for Redis
 
 # Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
@@ -298,7 +301,7 @@ async def get_search():
 	
 	try:
 		results = await run_scrapers(query)
-		# Convert to serializable format for Car objects
+		# Convert to serializable format for Listing objects
 		serializable_results = {}
 		for key, value in results.items():
 			if hasattr(value, '__dict__'):
@@ -307,6 +310,22 @@ async def get_search():
 				serializable_results[key] = value
 		
 		return jsonify(serializable_results), 200
+	
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+	
+@app.route("/listings", methods=["GET"])
+async def get_all_listings():
+	"""Get all live listings from Redis"""
+	try:
+		r = redis.Redis(host="redis", port=6379, db=0)
+		data = r.get("bat_listings")
+		
+		if not data:
+			return jsonify({"error": "No listings found"}), 404
+		
+		dict_data = json.loads(data.decode("utf-8"))
+		return jsonify(dict_data), 200
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500

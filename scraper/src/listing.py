@@ -9,3 +9,14 @@ class Listing:
 
 	def __str__(self):
 		return f"Title: {self.title}\nURL: {self.url}\nCurrent Bid: {self.price}\nTime Remaining: {self.time}"
+
+	# Convert to dictionary for JSON serialization
+	def to_dict(self):
+		return {
+			"title": self.title,
+			"url": self.url,
+			"image": self.image,
+			"time": self.time,
+			"price": self.price,
+			"year": self.year
+		}

@@ -1,9 +1,10 @@
 import "../../App.css"
-import { Button, Container, Form, Dropdown, Row, Col } from "react-bootstrap";
+import { Button, Container, Form, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import CarSummary from "./CarSummary"
 import YearRangeFilter from "./YearRangeFilter";
 import KeywordFilter from "./KeywordFilter";
+import AllListings from "./AllListings";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,7 @@ const Search = () => {
 
 	const [data, setData] = useState(null);
 	const [filteredData, setFilteredData] = useState(null);
+
 	const [resetKey, setResetKey] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
@@ -236,24 +238,26 @@ const Search = () => {
 			<br></br>
 			{error && <p style={{ color: "red" }}>Error: {error}</p>}
 
-			{(filteredData && Object.keys(filteredData).length > 0) ? (
+			{(!data && !filteredData) ? (
+    			<AllListings />
+			) : (filteredData && Object.keys(filteredData).length > 0) ? (
 				<Row>
 					{Object.values(filteredData).map(car => (
-						<Col xs={12} md={6} lg={4} key={car.url}>
-							<CarSummary {...car} />
-						</Col>
+							<Col xs={12} md={6} lg={4} key={car.url}>
+								<CarSummary {...car} />
+							</Col>
 					))}
 				</Row>
 			) : data && (
 				<Row>
 					{Object.keys(data).length === 0 ? (
-						<p className='text-center'>No live listings match this search!</p>
+							<p className='text-center'>No live listings match this search!</p>
 					) : (
-						Object.values(data).map(car => (
-							<Col xs={12} md={6} lg={4} key={car.url}>
-								<CarSummary {...car} />
-							</Col>
-						))
+							Object.values(data).map(car => (
+								<Col xs={12} md={6} lg={4} key={car.url}>
+									<CarSummary {...car} />
+								</Col>
+							))
 					)}
 				</Row>
 			)}

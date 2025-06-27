@@ -126,10 +126,6 @@ async def get_all_live(browser, debug=False):
 	Returns:
 		All discovered listings as a dict
 	"""
-	if debug:
-		import time
-		start_time = time.time()
-
 	search_url = "https://bringatrailer.com/auctions/"
 	page = await browser.new_page()
 	try:
@@ -171,21 +167,17 @@ async def get_all_live(browser, debug=False):
 			# Scroll to bottom of page
 			await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
 			
-			# Optional: Wait for new listings to appear
+			# Wait for new listings to appear
 			try:
 				await page.wait_for_function(
 					f"document.querySelectorAll('.listing-card').length > {current_count}",
 					timeout=2000
 				)
 			except:
-				# If no new listings load within 5 seconds, we're probably done
+				# If no new listings load within 2 seconds, we're probably done
 				break
 					
 			attempts += 1
-
-		if debug:
-			import time
-			print(f"Total time taken to load all listings: {time.time() - start_time:.2f} seconds")
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -199,9 +191,6 @@ async def get_all_live(browser, debug=False):
 				}));
 			}
 		""")
-		if debug:
-			import time
-			print(f"Time to load and evaluate listings: {time.time() - start_time:.2f} seconds")
 
 		# Process each listing
 		print(f"Found {len(listings_data)} listings")
@@ -235,7 +224,7 @@ async def get_all_live(browser, debug=False):
 			
 			# Create listing
 			key = "BaT: " + data['title']
-			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid, year)
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid, year).to_dict()
 			
 			if debug:
 				print(f"Title: {data['title']}")
@@ -244,10 +233,6 @@ async def get_all_live(browser, debug=False):
 				print(f"Current Bid: {bid}")
 				print(f"Time Remaining: {timeRemaining}")
 				print("-" * 50)
-			
-		if debug:
-			import time
-			print(f"Total time taken: {time.time() - start_time:.2f} seconds")
 
 		# Return dict of BaT results
 		return out				
