@@ -12,17 +12,19 @@ REDIS_HOST = "redis"  # docker-compose service name
 def store_in_redis(results):
 	r = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 	r.set(f"bat_listings", json.dumps(results))
+	timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	r.set(f"last_updated", timestamp)
 
-async def run_scraper():
+async def run_scrapers():
 	async with async_playwright() as p:
 		browser = await p.chromium.launch(headless=True)
 		data = await get_all_live(browser, debug=False)
 		await browser.close()
+		
 	store_in_redis(data)
-	print(f"Scrape complete at: {datetime.now()}")
 
 def job():
-	asyncio.run(run_scraper())
+	asyncio.run(run_scrapers())
 
 if __name__ == "__main__":
 	schedule.every(30).minutes.do(job)

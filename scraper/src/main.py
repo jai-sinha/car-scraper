@@ -1,4 +1,5 @@
-from run_all import run_scrapers
+from run_all import run_search_scrapers
+from scheduler import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
@@ -300,7 +301,7 @@ async def get_search():
 	query = request.args.get("query")
 	
 	try:
-		results = await run_scrapers(query)
+		results = await run_search_scrapers(query)
 		# Convert to serializable format for Listing objects
 		serializable_results = {}
 		for key, value in results.items():
@@ -317,15 +318,24 @@ async def get_search():
 @app.route("/listings", methods=["GET"])
 async def get_all_listings():
 	"""Get all live listings from Redis"""
+	refresh = request.args.get("refresh")
+	if refresh and refresh.lower() == "true":
+		try:
+			await run_scrapers()  # Run the scraper to refresh data
+		except Exception as e:
+			return jsonify({"error": str(e)}), 500
+
 	try:
 		r = redis.Redis(host="redis", port=6379, db=0)
 		data = r.get("bat_listings")
+		timestamp = r.get("last_updated")
 		
 		if not data:
 			return jsonify({"error": "No listings found"}), 404
 		
-		dict_data = json.loads(data.decode("utf-8"))
-		return jsonify(dict_data), 200
+		timestamp = timestamp.decode("utf-8") 
+		data = json.loads(data.decode("utf-8"))
+		return jsonify({timestamp: data}), 200
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500
