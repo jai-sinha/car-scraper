@@ -116,8 +116,149 @@ async def get_results(query, browser, debug=False):
 		return {}
 
 
+async def get_all_live(browser, debug=False):
+	"""
+	Fetches all live auctions from bring a trailer and returns them as a dict.
+	
+	Args:
+		browser: Playwright async browser
+		debug: Print all info
+	Returns:
+		All discovered listings as a dict
+	"""
+	if debug:
+		import time
+		start_time = time.time()
+
+	search_url = "https://bringatrailer.com/auctions/"
+	page = await browser.new_page()
+	try:
+		await page.goto(search_url, timeout=TIMEOUT)
+		
+
+		# Then confirm there are live auctions matching the filter
+		await page.wait_for_function(
+			"""() => {
+					return document.querySelector('.listing-card') ||
+							document.querySelector('#auctions_filtered_message_none');
+			}""",
+			timeout=TIMEOUT
+		)
+		
+		# If there were no results, simply return an empty dict
+		if not await page.query_selector('.listing-card'):
+			if debug:
+				print("No listings found")
+			return {}
+		
+		# Scroll to load all listings
+		previous_count = 0
+		max_attempts = 100  # Prevent infinite loop
+		attempts = 0
+		while attempts < max_attempts:
+			# Get current count of listings
+			current_count = await page.evaluate("document.querySelectorAll('.listing-card').length")
+			
+			if debug:
+					print(f"Currently loaded: {current_count} listings")
+			
+			# If no new listings loaded, we've reached the end
+			if current_count == previous_count:
+					break
+					
+			previous_count = current_count
+			
+			# Scroll to bottom of page
+			await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+			
+			# Optional: Wait for new listings to appear
+			try:
+				await page.wait_for_function(
+					f"document.querySelectorAll('.listing-card').length > {current_count}",
+					timeout=2000
+				)
+			except:
+				# If no new listings load within 5 seconds, we're probably done
+				break
+					
+			attempts += 1
+
+		if debug:
+			import time
+			print(f"Total time taken to load all listings: {time.time() - start_time:.2f} seconds")
+
+		listings_data = await page.evaluate("""
+			() => {
+				const items = document.querySelectorAll('.listing-card');
+				return Array.from(items).map(item => ({
+					title: item.querySelector('h3')?.textContent?.trim() || '',
+					url: item.href || '',
+					image: item.querySelector('.thumbnail img')?.src || '',
+					bid: item.querySelector('.bidding-bid .bid-formatted')?.textContent?.trim() || '',
+					timeRemaining: item.querySelector('.countdown-text')?.textContent?.trim() || ''
+				}));
+			}
+		""")
+		if debug:
+			import time
+			print(f"Time to load and evaluate listings: {time.time() - start_time:.2f} seconds")
+
+		# Process each listing
+		print(f"Found {len(listings_data)} listings")
+
+		out = {}
+		for data in listings_data:
+			if not data['title'] or not data['url']:
+				continue
+
+			# Extract year from title using regex
+			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+			year = int(year_match.group(0)) if year_match else None
+				
+			# Clean up bid text
+			bid = str(data['bid'])
+			if bid.startswith("USD "):
+				bid = bid[4:]
+
+			# Format time, removing seconds
+			timeRemaining = str(data['timeRemaining'])
+			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
+				pass
+			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
+				parts = timeRemaining.split(":")
+				if len(parts) == 3:  # hours:minutes:seconds
+					timeRemaining = f"{parts[0]}h {parts[1]}m"
+				elif len(parts) == 2:  # minutes:seconds
+					timeRemaining = f"{parts[0]}m"
+			else: # No colons and no days means just seconds remaining
+				timeRemaining = "0m"
+			
+			# Create listing
+			key = "BaT: " + data['title']
+			out[key] = listing.Listing(key, data['url'], data['image'], timeRemaining, bid, year)
+			
+			if debug:
+				print(f"Title: {data['title']}")
+				# print(f"URL: {data['url']}")
+				print(f"Year: {year}")
+				print(f"Current Bid: {bid}")
+				print(f"Time Remaining: {timeRemaining}")
+				print("-" * 50)
+			
+		if debug:
+			import time
+			print(f"Total time taken: {time.time() - start_time:.2f} seconds")
+
+		# Return dict of BaT results
+		return out				
+
+	except Exception as e:
+		print(f'Error fetching BaT results: {e}')
+		return {}
+
+
 if __name__ == "__main__":
-	async def test():
+	async def test_get_results():
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(headless=True)
 
@@ -129,5 +270,16 @@ if __name__ == "__main__":
 			finally:
 				await browser.close()
 	
-	asyncio.run(test())
+	async def test_get_all_live():
+		async with async_playwright() as p:
+			browser = await p.chromium.launch(headless=True)
+
+			try:
+				await get_all_live(browser, debug=True)
+
+			finally:
+				await browser.close()
+	
+	# asyncio.run(test_get_results())
+	asyncio.run(test_get_all_live())
 	
