@@ -2,7 +2,7 @@ import asyncio
 from playwright.async_api import async_playwright
 import cars_and_bids, pcarmarket, bring_a_trailer
 
-async def run_scrapers(query):
+async def run_search_scrapers(query):
 	"""Run all scrapers asynchronously and return combined results"""
 	async with async_playwright() as p:
 		browser = await p.chromium.launch(
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 	async def test():
 		from urllib.parse import quote
 		query = quote("997 911")
-		results = await run_scrapers(query)
+		results = await run_search_scrapers(query)
 		print(results)
 
 	asyncio.run(test())

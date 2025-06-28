@@ -6,6 +6,8 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* * { font-family: 'Georgia', Times, serif; } */
+
 .card {
 	margin: .25rem;
 	border-width: 0;

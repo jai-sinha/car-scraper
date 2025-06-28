@@ -1,15 +1,18 @@
 import { Button, Dropdown, Form } from "react-bootstrap";
 import React, { useState } from "react";
+import { useSearch } from "../contexts/SearchContext";
 
-const KeywordFilter = ({ onFilter, onClear }) => {
+const KeywordFilter = () => {
 	const [includeKeywords, setIncludeKeywords] = useState('');
 	const [excludeKeywords, setExcludeKeywords] = useState('');
 	const [show, setShow] = useState(false);
 
+	const { handleKeywordFilter, clearKeywordFilter } = useSearch();
+
 	return (
 		<Dropdown show={show} onToggle={(isOpen) => setShow(isOpen)}>
 			<Dropdown.Toggle variant="outline-secondary" id="dropdown-keywords">
-				Keywords
+					Keywords
 			</Dropdown.Toggle>
 			<Dropdown.Menu>
 				<div style={{ padding: '10px', minWidth: '275px' }}>
@@ -29,12 +32,12 @@ const KeywordFilter = ({ onFilter, onClear }) => {
 						onChange={(e) => setExcludeKeywords(e.target.value)}
 					/>
 					<Button size="md" className="mt-2 me-2" 
-						onClick={() => {onFilter(includeKeywords, excludeKeywords); setShow(false);}}>
+						onClick={() => {handleKeywordFilter(includeKeywords, excludeKeywords); setShow(false);}}>
 						Filter
 					</Button>
 					<Button size="md" variant="secondary" className="mt-2" 
 						onClick={() => {
-							onClear()
+							clearKeywordFilter();
 							setExcludeKeywords('');
 							setIncludeKeywords('');
 							setShow(false);
