@@ -17,11 +17,10 @@ function AllListings() {
 					throw new Error(`HTTP error: ${response.status}`);
 				}
 				const data = await response.json();
-				const timestamp = Object.keys(data)[0];
-				const listingsObj = data[timestamp];
-				setListings(listingsObj);
+				setListings(data);
+				const timestamp = Object.values(data)[0].scraped_at;
 				calculateMins(timestamp);
-				console.log("Live listings data:", listingsObj);
+				console.log("Live listings data:", data);
 				console.log("Timestamp of listings:", timestamp);
 
 			} catch (err) {
@@ -35,17 +34,16 @@ function AllListings() {
 		setListings(null); // Reset listings to show loading state
 		setMinutesAgo(null); // Reset minutes ago to show loading state
 		try {
-			const response = await fetch(`${API_URL}/listings`);
-			console.log("Fetching live listings from:", `${API_URL}/listings`);
+			const response = await fetch(`${API_URL}/listings?refresh=true`);
+			console.log("Fetching live listings from:", `${API_URL}/listings?refresh=true`);
 			if (!response.ok) {
 				throw new Error(`HTTP error: ${response.status}`);
 			}
 			const data = await response.json();
-			const timestamp = Object.keys(data)[0];
-			const listingsObj = data[timestamp];
-			setListings(listingsObj);
+			setListings(data);
+			const timestamp = Object.values(data)[0].scraped_at;
 			calculateMins(timestamp);
-			console.log("Live listings data:", listingsObj);
+			console.log("Live listings data:", data);
 			console.log("Timestamp of listings:", timestamp);
 
 		} catch (err) {
@@ -59,7 +57,6 @@ function AllListings() {
       const diffMins = Math.floor((now - timestampDate) / 60000);
       setMinutesAgo(diffMins);
 	}
-
 
 	if (!listings) {
 		return <div className="text-center">Loading live listings...</div>;

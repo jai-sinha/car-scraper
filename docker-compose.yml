@@ -17,20 +17,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    # Same image, but runs different command
     command: ["python", "-u", "scraper/src/scheduler.py"]
     depends_on:
-      - redis
+      - postgres
     volumes:
       - ./scraper:/app/scraper
     restart: unless-stopped
 
-  redis:
-    image: redis:latest
-    container_name: redis
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: live_auctions
     ports:
-      - "6379:6379"
-    restart: unless-stopped
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   frontend:
     build:
@@ -45,3 +48,13 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+x-resources: &default-resources
+  deploy:
+    resources:
+      limits:
+        memory: 2G
+
+
+volumes:
+  pgdata:
