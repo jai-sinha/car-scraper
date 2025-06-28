@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import CarSummary from "./CarSummary";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const PAGE_SIZE = 40;
 
 function AllListings() {
-  const [listings, setListings] = useState(null);
-  const [minutesAgo, setMinutesAgo] = useState(null);
+	const [listings, setListings] = useState(null);
+	const [minutesAgo, setMinutesAgo] = useState(null);
+	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
 	useEffect(() => {
 		const fetchListings = async () => {
@@ -20,9 +22,6 @@ function AllListings() {
 				setListings(data);
 				const timestamp = Object.values(data)[0].scraped_at;
 				calculateMins(timestamp);
-				console.log("Live listings data:", data);
-				console.log("Timestamp of listings:", timestamp);
-
 			} catch (err) {
 				console.error(err);
 			}
@@ -33,9 +32,9 @@ function AllListings() {
 	const refreshListings = async () => {
 		setListings(null); // Reset listings to show loading state
 		setMinutesAgo(null); // Reset minutes ago to show loading state
+		setVisibleCount(PAGE_SIZE);
 		try {
 			const response = await fetch(`${API_URL}/listings?refresh=true`);
-			console.log("Fetching live listings from:", `${API_URL}/listings?refresh=true`);
 			if (!response.ok) {
 				throw new Error(`HTTP error: ${response.status}`);
 			}
@@ -43,8 +42,6 @@ function AllListings() {
 			setListings(data);
 			const timestamp = Object.values(data)[0].scraped_at;
 			calculateMins(timestamp);
-			console.log("Live listings data:", data);
-			console.log("Timestamp of listings:", timestamp);
 
 		} catch (err) {
 			console.error(err);
@@ -62,17 +59,30 @@ function AllListings() {
 		return <div className="text-center">Loading live listings...</div>;
 	}
 
+	const cars = Object.values(listings);
+  	const visibleCars = cars.slice(0, visibleCount);
+
 	return (
 		<div className="text-center">
-			<h1>All Live* Auction Listings</h1>
+			<h1>All {cars.length} Live* Auction Listings</h1>
 			<h6 style={{ cursor: "pointer", display: "inline-block" }} onClick={refreshListings}>*as of {minutesAgo} minutes ago (click me to refresh)</h6>
 			<Row>
-				{Object.values(listings).map(car => (
-					<Col xs={12} md={6} lg={4} key={car.url}>
+				{visibleCars.map(car => (
+					<Col xs={12} md={6} lg={3} key={car.url}>
 						<CarSummary {...car} />
 					</Col>
 				))}
 			</Row>
+			{visibleCount < cars.length && (
+				<Button
+					variant="primary"
+					className="mt-3"
+					size="lg"
+					onClick={() => setVisibleCount(visibleCount + PAGE_SIZE)}
+				>
+					Show More
+				</Button>
+			)}
 		</div>
 	);
 }
