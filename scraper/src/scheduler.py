@@ -2,10 +2,9 @@ import schedule
 import time
 import asyncio
 import psycopg2
-import json
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright
-from bring_a_trailer import get_all_live
+import bring_a_trailer, pcarmarket, cars_and_bids
 
 PG_CONN = {
 	"host": "postgres",
@@ -39,9 +38,46 @@ def store_in_postgres(results):
 
 async def run_scrapers():
 	async with async_playwright() as p:
-		browser = await p.chromium.launch(headless=True)
-		data = await get_all_live(browser, debug=False)
-		await browser.close()
+		# bringatrailer
+		browser_bat = await p.chromium.launch(headless=True)
+		context_bat = await browser_bat.new_context()
+		# pcarmarket
+		browser_pcar = await p.chromium.launch(headless=True)
+		context_pcar = await browser_pcar.new_context()
+		# carsandbids with custom context and args
+		browser_cab = await p.chromium.launch(headless=True,
+			args=[
+				'--no-sandbox',
+				'--disable-setuid-sandbox',
+				'--disable-dev-shm-usage',
+				'--disable-accelerated-2d-canvas',
+				'--no-first-run',
+				'--no-zygote',
+				'--disable-gpu',
+				'--disable-web-security',
+				'--disable-features=VizDisplayCompositor'
+			]
+		)
+		context_cab = await browser_cab.new_context(
+			user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+			viewport={'width': 1920, 'height': 1080},
+			locale='en-US',
+			timezone_id='America/New_York'
+		)
+		try:
+			results = await asyncio.gather(
+				bring_a_trailer.get_all_live(context_bat),
+				pcarmarket.get_all_live(context_pcar),
+				cars_and_bids.get_all_live(context_cab)
+			)
+		finally:
+			await browser_bat.close()
+			await browser_pcar.close()
+			await browser_cab.close()
+		# Combine results
+		data = {}
+		for result_dict in results:
+			data.update(result_dict)
 
 	store_in_postgres(data)
 
