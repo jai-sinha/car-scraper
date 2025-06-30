@@ -50,9 +50,9 @@ function AllListings() {
 
 	const calculateMins = (timestamp) => {
 		const timestampDate = new Date(timestamp.replace(" ", "T") + "Z");
-      const now = new Date();
-      const diffMins = Math.floor((now - timestampDate) / 60000);
-      setMinutesAgo(diffMins);
+		const now = new Date();
+		const diffMins = Math.floor((now - timestampDate) / 60000);
+		setMinutesAgo(diffMins);
 	}
 
 	if (!listings) {
@@ -60,7 +60,7 @@ function AllListings() {
 	}
 
 	const cars = Object.values(listings);
-  	const visibleCars = cars.slice(0, visibleCount);
+	const visibleCars = cars.slice(0, visibleCount);
 
 	return (
 		<div className="text-center">

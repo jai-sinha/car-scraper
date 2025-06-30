@@ -180,21 +180,18 @@ async def get_all_live(browser, debug=False):
 				year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
 				year = int(year_match.group(0)) if year_match else None
 
-				bid = data['bid']
 				end_time = datetime.fromtimestamp(int(data['timeRemaining']), timezone.utc)
-				title = data['title']
 
 				# Create listing
 				url = f"https://pcarmarket.com{data['url']}"
-				key = f"PCAR: {title}"
-				out[key] = listing.Listing(key, url, data['image'], end_time, bid, year).to_dict()
+				out[url] = listing.Listing(f"PCAR: {data['title']}", url, data['image'], end_time, data['bid'], year).to_dict()
 				
 				if debug:
-					print(f"Title: {title}")
+					print(f"Title: {data['title']}")
 					print(f"URL: {url}")
 					print(f"Year: {year}")
-					print(f"Current Bid: {bid}")
-					print(f"Time Remaining: {end_time}")
+					print(f"Current Bid: {data['bid']}")
+					print(f"End Time (UTC): {end_time}")
 					print("-" * 50)
 
 			# Check for next page button using li.next:not(.disabled) a

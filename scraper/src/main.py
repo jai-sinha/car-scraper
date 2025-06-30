@@ -334,7 +334,7 @@ async def get_all_listings():
 		conn = psycopg2.connect(**PG_CONN)
 		cur = conn.cursor()
 		cur.execute("""
-			SELECT *
+			SELECT title, url, image, time, price, year, scraped_at
 			FROM live_listings
 			ORDER BY time DESC
 		""")

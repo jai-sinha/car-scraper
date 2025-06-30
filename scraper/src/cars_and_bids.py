@@ -179,7 +179,7 @@ async def get_all_live(browser, debug=False):
 			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
 			year = int(year_match.group(0)) if year_match else None
 		
-			# Format, removing seconds, and lowercasing "Day" if present
+			# Process end time in UTC
 			timeRemaining = str(data['timeRemaining']).lower()
 			if "day" in timeRemaining.lower(): # Keep days as-is (e.g., "1 day", "2 days")
 				delta = timedelta(days=int(timeRemaining.split()[0]))
@@ -199,10 +199,8 @@ async def get_all_live(browser, debug=False):
 			end_time = scrape_time + delta
 			
 			# Create listing
-			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
-			out[key] = listing.Listing(key, url, data['image'], end_time, data['bid'], year).to_dict()
-
+			out[url] = listing.Listing(f"C&B: {data['title']}", url, data['image'], end_time, data['bid'], year).to_dict()
 
 			print(f"Title: {data['title']}")
 			print(f"URL: {url}")

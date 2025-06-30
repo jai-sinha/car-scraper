@@ -17,17 +17,15 @@ def store_in_postgres(results):
 	conn = psycopg2.connect(**PG_CONN)
 	cur = conn.cursor()
 	scraped_at = datetime.now(timezone.utc)
+
 	for key, listing in results.items():
 		cur.execute("""
 			INSERT INTO live_listings (url, title, image, time, price, year, scraped_at)
 			VALUES (%s, %s, %s, %s, %s, %s, %s)
 			ON CONFLICT (url) DO UPDATE SET
-					title = EXCLUDED.title,
-					image = EXCLUDED.image,
-					time = time,
-					price = price,
-					year = EXCLUDED.year,
-					scraped_at = scraped_at
+				time = EXCLUDED.time,
+				price = EXCLUDED.price,
+				scraped_at = EXCLUDED.scraped_at
 		""", (
 			listing["url"],
 			listing["title"],
@@ -90,9 +88,7 @@ def job():
 	asyncio.run(run_scrapers())
 
 if __name__ == "__main__":
-	schedule.every(30).minutes.do(job)
-	time.sleep(360)
+	schedule.every(1).minutes.do(job)
 	job()  # run once on startup
 	while True:
 		schedule.run_pending()
-		time.sleep(60)

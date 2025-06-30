@@ -198,12 +198,10 @@ async def get_all_live(browser, debug=False):
 			year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
 			year = int(year_match.group(0)) if year_match else None
 				
-			# Clean up bid text
-			bid = str(data['bid'])
-			if bid.startswith("USD "):
-				bid = bid[4:]
+			# Clean up bid text, removing currency code prefix
+			bid = str(data['bid'])[4:]
 
-			# Format time, removing seconds
+			# Process end time in UTC
 			timeRemaining = str(data['timeRemaining'])
 			if "day" in timeRemaining.lower(): # Keep days as-is (e.g., "1 day", "2 days")
 				delta = timedelta(days=int(timeRemaining.split()[0]))
