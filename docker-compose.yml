@@ -29,7 +29,7 @@ services:
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: live_auctions
+      POSTGRES_DB: auctions
     ports:
       - "5432:5432"
     volumes:

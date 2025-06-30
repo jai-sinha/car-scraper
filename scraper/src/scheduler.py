@@ -8,7 +8,7 @@ import bring_a_trailer, pcarmarket, cars_and_bids
 
 PG_CONN = {
 	"host": "postgres",
-	"database": "live_auctions",
+	"database": "auctions",
 	"user": "username",
 	"password": "password"
 }
@@ -17,15 +17,20 @@ def store_in_postgres(results):
 	conn = psycopg2.connect(**PG_CONN)
 	cur = conn.cursor()
 	scraped_at = datetime.now(timezone.utc)
-	cur.execute("DELETE FROM listings;") # Clear previous listings
 	for key, listing in results.items():
 		cur.execute("""
-			INSERT INTO listings (source, title, url, image, time, price, year, scraped_at)
-			VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+			INSERT INTO live_listings (url, title, image, time, price, year, scraped_at)
+			VALUES (%s, %s, %s, %s, %s, %s, %s)
+			ON CONFLICT (url) DO UPDATE SET
+					title = EXCLUDED.title,
+					image = EXCLUDED.image,
+					time = time,
+					price = price,
+					year = EXCLUDED.year,
+					scraped_at = scraped_at
 		""", (
-			"bringatrailer",  # or dynamic source
-			listing["title"],
 			listing["url"],
+			listing["title"],
 			listing["image"],
 			listing["time"],
 			listing["price"],
@@ -38,10 +43,9 @@ def store_in_postgres(results):
 
 async def run_scrapers():
 	async with async_playwright() as p:
-		# bringatrailer
+		# bringatrailer, pcarmarket
 		browser_bat = await p.chromium.launch(headless=True)
 		context_bat = await browser_bat.new_context()
-		# pcarmarket
 		browser_pcar = await p.chromium.launch(headless=True)
 		context_pcar = await browser_pcar.new_context()
 		# carsandbids with custom context and args
@@ -74,6 +78,7 @@ async def run_scrapers():
 			await browser_bat.close()
 			await browser_pcar.close()
 			await browser_cab.close()
+
 		# Combine results
 		data = {}
 		for result_dict in results:

@@ -17,7 +17,7 @@ app.secret_key = "secret key"
 
 PG_CONN = {
 	"host": "postgres",  # or "localhost" if running locally
-	"database": "live_auctions",
+	"database": "auctions",
 	"user": "username",
 	"password": "password"
 }
@@ -334,8 +334,9 @@ async def get_all_listings():
 		conn = psycopg2.connect(**PG_CONN)
 		cur = conn.cursor()
 		cur.execute("""
-			SELECT source, title, url, image, time, price, year, scraped_at
-			FROM listings
+			SELECT *
+			FROM live_listings
+			ORDER BY time DESC
 		""")
 		rows = cur.fetchall()
 		cur.close()
@@ -347,9 +348,8 @@ async def get_all_listings():
 		# Convert rows to a dictionary format
 		listings = {}
 		for row in rows:
-			source, title, url, image, time_rem, price, year, scraped_at = row
+			title, url, image, time_rem, price, year, scraped_at = row
 			listings[title] = {
-				"source": source,
 				"title": title,
 				"url": url,
 				"image": image,

@@ -2,6 +2,7 @@ from playwright.async_api import async_playwright
 import re
 import asyncio
 import listing
+from datetime import timezone, datetime, timedelta
 
 TIMEOUT = 10000
 
@@ -168,6 +169,7 @@ async def get_all_live(browser, debug=False):
 		if debug:
 			print(f"Found {len(listings_data)} auction listings")
 
+		scrape_time = datetime.now(timezone.utc)
 		out = {}
 		for data in listings_data:
 			if not data['title'] or not data['timeRemaining']:
@@ -179,28 +181,34 @@ async def get_all_live(browser, debug=False):
 		
 			# Format, removing seconds, and lowercasing "Day" if present
 			timeRemaining = str(data['timeRemaining']).lower()
-			if "day" in timeRemaining: # Keep days as-is (e.g., "1 day", "2 days")
-				pass
+			if "day" in timeRemaining.lower(): # Keep days as-is (e.g., "1 day", "2 days")
+				delta = timedelta(days=int(timeRemaining.split()[0]))
 			elif ":" in timeRemaining: # Handle time formats like "1:23:45" or "23:45"
 				parts = timeRemaining.split(":")
 				if len(parts) == 3:  # hours:minutes:seconds
-					timeRemaining = f"{parts[0]}h {parts[1]}m"
-				elif len(parts) == 2 and int(parts[0]) > 0:  # minutes:seconds (and minutes > 0)
-					timeRemaining = f"{parts[0]}m"
+					delta = timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
+				elif len(parts) == 2:  # minutes:seconds
+					delta = timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
+			elif "ended" in timeRemaining.lower(): # Handle cars that have just ended
+				print(f"Skipping ended auction: {data['title']}, {data['timeRemaining']}", {data['url']})
+				print("-" * 50)
+				continue
 			else: # No colons and no days means just seconds remaining
-				timeRemaining = "0m"
+				delta = timedelta(seconds=int(timeRemaining.split('s')[0]))
+
+			end_time = scrape_time + delta
 			
 			# Create listing
 			key = f"C&B: {data['title']}"
 			url = f"https://carsandbids.com{data['url']}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, data['bid'], year).to_dict()
+			out[key] = listing.Listing(key, url, data['image'], end_time, data['bid'], year).to_dict()
 
 
 			print(f"Title: {data['title']}")
 			print(f"URL: {url}")
 			print(f"Year: {year}")
 			print(f"Current Bid: {data['bid']}")
-			print(f"Time Remaining: {timeRemaining}")
+			print(f"End Time (UTC): {end_time.isoformat()}")
 			print("-" * 50)
 
 		# Return dict of C&B results

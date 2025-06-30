@@ -8,7 +8,7 @@ class Listing:
 		self.year 	= year
 
 	def __str__(self):
-		return f"Title: {self.title}\nURL: {self.url}\nCurrent Bid: {self.price}\nTime Remaining: {self.time}"
+		return f"Title: {self.title}\nURL: {self.url}\nCurrent Bid: {self.price}\nEnd Time (UTC): {self.time}"
 
 	# Convert to dictionary for JSON serialization
 	def to_dict(self):
