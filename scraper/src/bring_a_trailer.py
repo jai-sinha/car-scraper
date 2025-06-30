@@ -118,7 +118,7 @@ async def get_results(query, browser, debug=False):
 
 async def get_all_live(browser, debug=False):
 	"""
-	Fetches all live auctions from bring a trailer and returns them as a dict.
+	Fetches all live auctions from Bring a Trailer and returns them as a dict.
 	
 	Args:
 		browser: Playwright async browser
@@ -140,12 +140,6 @@ async def get_all_live(browser, debug=False):
 			}""",
 			timeout=TIMEOUT
 		)
-		
-		# If there were no results, simply return an empty dict
-		if not await page.query_selector('.listing-card'):
-			if debug:
-				print("No listings found")
-			return {}
 		
 		# Scroll to load all listings
 		previous_count = 0
