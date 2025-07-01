@@ -142,33 +142,17 @@ async def get_all_live(context, debug=False):
 		)
 		
 		# Scroll to load all listings
-		previous_count = 0
-		max_attempts = 25  # Prevent infinite loop
-		attempts = 0
-		while attempts < max_attempts:
-			# Get current count of listings
-			current_count = await page.evaluate("document.querySelectorAll('.listing-card').length")
-			
-			# If no new listings loaded, we've reached the end
-			if current_count == previous_count:
-				break
-					
-			previous_count = current_count
-			
-			# Scroll to bottom of page
+		for _ in range(25):
+			count = await page.evaluate("document.querySelectorAll('.listing-card').length")
 			await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-			await asyncio.sleep(1)  # Give browser time to render
-			# Wait for new listings to appear
+			await asyncio.sleep(1)  # Give browser time to render to deal w CPU limits
+			
 			try:
 				await page.wait_for_function(
-					f"document.querySelectorAll('.listing-card').length > {current_count}",
+					f"document.querySelectorAll('.listing-card').length > {count}",
 					timeout=3000
 				)
-			except:
-				# If no new listings load within 2 seconds, we're probably done
-				break
-					
-			attempts += 1
+			except: break # If no new listings loaded, we're done scrolling
 
 		listings_data = await page.evaluate("""
 			() => {
@@ -210,10 +194,10 @@ async def get_all_live(context, debug=False):
 					delta = timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
 				elif len(parts) == 2:  # minutes:seconds
 					delta = timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
+
+			# Sometimes the time remaining is "ended" but the auction is still up and waiting for new bids. If it's actually over, it will be removed in the next scrape
 			elif "ended" in timeRemaining.lower(): # Handle auctions that have just ended
-				print(f"Skipping ended auction: {data['title']}, {data['timeRemaining']}", {data['url']})
-				print("-" * 50)
-				continue
+				delta = timedelta(seconds=2) 
 			else: # No colons and no days means just seconds remaining
 				delta = timedelta(seconds=int(timeRemaining.split('s')[0]))
 
@@ -238,30 +222,100 @@ async def get_all_live(context, debug=False):
 		return {}
 
 
+async def get_listing_details(listing: listing.Listing, context, debug=False):
+	"""
+	Fetches details and keywords for a specific listing from Bring a Trailer.
+
+	Args:
+		listing: The listing object to fetch details for.
+		context: Playwright async context
+		debug: Print all info
+	Returns:
+		A modified listing dictionary with keywords added.
+	"""
+	page = await context.new_page()
+	try:
+		await page.goto(listing.url, timeout=TIMEOUT)
+		await page.wait_for_selector('.column-groups', timeout=TIMEOUT)
+
+		# Get make, model from the detail page 
+		listing_keywords = await page.evaluate("""
+			() => {
+				const keywords = [];
+				const keywordElements = Array.from(document.querySelectorAll('.group-item-wrap .group-item')).slice(0, 2);
+				keywordElements.forEach(el => {
+					const label = el.querySelector('.group-title-label');
+					let value = '';
+					if (label) {
+						let node = label.nextSibling;
+						while (node) {
+							if (node.nodeType === Node.TEXT_NODE) {
+									value += node.textContent;
+							}
+							node = node.nextSibling;
+						}
+					} else {
+						value = el.innerText;
+					}
+					if (value) {
+						// Only keep the part before the first parenthesis, if present
+						value = value.split('(')[0].trim();
+						if (value) {
+							keywords.push(value);
+						}
+					}
+				});
+				return keywords;
+			}
+		""")
+
+		# Add keywords including title to the listing object
+		listing.keywords.extend(listing_keywords)
+		listing.keywords.append(listing.title)
+
+		if debug:
+			print(f"Keywords for {listing.title}: {listing.keywords}")
+
+	except Exception as e:
+		print(f'Error fetching BaT details: {e}')
+		return
+	finally:
+		await page.close()
+
 if __name__ == "__main__":
-	async def test_get_results():
+	async def test(test_type):
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(headless=True)
 
-			try:
-				from urllib.parse import quote
-				query = quote("911 991")
-				await get_results(query, browser, debug=True)
+			match test_type:
+				case "results":
+					try:
+						from urllib.parse import quote
+						query = quote("911 991")
+						await get_results(query, browser, debug=True)
 
-			finally:
-				await browser.close()
-	
-	async def test_get_all_live():
-		async with async_playwright() as p:
-			browser = await p.chromium.launch(headless=True)
-			context = await browser.new_context()
+					finally:
+						await browser.close()
 
-			try:
-				await get_all_live(context, debug=True)
+				case "live":
+					context = await browser.new_context()
+					try:
+						await get_all_live(context, debug=True)
 
-			finally:
-				await browser.close()
+					finally:
+						await browser.close()
+
+				case "keywords":
+					context = await browser.new_context()
+					try:
+						# Example listing, replace with actual URL
+						url = "https://bringatrailer.com/listing/2005-porsche-911-carrera-coupe-44/"
+						test = listing.Listing("2015 porsche 911 carrera coupe", url, "","", "", 2020)
+						await get_listing_details(test, context, debug=True)
+
+					finally:
+						await browser.close()
 	
 	# asyncio.run(test_get_results())
-	asyncio.run(test_get_all_live())
+	asyncio.run(test("keywords"))
 	

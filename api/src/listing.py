@@ -1,11 +1,12 @@
 class Listing:
-	def __init__(self, title, url, image, time, price, year):
+	def __init__(self, title, url, image, time, price, year, keywords=None):
 		self.title 	= title
 		self.url 	= url
 		self.image 	= image
 		self.time 	= time
 		self.price 	= price
 		self.year 	= year
+		self.keywords = keywords or []
 
 	def __str__(self):
 		return f"Title: {self.title}\nURL: {self.url}\nCurrent Bid: {self.price}\nEnd Time (UTC): {self.time}"
@@ -18,5 +19,6 @@ class Listing:
 			"image": self.image,
 			"time": self.time,
 			"price": self.price,
-			"year": self.year
+			"year": self.year,
+			"keywords": self.keywords
 		}
