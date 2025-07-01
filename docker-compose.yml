@@ -9,7 +9,7 @@ services:
       - DATABASE_URL=sqlite:///users.db
       - PYTHONUNBUFFERED=1
     volumes:
-      - ./scraper:/app/scraper
+      - ./api:/app/api
       - ./data:/app/data
     restart: unless-stopped
 
@@ -17,11 +17,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    command: ["python", "-u", "scraper/src/scheduler.py"]
+    command: ["python", "-u", "api/src/scheduler.py"]
     depends_on:
       - postgres
     volumes:
-      - ./scraper:/app/scraper
+      - ./api:/app/api
     restart: unless-stopped
 
   postgres:
