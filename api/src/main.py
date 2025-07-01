@@ -26,10 +26,10 @@ PG_CONN = {
 	"password": os.environ.get("PG_PASSWORD")
 }
 
-# Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
-# Database setup
-DATABASE_URL = 'sqlite:///users.db'
+
+# Setup PostgreSQL connection w/ SQLAlchemy
+DATABASE_URL = os.environ.get("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = sqlalchemy.orm.declarative_base()
