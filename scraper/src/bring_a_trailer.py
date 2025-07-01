@@ -116,18 +116,18 @@ async def get_results(query, browser, debug=False):
 		return {}
 
 
-async def get_all_live(browser, debug=False):
+async def get_all_live(context, debug=False):
 	"""
 	Fetches all live auctions from Bring a Trailer and returns them as a dict.
 	
 	Args:
-		browser: Playwright async browser
+		context: Playwright async browser context
 		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
 	search_url = "https://bringatrailer.com/auctions/"
-	page = await browser.new_page()
+	page = await context.new_page()
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
 		
@@ -143,29 +143,26 @@ async def get_all_live(browser, debug=False):
 		
 		# Scroll to load all listings
 		previous_count = 0
-		max_attempts = 100  # Prevent infinite loop
+		max_attempts = 25  # Prevent infinite loop
 		attempts = 0
 		while attempts < max_attempts:
 			# Get current count of listings
 			current_count = await page.evaluate("document.querySelectorAll('.listing-card').length")
 			
-			if debug:
-					print(f"Currently loaded: {current_count} listings")
-			
 			# If no new listings loaded, we've reached the end
 			if current_count == previous_count:
-					break
+				break
 					
 			previous_count = current_count
 			
 			# Scroll to bottom of page
 			await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-			
+			await asyncio.sleep(1)  # Give browser time to render
 			# Wait for new listings to appear
 			try:
 				await page.wait_for_function(
 					f"document.querySelectorAll('.listing-card').length > {current_count}",
-					timeout=2000
+					timeout=3000
 				)
 			except:
 				# If no new listings load within 2 seconds, we're probably done
@@ -187,7 +184,9 @@ async def get_all_live(browser, debug=False):
 		""")
 
 		# Process each listing
-		print(f"Found {len(listings_data)} listings")
+		if debug:
+			print(f"Found {len(listings_data)} listings")
+
 		scrape_time = datetime.now(timezone.utc)
 		out = {}
 		for data in listings_data:
@@ -255,9 +254,10 @@ if __name__ == "__main__":
 	async def test_get_all_live():
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(headless=True)
+			context = await browser.new_context()
 
 			try:
-				await get_all_live(browser, debug=True)
+				await get_all_live(context, debug=True)
 
 			finally:
 				await browser.close()

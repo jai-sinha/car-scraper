@@ -10,31 +10,10 @@ function AllListings() {
 	const [minutesAgo, setMinutesAgo] = useState(null);
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-	useEffect(() => {
-		const fetchListings = async () => {
-			try {
-				const response = await fetch(`${API_URL}/listings`);
-				console.log("Fetching live listings from:", `${API_URL}/listings`);
-				if (!response.ok) {
-					throw new Error(`HTTP error: ${response.status}`);
-				}
-				const data = await response.json();
-				setListings(data);
-				const timestamp = Object.values(data)[0].scraped_at;
-				calculateMins(timestamp);
-			} catch (err) {
-				console.error(err);
-			}
-		};
-		fetchListings();
-	}, []);
-
-	const refreshListings = async () => {
-		setListings(null); // Reset listings to show loading state
-		setMinutesAgo(null); // Reset minutes ago to show loading state
-		setVisibleCount(PAGE_SIZE);
+	const fetchListings = async () => {
 		try {
-			const response = await fetch(`${API_URL}/listings?refresh=true`);
+			const response = await fetch(`${API_URL}/listings`);
+			console.log("Fetching live listings from:", `${API_URL}/listings`);
 			if (!response.ok) {
 				throw new Error(`HTTP error: ${response.status}`);
 			}
@@ -42,10 +21,20 @@ function AllListings() {
 			setListings(data);
 			const timestamp = Object.values(data)[0].scraped_at;
 			calculateMins(timestamp);
-
 		} catch (err) {
 			console.error(err);
 		}
+	};
+
+	useEffect(() => {
+		fetchListings();
+	}, []);
+
+	const refreshListings = async () => {
+		setListings(null); // Reset listings to show loading state
+		setMinutesAgo(null); // Reset minutes ago to show loading state
+		setVisibleCount(PAGE_SIZE);
+		await fetchListings();
 	};
 
 	const calculateMins = (timestamp) => {
@@ -64,7 +53,7 @@ function AllListings() {
 
 	return (
 		<div className="text-center">
-			<h1>All {cars.length} Live* Auction Listings</h1>
+			<h1>{cars.length} Live* Auction Listings</h1>
 			<h6 style={{ cursor: "pointer", display: "inline-block" }} onClick={refreshListings}>*as of {minutesAgo} minutes ago (click me to refresh)</h6>
 			<Row>
 				{visibleCars.map(car => (

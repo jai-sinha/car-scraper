@@ -190,8 +190,9 @@ async def get_all_live(browser, debug=False):
 				elif len(parts) == 2:  # minutes:seconds
 					delta = timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
 			elif "ended" in timeRemaining.lower(): # Handle cars that have just ended
-				print(f"Skipping ended auction: {data['title']}, {data['timeRemaining']}", {data['url']})
-				print("-" * 50)
+				if debug:
+					print(f"Skipping ended auction: {data['title']}, {data['timeRemaining']}", {data['url']})
+					print("-" * 50)
 				continue
 			else: # No colons and no days means just seconds remaining
 				delta = timedelta(seconds=int(timeRemaining.split('s')[0]))
@@ -202,12 +203,13 @@ async def get_all_live(browser, debug=False):
 			url = f"https://carsandbids.com{data['url']}"
 			out[url] = listing.Listing(f"C&B: {data['title']}", url, data['image'], end_time, data['bid'], year).to_dict()
 
-			print(f"Title: {data['title']}")
-			print(f"URL: {url}")
-			print(f"Year: {year}")
-			print(f"Current Bid: {data['bid']}")
-			print(f"End Time (UTC): {end_time.isoformat()}")
-			print("-" * 50)
+			if debug:
+				print(f"Title: {data['title']}")
+				print(f"URL: {url}")
+				print(f"Year: {year}")
+				print(f"Current Bid: {data['bid']}")
+				print(f"End Time (UTC): {end_time.isoformat()}")
+				print("-" * 50)
 
 		# Return dict of C&B results
 		return out
