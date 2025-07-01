@@ -1,8 +1,8 @@
 from playwright.async_api import async_playwright
 from datetime import datetime, timezone
 import re
-import asyncio
 import listing
+import asyncio
 
 TIMEOUT = 10000
 
@@ -31,8 +31,8 @@ async def get_results(query, browser, debug=False):
 		# Check to see if any results exist
 		await page.wait_for_function(
 			"""() => {
-					return document.querySelector('.post.clearfix.searchResult') !== null ||
-							document.body.textContent.includes('No results were found in auctions matching your query');
+				return document.querySelector('.post.clearfix.searchResult') !== null ||
+					document.body.textContent.includes('No results were found in auctions matching your query');
 			}""",
 			timeout=TIMEOUT
 		)
@@ -75,7 +75,7 @@ async def get_results(query, browser, debug=False):
 			year = int(year_match.group(0)) if year_match else None
 
 			# Check if this is a live auction
-			if data['bid']: 
+			if not data['title'].startswith("MarketPlace"):
 				bid = data['bid']
 				timeRemaining = countdown(data['timeRemaining'])
 				title = data['title']
@@ -89,7 +89,7 @@ async def get_results(query, browser, debug=False):
 			# Create listing
 			url = f"https://pcarmarket.com{data['url']}"
 			key = f"PCAR: {title}"
-			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid, year)
+			out[key] = listing.Listing(key, url, data['image'], timeRemaining, bid, year).to_dict()
 			
 			if debug:
 				print(f"Title: {title}")
@@ -105,7 +105,116 @@ async def get_results(query, browser, debug=False):
 	except Exception as e:
 		print(f"Error scraping PCAR auctions: {e}")
 		return {}
-	
+
+async def get_all_live(browser, debug=False):
+	"""
+	Fetches all live auctions from PCARMARKET, and returns them as a dict.
+
+	Args:
+		browser: Playwright async browser
+		debug: Print all info
+	Returns:
+		All discovered listings as a dict
+	"""
+
+	search_url = "https://www.pcarmarket.com/auction/all/?page=1"
+
+	page = await browser.new_page()
+	try:
+		await page.goto(search_url, timeout=TIMEOUT)
+		await page.wait_for_function(
+			"""() => {
+				return document.querySelector('.post.car') !== null
+			}""",
+			timeout=TIMEOUT
+		)
+
+		listings_data = await page.evaluate("""
+			() => {
+			const items = document.querySelectorAll('.post.car');
+			return Array.from(items).map(item => ({
+				title: item.querySelector('h2 a')?.textContent?.trim() || '',
+				url: item.querySelector('h2 a')?.getAttribute('href') || '',
+				bid: item.querySelector('.auction-bid .pushed_bid_amount')?.textContent?.trim() || '',
+				buyNow: item.querySelector('.buyNowHomeDetails strong')?.nextSibling?.textContent?.trim() || '', // fallback, if needed
+				timeRemaining: (() => {
+					const countdown = item.querySelector('.countdownTimer');
+					return countdown ? countdown.getAttribute('data-ends-at') : null;
+				})(),
+				image: item.querySelector('img.featured')?.getAttribute('src') || ''
+			}));
+			}
+		""")
+
+		out = {}
+		page_num = 1
+		while True:
+			if debug:
+				print(f"Scraping page {page_num}")
+
+			listings_data = await page.evaluate("""
+				() => {
+				const items = document.querySelectorAll('.post.car');
+				return Array.from(items).map(item => ({
+					title: item.querySelector('h2 a')?.textContent?.trim() || '',
+					url: item.querySelector('h2 a')?.getAttribute('href') || '',
+					bid: item.querySelector('.auction-bid .pushed_bid_amount')?.textContent?.trim() || 'No bids',
+					buyNow: item.querySelector('.buyNowHomeDetails strong')?.nextSibling?.textContent?.trim() || '',
+					timeRemaining: (() => {
+						const countdown = item.querySelector('.countdownTimer');
+						return countdown ? countdown.getAttribute('data-ends-at') : null;
+					})(),
+					image: item.querySelector('img.featured')?.getAttribute('src') || ''
+				}));
+				}
+			""")
+
+			if debug:
+				print(f"Found {len(listings_data)} auction listings on page {page_num}")
+
+			for data in listings_data:
+				if not data['title'] or not data['url']:
+					continue
+
+				# Extract year from title using regex
+				year_match = re.search(r'\b(19|20)\d{2}\b', data['title'])
+				year = int(year_match.group(0)) if year_match else None
+
+				end_time = datetime.fromtimestamp(int(data['timeRemaining']), timezone.utc)
+
+				# Create listing
+				url = f"https://pcarmarket.com{data['url']}"
+				out[url] = listing.Listing(f"PCAR: {data['title']}", url, data['image'], end_time, data['bid'], year).to_dict()
+				
+				if debug:
+					print(f"Title: {data['title']}")
+					print(f"URL: {url}")
+					print(f"Year: {year}")
+					print(f"Current Bid: {data['bid']}")
+					print(f"End Time (UTC): {end_time}")
+					print("-" * 50)
+
+			# Check for next page button using li.next:not(.disabled) a
+			has_next = await page.evaluate("""
+				() => {
+					const nextLi = document.querySelector('li.next:not(.disabled)');
+					return !!(nextLi && nextLi.querySelector('a'));
+				}
+			""")
+			if has_next:
+				await page.click('li.next:not(.disabled) a')
+				await page.wait_for_load_state('networkidle')
+				page_num += 1
+			else:
+				break
+
+		# Return dict of PCAR results
+		return out
+
+	except Exception as e:
+		print(f"Error scraping PCAR auctions: {e}")
+		return {}
+
 def countdown(ends_at):
 	"""
 	Calculates remaining time from specified end time in human readable format.
@@ -132,18 +241,23 @@ def countdown(ends_at):
 	else:
 		return f"{int(hours)}h {int(minutes)}m"
 
-
 if __name__ == "__main__":
-	async def test():
+	async def test(isSearch: bool):
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(headless=True)
+			if isSearch:
+				try:
+					from urllib.parse import quote
+					query = quote("Porsche 911 991")
+					await get_results(query, browser, debug=True)
 
-			try:
-				from urllib.parse import quote
-				query = quote("Porsche 911 991")
-				await get_results(query, browser, debug=True)
+				finally:
+					await browser.close()
+			else:
+				try:
+					results = await get_all_live(browser, debug=True)
+					print(f"Found {len(results)} live auctions")
+				finally:
+					await browser.close()
 
-			finally:
-				await browser.close()
-	
-	asyncio.run(test())
+	asyncio.run(test(False))

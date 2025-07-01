@@ -1,10 +1,12 @@
-from run_all import run_scrapers
+from run_all import run_search_scrapers
+from scheduler import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session
 import sqlalchemy.orm
 from sqlalchemy.exc import IntegrityError
+import psycopg2
 import bcrypt
 import re
 from functools import wraps
@@ -12,6 +14,13 @@ from datetime import datetime, timezone
 
 app = Quart(__name__)
 app.secret_key = "secret key"
+
+PG_CONN = {
+	"host": "postgres",  # or "localhost" if running locally
+	"database": "auctions",
+	"user": "username",
+	"password": "password"
+}
 
 # Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
@@ -297,8 +306,8 @@ async def get_search():
 	query = request.args.get("query")
 	
 	try:
-		results = await run_scrapers(query)
-		# Convert to serializable format for Car objects
+		results = await run_search_scrapers(query)
+		# Convert to serializable format for Listing objects
 		serializable_results = {}
 		for key, value in results.items():
 			if hasattr(value, '__dict__'):
@@ -307,6 +316,50 @@ async def get_search():
 				serializable_results[key] = value
 		
 		return jsonify(serializable_results), 200
+	
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+	
+@app.route("/listings", methods=["GET"])
+async def get_all_listings():
+	"""Get all live listings from PostgreSQL"""
+	refresh = request.args.get("refresh")
+	if refresh and refresh.lower() == "true":
+		try:
+			await run_scrapers()  # Run the scraper to refresh data
+		except Exception as e:
+			return jsonify({"error": str(e)}), 500
+
+	try:
+		conn = psycopg2.connect(**PG_CONN)
+		cur = conn.cursor()
+		cur.execute("""
+			SELECT title, url, image, time, price, year, scraped_at
+			FROM live_listings
+			ORDER BY time DESC
+		""")
+		rows = cur.fetchall()
+		cur.close()
+		conn.close()
+
+		if not rows:
+			return jsonify({"error": "No listings found"}), 404
+
+		# Convert rows to a dictionary format
+		listings = {}
+		for row in rows:
+			title, url, image, time_rem, price, year, scraped_at = row
+			listings[title] = {
+				"title": title,
+				"url": url,
+				"image": image,
+				"time": time_rem,
+				"price": price,
+				"year": year,
+				"scraped_at": scraped_at.isoformat() if scraped_at else None
+			}
+
+		return jsonify(listings), 200
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500
