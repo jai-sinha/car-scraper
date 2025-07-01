@@ -3,6 +3,8 @@ import asyncio
 import psycopg2
 import time
 import logging
+import os
+from dotenv import load_dotenv
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright
 import bring_a_trailer, pcarmarket, cars_and_bids
@@ -13,11 +15,13 @@ logging.basicConfig(
 	force=True
 )
 
+load_dotenv()
+
 PG_CONN = {
-	"host": "postgres",
-	"database": "auctions",
-	"user": "username",
-	"password": "password"
+	"host": os.environ.get("PG_HOST"),
+	"database": os.environ.get("PG_DATABASE"),
+	"user": os.environ.get("PG_USER"),
+	"password": os.environ.get("PG_PASSWORD")
 }
 
 def store_in_postgres(results: dict):
