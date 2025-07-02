@@ -1,5 +1,5 @@
 class Listing:
-	def __init__(self, title, url, image, time, price, year, keywords=None):
+	def __init__(self, title: str, url: str, image: str, time, price: str, year: int, keywords=None):
 		self.title 	= title
 		self.url 	= url
 		self.image 	= image

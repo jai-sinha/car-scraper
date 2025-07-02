@@ -231,8 +231,8 @@ async def get_listing_details(listing: listing.Listing, context, debug=False):
 	Returns:
 		A modified listing dictionary with keywords added.
 	"""
-	page = await context.new_page()
 	try:
+		page = await context.new_page()
 		await page.goto(listing.url, timeout=TIMEOUT)
 		await page.wait_for_selector('.column-groups', timeout=TIMEOUT)
 
@@ -275,8 +275,9 @@ async def get_listing_details(listing: listing.Listing, context, debug=False):
 			print(f"Keywords for {listing.title}: {listing.keywords}")
 
 	except Exception as e:
-		print(f'Error fetching BaT details: {e}')
+		print(f'Error fetching BaT details for {listing.title}: {e}')
 		return
+	
 	finally:
 		await page.close()
 

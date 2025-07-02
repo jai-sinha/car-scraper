@@ -226,14 +226,13 @@ async def get_listing_details(listing, context, debug=False):
 	Returns:
 		None, modifies the listing object in place
 	"""
-
 	try:
 		page = await context.new_page()
 		await page.goto(listing.url, timeout=TIMEOUT)
 		
 		await page.wait_for_selector('.quick-facts', timeout=TIMEOUT)
 
-		make_model = await page.evaluate("""
+		listing_keywords = await page.evaluate("""
 			() => {
 				const facts = {};
 				const dts = Array.from(document.querySelectorAll('.quick-facts dt'));
@@ -254,13 +253,16 @@ async def get_listing_details(listing, context, debug=False):
 			}
 		""")
 
-		listing.keywords.extend([make_model['make'], make_model['model'], listing.title])
+		listing.keywords.extend([listing_keywords['make'], listing_keywords['model'], listing.title])
 
 		if debug:
 			print(f"Keywords for {listing.title}: {listing.keywords}")
 
 	except Exception as e:
-		print(f'Error fetching C&B details: {e}')
+		print(f'Error fetching C&B details for {listing.title}: {e}')
+
+	finally:
+		await page.close()
 
 
 if __name__ == "__main__":
