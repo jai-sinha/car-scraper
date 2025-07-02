@@ -194,10 +194,8 @@ async def get_all_live(context, debug=False):
 					delta = timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
 				elif len(parts) == 2:  # minutes:seconds
 					delta = timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
-
-			# Sometimes the time remaining is "ended" but the auction is still up and waiting for new bids. If it's actually over, it will be removed in the next scrape
-			elif "ended" in timeRemaining.lower(): # Handle auctions that have just ended
-				delta = timedelta(seconds=2) 
+			elif "ended" in timeRemaining.lower():
+				delta = timedelta(seconds=2) # Give a small buffer for ended auctions
 			else: # No colons and no days means just seconds remaining
 				delta = timedelta(seconds=int(timeRemaining.split('s')[0]))
 
@@ -310,12 +308,11 @@ if __name__ == "__main__":
 					try:
 						# Example listing, replace with actual URL
 						url = "https://bringatrailer.com/listing/2005-porsche-911-carrera-coupe-44/"
-						test = listing.Listing("2015 porsche 911 carrera coupe", url, "","", "", 2020)
-						await get_listing_details(test, context, debug=True)
+						test_listing = listing.Listing("2015 porsche 911 carrera coupe", url, "","", "", 2020)
+						await get_listing_details(test_listing, context, debug=True)
 
 					finally:
 						await browser.close()
 	
-	# asyncio.run(test_get_results())
 	asyncio.run(test("keywords"))
 	
