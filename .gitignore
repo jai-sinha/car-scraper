@@ -2,6 +2,7 @@ __pycache__
 .*
 *.db
 out
+venv
 
 # Logs
 logs

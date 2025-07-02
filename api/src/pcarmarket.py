@@ -215,6 +215,51 @@ async def get_all_live(browser, debug=False):
 		print(f"Error scraping PCAR auctions: {e}")
 		return {}
 
+async def get_listing_details(listing: listing.Listing, context, debug=False):
+	"""
+	Fetches detailed information about a specific PCARMARKET listing.
+
+	Args:
+		listing: Listing object containing the URL to fetch details for.
+		context: Playwright async browser context
+		debug: Print all info
+	Returns:
+		Updated listing object with additional details
+	"""
+	try:
+		page = await context.new_page()
+		await page.goto(listing.url, timeout=TIMEOUT)
+		await page.wait_for_selector('#auction-details-list', timeout=TIMEOUT)
+
+		listing_keywords = await page.evaluate("""
+			() => {
+				const facts = {};
+				document.querySelectorAll('#auction-details-list li').forEach(li => {
+					const strong = li.querySelector('strong');
+					if (strong) {
+						const key = strong.textContent.replace(':', '').trim();
+						const value = li.textContent.replace(strong.textContent, '').replace(':', '').trim();
+						facts[key] = value;
+					}
+				});
+				return {
+					make: facts['Make'] || null,
+					model: facts['Model'] || null
+				};
+			}
+		""")
+
+		listing.keywords.extend([listing_keywords['make'], listing_keywords['model'], listing.title.replace(".", " ")])
+
+		if debug:
+			print(f"Keywords for {listing.title}: {listing.keywords}")
+
+	except Exception as e:
+		print(f'Error fetching PCAR details for {listing.title}: {e}')
+
+	finally:
+		await page.close()
+
 def countdown(ends_at):
 	"""
 	Calculates remaining time from specified end time in human readable format.
@@ -242,22 +287,34 @@ def countdown(ends_at):
 		return f"{int(hours)}h {int(minutes)}m"
 
 if __name__ == "__main__":
-	async def test(isSearch: bool):
+	async def test(test_type):
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(headless=True)
-			if isSearch:
-				try:
-					from urllib.parse import quote
-					query = quote("Porsche 911 991")
-					await get_results(query, browser, debug=True)
 
-				finally:
-					await browser.close()
-			else:
-				try:
-					results = await get_all_live(browser, debug=True)
-					print(f"Found {len(results)} live auctions")
-				finally:
-					await browser.close()
+			match test_type:
+				case "results":
+					try:
+						from urllib.parse import quote
+						query = quote("Porsche 911 991")
+						await get_results(query, browser, debug=True)
 
-	asyncio.run(test(False))
+					finally:
+						await browser.close()
+
+				case "live":
+					try:
+						await get_all_live(browser, debug=True)
+
+					finally:
+						await browser.close()
+
+				case "keywords":
+					try:
+						test_url = "https://www.pcarmarket.com/auction/2018-porsche-911-gt3-touring-13/"
+						test_listing = listing.Listing("3,300-MILE 2018 PORSCHE 991.2 GT3 TOURING", test_url, "", "", "", 2020)
+						await get_listing_details(test_listing, browser, debug=True)
+
+					finally:
+						await browser.close()
+
+	asyncio.run(test("keywords"))

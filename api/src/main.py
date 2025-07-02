@@ -9,23 +9,27 @@ from sqlalchemy.exc import IntegrityError
 import psycopg2
 import bcrypt
 import re
+import os
+from dotenv import load_dotenv
 from functools import wraps
 from datetime import datetime, timezone
 
+load_dotenv()
+
 app = Quart(__name__)
-app.secret_key = "secret key"
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
 PG_CONN = {
-	"host": "postgres",  # or "localhost" if running locally
-	"database": "auctions",
-	"user": "username",
-	"password": "password"
+	"host": os.environ.get("PG_HOST"),
+	"database": os.environ.get("PG_DATABASE"),
+	"user": os.environ.get("PG_USER"),
+	"password": os.environ.get("PG_PASSWORD")
 }
 
-# Enable CORS for the app
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
-# Database setup
-DATABASE_URL = 'sqlite:///users.db'
+
+# Setup PostgreSQL connection w/ SQLAlchemy
+DATABASE_URL = os.environ.get("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 Session = scoped_session(sessionmaker(bind=engine))
 Base = sqlalchemy.orm.declarative_base()
