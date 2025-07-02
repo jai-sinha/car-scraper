@@ -2,11 +2,7 @@ from run_all import run_search_scrapers
 from scheduler import run_scrapers
 from quart_cors import cors
 from quart import Quart, request, jsonify, session
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
-from sqlalchemy.orm import sessionmaker, scoped_session
-import sqlalchemy.orm
-from sqlalchemy.exc import IntegrityError
-import psycopg2
+import asyncpg
 import bcrypt
 import re
 import os
@@ -28,149 +24,127 @@ PG_CONN = {
 
 app = cors(app, allow_origin="http://localhost:5173", allow_credentials=True)
 
-# Setup PostgreSQL connection w/ SQLAlchemy
-DATABASE_URL = os.environ.get("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
-Session = scoped_session(sessionmaker(bind=engine))
-Base = sqlalchemy.orm.declarative_base()
+# User helper functions
+async def validate_email(email):
+	"""Validate email format"""
+	pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+	return re.match(pattern, email) is not None
 
-# User Model
-class User(Base):
-	__tablename__ = 'users'
-	
-	id = Column(Integer, primary_key=True)
-	email = Column(String(120), unique=True, nullable=False, index=True)
-	username = Column(String(50), unique=True, nullable=False, index=True)
-	password_hash = Column(String(128), nullable=False)
-	created_at = Column(DateTime, default=datetime.now(timezone.utc))
-	is_active = Column(Boolean, default=True)
-	
-	def __init__(self, email, username, password):
-		self.email = email.strip().lower()
-		self.username = username.strip()
-		self.set_password(password)
-	
-	def set_password(self, password):
-		"""Hash and set password"""
-		salt = bcrypt.gensalt()
-		self.password_hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-	
-	def check_password(self, password):
-		"""Check password against hash"""
-		return bcrypt.checkpw(password.encode('utf-8'), self.password_hash)
-	
-	def to_dict(self, include_sensitive=False):
-		"""Convert user to dictionary"""
-		data = {
-			'id': self.id,
-			'email': self.email,
-			'username': self.username,
-			'created_at': self.created_at.isoformat() if self.created_at else None,
-			'is_active': self.is_active
-		}
-		if include_sensitive:
-			data['password_hash'] = self.password_hash
-		return data
-	
-	@classmethod
-	def find_by_email_or_username(cls, email_or_username):
-		"""Find user by email or username"""
-		session = Session()
-		try:
-			return session.query(cls).filter(
-					(cls.email == email_or_username.lower()) | 
-					(cls.username == email_or_username)
-			).first()
-		finally:
-			session.close()
-	
-	@classmethod
-	def create_user(cls, email, username, password):
-		"""Create new user with validation - simpler approach"""
-		session = Session()
-		try:
-			# Validate input first
-			if not cls.validate_email(email):
-				raise ValueError("Invalid email format")
-			
-			is_valid, msg = cls.validate_password(password)
-			if not is_valid:
-				raise ValueError(msg)
-			
-			if len(username.strip()) < 3 or len(username.strip()) > 50:
-				raise ValueError("Username must be between 3 and 50 characters")
-			
-			# Begin explicit transaction
-			session.begin()
-			
-			# Create user
-			user = cls(email, username, password)
-			session.add(user)
-			session.flush()  # This assigns the ID but doesn't commit yet
-			
-			# Get the ID while still in transaction
-			user_id = user.id
-			
-			# Commit the transaction
-			session.commit()
-			
-			# Return a fresh instance from database
-			return session.query(cls).filter(cls.id == user_id).first()
-			
-		except IntegrityError:
-			session.rollback()
-			# Check what specifically failed
-			existing_user = session.query(cls).filter(
-				(cls.email == email.strip().lower()) | 
-				(cls.username == username.strip())
-			).first()
-			
-			if existing_user:
-				if existing_user.email == email.strip().lower():
-					raise ValueError("Email already exists")
-				else:
-					raise ValueError("Username already exists")
-			else:
-				raise ValueError("Email or username already exists")
-		except Exception as e:
-			session.rollback()
-			raise
-		finally:
-			session.close()
-	
-	@staticmethod
-	def validate_email(email):
-		"""Validate email format"""
-		pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-		return re.match(pattern, email) is not None
-	
-	@staticmethod
-	def validate_password(password):
-		"""Validate password strength"""
-		if len(password) < 8:
-			return False, "Password must be at least 8 characters long"
-		if not re.search(r'[A-Za-z]', password):
-			return False, "Password must contain at least one letter"
-		if not re.search(r'\d', password):
-			return False, "Password must contain at least one number"
-		return True, "Valid password"
+async def validate_password(password):
+	"""Validate password strength"""
+	if len(password) < 8:
+		return False, "Password must be at least 8 characters long"
+	if not re.search(r'[A-Za-z]', password):
+		return False, "Password must contain at least one letter"
+	if not re.search(r'\d', password):
+		return False, "Password must contain at least one number"
+	return True, "Valid password"
 
-def get_user_by_id(user_id):
-	"""Get user by ID"""
-	session = Session()
+async def hash_password(password):
+	"""Hash password"""
+	salt = bcrypt.gensalt()
+	return bcrypt.hashpw(password.encode('utf-8'), salt)
+
+async def check_password(password, password_hash):
+	"""Check password against hash"""
+	return bcrypt.checkpw(password.encode('utf-8'), password_hash)
+
+async def find_user_by_email_or_username(email_or_username):
+	"""Find user by email or username"""
+	conn = await asyncpg.connect(**PG_CONN)
 	try:
-		return session.query(User).filter(User.id == user_id).first()
+		user = await conn.fetchrow("""
+			SELECT id, email, username, password_hash, created_at, is_active
+			FROM users 
+			WHERE email = $1 OR username = $2
+		""", email_or_username.lower(), email_or_username)
+		return user
 	finally:
-		session.close()
+		await conn.close()
+
+async def get_user_by_id(user_id):
+	"""Get user by ID"""
+	conn = await asyncpg.connect(**PG_CONN)
+	try:
+		user = await conn.fetchrow("""
+			SELECT id, email, username, password_hash, created_at, is_active
+			FROM users 
+			WHERE id = $1
+		""", user_id)
+		return user
+	finally:
+		await conn.close()
+
+async def create_user(email, username, password):
+	"""Create new user with validation"""
+	# Validate input
+	if not await validate_email(email):
+		raise ValueError("Invalid email format")
+	
+	is_valid, msg = await validate_password(password)
+	if not is_valid:
+		raise ValueError(msg)
+	
+	if len(username.strip()) < 3 or len(username.strip()) > 50:
+		raise ValueError("Username must be between 3 and 50 characters")
+	
+	conn = await asyncpg.connect(**PG_CONN)
+	try:
+		# Check if user already exists
+		existing = await conn.fetchrow("""
+			SELECT id FROM users WHERE email = $1 OR username = $2
+		""", email.strip().lower(), username.strip())
+		
+		if existing:
+			# Check which field conflicts
+			email_exists = await conn.fetchrow("SELECT id FROM users WHERE email = $1", email.strip().lower())
+			if email_exists:
+					raise ValueError("Email already exists")
+			else:
+					raise ValueError("Username already exists")
+		
+		# Hash password and create user
+		password_hash = await hash_password(password)
+		user_id = await conn.fetchval("""
+			INSERT INTO users (email, username, password_hash, created_at, is_active)
+			VALUES ($1, $2, $3, $4, $5)
+			RETURNING id
+		""", email.strip().lower(), username.strip(), password_hash, datetime.now(timezone.utc), True)
+		
+		# Return the created user
+		user = await conn.fetchrow("""
+			SELECT id, email, username, password_hash, created_at, is_active
+			FROM users WHERE id = $1
+		""", user_id)
+		return user
+		
+	finally:
+		await conn.close()
 
 def login_required(f):
 	"""Decorator to require login for protected routes"""
 	@wraps(f)
-	async def decorated_function(*args, **kwargs):  # Make this async
+	async def decorated_function(*args, **kwargs):
 		if 'user_id' not in session:
 			return jsonify({'error': 'Authentication required'}), 401
-		return await f(*args, **kwargs)  # Add await here
+		return await f(*args, **kwargs)
 	return decorated_function
+
+def user_to_dict(user, include_sensitive=False):
+	"""Convert user record to dictionary"""
+	if not user:
+		return None
+	
+	data = {
+		'id': user['id'],
+		'email': user['email'],
+		'username': user['username'],
+		'created_at': user['created_at'].isoformat() if user['created_at'] else None,
+		'is_active': user['is_active']
+	}
+	if include_sensitive:
+		data['password_hash'] = user['password_hash']
+	return data
 
 @app.route('/register', methods=['POST'])
 async def register():
@@ -189,15 +163,15 @@ async def register():
 			return jsonify({'error': 'Email, username, and password are required'}), 400
 		
 		# Create user (includes validation)
-		user = User.create_user(email, username, password)
+		user = await create_user(email, username, password)
 		
 		# Log the user in
-		session['user_id'] = user.id
-		session['username'] = user.username
+		session['user_id'] = user['id']
+		session['username'] = user['username']
 		
 		return jsonify({
 			'message': 'User registered successfully',
-			'user': user.to_dict()
+			'user': user_to_dict(user)
 		}), 201
 		
 	except ValueError as e:
@@ -225,18 +199,18 @@ async def login():
 			return jsonify({'error': 'Email/username and password are required'}), 400
 		
 		# Find and authenticate user
-		user = User.find_by_email_or_username(email_or_username)
+		user = await find_user_by_email_or_username(email_or_username)
 		
-		if not user or not user.check_password(password) or not user.is_active:
+		if not user or not await check_password(password, user['password_hash']) or not user['is_active']:
 			return jsonify({'error': 'Invalid credentials'}), 401
 		
 		# Create session
-		session['user_id'] = user.id
-		session['username'] = user.username
+		session['user_id'] = user['id']
+		session['username'] = user['username']
 		
 		return jsonify({
 			'message': 'Login successful',
-			'user': user.to_dict()
+			'user': user_to_dict(user)
 		}), 200
 		
 	except Exception as e:
@@ -248,13 +222,13 @@ async def get_current_user():
 	"""Get current user information"""
 	try:
 		user_id = session['user_id']
-		user = get_user_by_id(user_id)
+		user = await get_user_by_id(user_id)
 		
 		if not user:
 			return jsonify({'error': 'User not found'}), 404
 		
 		return jsonify({
-			'user': user.to_dict()
+			'user': user_to_dict(user)
 		}), 200
 		
 	except Exception as e:
@@ -272,18 +246,17 @@ async def delete_user():
 			return jsonify({'error': 'Password confirmation required'}), 400
 		
 		user_id = session['user_id']
-		user = get_user_by_id(user_id)
+		user = await get_user_by_id(user_id)
 		
-		if not user or not user.check_password(password):
+		if not user or not await check_password(password, user['password_hash']):
 			return jsonify({'error': 'Invalid password'}), 401
 		
 		# Delete user
-		db_session = Session()
+		conn = await asyncpg.connect(**PG_CONN)
 		try:
-			db_session.delete(user)
-			db_session.commit()
+			await conn.execute("DELETE FROM users WHERE id = $1", user_id)
 		finally:
-			db_session.close()
+			await conn.close()
 		
 		# Clear session
 		session.clear()
@@ -303,7 +276,25 @@ async def logout():
 @app.before_serving
 async def startup():
 	"""Create database tables"""
-	Base.metadata.create_all(engine)
+	conn = await asyncpg.connect(**PG_CONN)
+	try:
+		await conn.execute("""
+			CREATE TABLE IF NOT EXISTS users (
+				id SERIAL PRIMARY KEY,
+				email VARCHAR(120) UNIQUE NOT NULL,
+				username VARCHAR(50) UNIQUE NOT NULL,
+				password_hash BYTEA NOT NULL,
+				created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+				is_active BOOLEAN DEFAULT TRUE
+			)
+		""")
+		
+		# Create indexes
+		await conn.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
+		await conn.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)")
+		
+	finally:
+		await conn.close()
 
 @app.route("/search", methods=["GET"])
 async def get_search():
@@ -315,9 +306,9 @@ async def get_search():
 		serializable_results = {}
 		for key, value in results.items():
 			if hasattr(value, '__dict__'):
-				serializable_results[key] = value.__dict__
+					serializable_results[key] = value.__dict__
 			else:
-				serializable_results[key] = value
+					serializable_results[key] = value
 		
 		return jsonify(serializable_results), 200
 	
@@ -326,7 +317,7 @@ async def get_search():
 	
 @app.route("/listings", methods=["GET"])
 async def get_all_listings():
-	"""Get all live listings from PostgreSQL"""
+	"""Get all live listings from PostgreSQL using asyncpg"""
 	refresh = request.args.get("refresh")
 	if refresh and refresh.lower() == "true":
 		try:
@@ -335,16 +326,15 @@ async def get_all_listings():
 			return jsonify({"error": str(e)}), 500
 
 	try:
-		conn = psycopg2.connect(**PG_CONN)
-		cur = conn.cursor()
-		cur.execute("""
-			SELECT title, url, image, time, price, year, scraped_at
-			FROM live_listings
-			ORDER BY time DESC
-		""")
-		rows = cur.fetchall()
-		cur.close()
-		conn.close()
+		conn = await asyncpg.connect(**PG_CONN)
+		try:
+			rows = await conn.fetch("""
+				SELECT title, url, image, time, price, year, scraped_at
+				FROM live_listings
+				ORDER BY time DESC
+			""")
+		finally:
+			await conn.close()
 
 		if not rows:
 			return jsonify({"error": "No listings found"}), 404

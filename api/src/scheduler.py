@@ -1,6 +1,6 @@
 import schedule
 import asyncio
-import psycopg2
+import asyncpg
 import time
 import logging
 import os
@@ -24,89 +24,108 @@ PG_CONN = {
 	"password": os.environ.get("PG_PASSWORD")
 }
 
-def store_in_postgres(results: dict):
-	conn = psycopg2.connect(**PG_CONN)
-	cur = conn.cursor()
+async def store_in_postgres(results: dict, context):
+	conn = await asyncpg.connect(**PG_CONN)
 	scraped_at = datetime.now(timezone.utc)
 
-	# 1. Truncate and bulk-insert current scrape into temp_listings
-	cur.execute("TRUNCATE temp_listings")
-	for listing in results.values():
-		cur.execute("""
+	try:
+		# 1. Truncate and bulk-insert current scrape into temp_listings
+		await conn.execute("TRUNCATE temp_listings")
+		await conn.executemany("""
 			INSERT INTO temp_listings (url, title, image, time, price, year, scraped_at)
-			VALUES (%s, %s, %s, %s, %s, %s, %s)
-		""", (
-			listing["url"],
-			listing["title"],
-			listing["image"],
-			listing["time"],
-			listing["price"],
-			listing["year"],
-			scraped_at
-		))
+			VALUES ($1, $2, $3, $4, $5, $6, $7)
+		""", [
+			(listing["url"], listing["title"], listing["image"], 
+				listing["time"], listing["price"], listing["year"], scraped_at)
+			for listing in results.values()
+		])
 
-	# 2. Find new listings (in temp, not in live)
-	cur.execute("""
-		SELECT t.url FROM temp_listings t
-		LEFT JOIN live_listings l ON t.url = l.url
-		WHERE l.url IS NULL
-	""")
-	new_urls = [row[0] for row in cur.fetchall()]
+		# 2. Find new listings (in temp, not in live)
+		new_urls = [row[0] for row in await conn.fetch("""
+			SELECT t.url FROM temp_listings t
+			LEFT JOIN live_listings l ON t.url = l.url
+			WHERE l.url IS NULL
+		""")]
 
-	# 3. Find closed listings (in live, not in temp)
-	cur.execute("""
-		SELECT l.url, l.title, l.image, l.time, l.price, l.year, l.scraped_at
-		FROM live_listings l
-		LEFT JOIN temp_listings t ON l.url = t.url
-		WHERE t.url IS NULL
-	""")
-	closed_rows = cur.fetchall()
-	for row in closed_rows:
-		url, title, image, _, price, year, _ = row
-		cur.execute("""
-			INSERT INTO closed_listings (url, title, image, price, year, closed_at)
-			VALUES (%s, %s, %s, %s, %s, %s)
-			ON CONFLICT (url) DO NOTHING
-		""", (url, title, image, price, year, scraped_at))
-		cur.execute("DELETE FROM live_listings WHERE url = %s", (row[0],))
+		# 3. Find closed listings (in live, not in temp)
+		closed_rows = await conn.fetch("""
+			SELECT l.url, l.title, l.image, l.time, l.price, l.year, l.scraped_at
+			FROM live_listings l
+			LEFT JOIN temp_listings t ON l.url = t.url
+			WHERE t.url IS NULL
+		""")
+		
+		# Bulk insert closed listings and bulk delete from live
+		if closed_rows:
+			await conn.executemany("""
+				INSERT INTO closed_listings (url, title, image, price, year, closed_at)
+				VALUES ($1, $2, $3, $4, $5, $6)
+				ON CONFLICT (url) DO NOTHING
+			""", [
+				(row[0], row[1], row[2], row[4], row[5], scraped_at)
+				for row in closed_rows
+			])
+			
+			await conn.executemany("""
+				DELETE FROM live_listings WHERE url = $1
+			""", [(row[0],) for row in closed_rows])
 
-	# 4. Update existing listings (in both temp and live)
-	cur.execute("""
-		SELECT t.url, t.time, t.price, t.scraped_at
-		FROM temp_listings t
-		INNER JOIN live_listings l ON t.url = l.url
-	""")
-	for url, time_val, price, scraped in cur.fetchall():
-		cur.execute("""
-			UPDATE live_listings
-			SET time = %s, price = %s, scraped_at = %s
-			WHERE url = %s
-		""", (time_val, price, scraped, url))
+		# 4. Update existing listings (in both temp and live)
+		update_rows = await conn.fetch("""
+			SELECT t.url, t.time, t.price, t.scraped_at
+			FROM temp_listings t
+			INNER JOIN live_listings l ON t.url = l.url
+		""")
+		
+		if update_rows:
+			await conn.executemany("""
+				UPDATE live_listings
+				SET time = $2, price = $3, scraped_at = $4
+				WHERE url = $1
+			""", [
+				(row[0], row[1], row[2], scraped_at)  # Use the current scraped_at
+				for row in update_rows
+			])
+			
+		# 5. Insert new listings (in temp, not in live)
+		new_listings = [next(l for l in results.values() if l["url"] == url) for url in new_urls]
+		
+		# Create tasks for concurrent keyword scraping
+		tasks = []
+		logging.info(f"Found {len(new_listings)} new listings to scrape keywords for")
+		for listing in new_listings:
+			if not listing.get("keywords", []):
+				if listing['title'].startswith("BaT: "):
+					tasks.append(bring_a_trailer.get_listing_details(listing, context))
+				elif listing['title'].startswith("PCAR:"):
+					tasks.append(pcarmarket.get_listing_details(listing, context))
+				elif listing['title'].startswith("C&B: "):
+					tasks.append(cars_and_bids.get_listing_details(listing, context))
+		
+		# Run all keyword scraping concurrently
+		if tasks:
+			await asyncio.gather(*tasks, return_exceptions=True)
+		
+		# Bulk insert new listings
+		if new_listings:
+			await conn.executemany("""
+				INSERT INTO live_listings (url, title, image, time, price, year, scraped_at)
+				VALUES ($1, $2, $3, $4, $5, $6, $7)
+			""", [
+				(listing["url"], listing["title"], listing["image"],
+				listing["time"], listing["price"], listing["year"], scraped_at)
+				for listing in new_listings
+			])
 
-	# 5. Insert new listings (in temp, not in live)
-	for url in new_urls:
-		listing = next(l for l in results.values() if l["url"] == url)
-		# Optionally crawl for keywords here
-		cur.execute("""
-			INSERT INTO live_listings (url, title, image, time, price, year, scraped_at)
-			VALUES (%s, %s, %s, %s, %s, %s, %s)
-		""", (
-			listing["url"],
-			listing["title"],
-			listing["image"],
-			listing["time"],
-			listing["price"],
-			listing["year"],
-			scraped_at
-		))
-
-	conn.commit()
-	cur.close()
-	conn.close()
+	except Exception as e:
+		logging.error(f"Error storing data in Postgres: {e}")
+		raise
+	finally:
+		await conn.close()
 
 async def run_scrapers():
 	async with async_playwright() as p:
-		# carsandbids with custom context and args
+		# Create browser, contexts for each scraper
 		browser = await p.chromium.launch(headless=True,
 			args=[
 				'--no-sandbox',
@@ -122,13 +141,14 @@ async def run_scrapers():
 		)
 		context_cab = await browser.new_context(
 			user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-			viewport={'width': 1920, 'height': 1080},
+			viewport={'width': 800, 'height': 600},
 			locale='en-US',
 			timezone_id='America/New_York'
 		)
-		# bringatrailer, pcarmarket
-		context_bat = await browser.new_context()
-		context_pcar = await browser.new_context()
+		context_bat = await browser.new_context(viewport={"width": 800, "height": 600})
+		context_pcar = await browser.new_context(viewport={"width": 800, "height": 600})
+		for ctx in [context_bat, context_pcar, context_cab]:
+			await ctx.route("**/*", lambda route, request: route.abort() if request.resource_type in ["image", "media", "font"] else route.continue_())
 		try:
 			results = await asyncio.gather(
 				bring_a_trailer.get_all_live(context_bat),
@@ -136,17 +156,28 @@ async def run_scrapers():
 				cars_and_bids.get_all_live(context_cab)
 			)
 			for i, name in enumerate(['bat', 'pcar', 'cab']):
-				print(f"{name} returned {len(results[i])} listings")
+				logging.info(f"{name} returned {len(results[i])} listings")
+				if (name == 'bat' and len(results[i]) < 500) or len(results[i]) == 0:
+					# Skip upload to prevent incomplete data messing with the database
+					logging.warning(f"Incomplete results for {name}. Skipping upload.")
+					return
 					
+			# Combine results
+			data = {}
+			for result_dict in results:
+				data.update(result_dict)
+				
+			await store_in_postgres(data, context_cab)
+
+		except Exception as e:
+			logging.error(f"Error during scraping: {e}")
+			raise
+
 		finally:
+			for ctx in [context_bat, context_pcar, context_cab]:
+				await ctx.close()
+
 			await browser.close()
-
-		# Combine results
-		data = {}
-		for result_dict in results:
-			data.update(result_dict)
-
-	store_in_postgres(data)
 
 def job():
 	logging.info("Job started")

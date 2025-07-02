@@ -6,7 +6,10 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - DATABASE_URL=postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - PG_HOST=postgres
+      - PG_DATABASE=${POSTGRES_DB}
+      - PG_USER=${POSTGRES_USER}
+      - PG_PASSWORD=${POSTGRES_PASSWORD}
       - PYTHONUNBUFFERED=1
     volumes:
       - ./api:/app/api

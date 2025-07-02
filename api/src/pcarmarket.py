@@ -4,7 +4,7 @@ import re
 import listing
 import asyncio
 
-TIMEOUT = 10000
+TIMEOUT = 5000
 
 async def get_results(query, browser, debug=False):
 	"""
@@ -106,20 +106,18 @@ async def get_results(query, browser, debug=False):
 		print(f"Error scraping PCAR auctions: {e}")
 		return {}
 
-async def get_all_live(browser, debug=False):
+async def get_all_live(context, debug=False):
 	"""
 	Fetches all live auctions from PCARMARKET, and returns them as a dict.
 
 	Args:
-		browser: Playwright async browser
+		context: Playwright async context
 		debug: Print all info
 	Returns:
 		All discovered listings as a dict
 	"""
-
 	search_url = "https://www.pcarmarket.com/auction/all/?page=1"
-
-	page = await browser.new_page()
+	page = await context.new_page()
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
 		await page.wait_for_function(
@@ -152,6 +150,7 @@ async def get_all_live(browser, debug=False):
 			if debug:
 				print(f"Scraping page {page_num}")
 
+			await page.wait_for_selector('.post.car', timeout=TIMEOUT)
 			listings_data = await page.evaluate("""
 				() => {
 				const items = document.querySelectorAll('.post.car');
@@ -173,7 +172,7 @@ async def get_all_live(browser, debug=False):
 				print(f"Found {len(listings_data)} auction listings on page {page_num}")
 
 			for data in listings_data:
-				if not data['title'] or not data['url']:
+				if not data['title'] or not data['timeRemaining']:
 					continue
 
 				# Extract year from title using regex
@@ -203,32 +202,38 @@ async def get_all_live(browser, debug=False):
 			""")
 			if has_next:
 				await page.click('li.next:not(.disabled) a')
-				await page.wait_for_load_state('networkidle')
+				await page.wait_for_load_state('domcontentloaded', timeout=TIMEOUT) 
 				page_num += 1
 			else:
 				break
 
 		# Return dict of PCAR results
+		if debug:
+			print(f"Total listings found: {len(out)}")
+
 		return out
 
 	except Exception as e:
 		print(f"Error scraping PCAR auctions: {e}")
 		return {}
+	
+	finally:
+		await page.close()
 
-async def get_listing_details(listing: listing.Listing, context, debug=False):
+async def get_listing_details(listing: dict, context, debug=False):
 	"""
-	Fetches detailed information about a specific PCARMARKET listing.
+	Fetches details and keywords for a specific listing from PCARMARKET. Async even though it doesn't need to be, for the sake of consistency.
 
 	Args:
-		listing: Listing object containing the URL to fetch details for.
+		listing: Listing dict containing the URL to fetch details for.
 		context: Playwright async browser context
 		debug: Print all info
 	Returns:
 		Updated listing object with additional details
 	"""
+	page = await context.new_page()
 	try:
-		page = await context.new_page()
-		await page.goto(listing.url, timeout=TIMEOUT)
+		await page.goto(listing["url"], timeout=TIMEOUT)
 		await page.wait_for_selector('#auction-details-list', timeout=TIMEOUT)
 
 		listing_keywords = await page.evaluate("""
@@ -249,13 +254,17 @@ async def get_listing_details(listing: listing.Listing, context, debug=False):
 			}
 		""")
 
-		listing.keywords.extend([listing_keywords['make'], listing_keywords['model'], listing.title.replace(".", " ")])
+		if "keywords" not in listing:
+			listing["keywords"] = []
+		listing["keywords"].extend([listing_keywords.get("make", ""), listing_keywords.get("model", "")])
+		listing["keywords"].append(listing["title"].replace(".", " "))
+
 
 		if debug:
-			print(f"Keywords for {listing.title}: {listing.keywords}")
+			print(f"Keywords for {listing['title']}: {listing['keywords']}")
 
 	except Exception as e:
-		print(f'Error fetching PCAR details for {listing.title}: {e}')
+		print(f'Error fetching PCAR details for {listing["title"]}: {e}')
 
 	finally:
 		await page.close()
@@ -303,18 +312,24 @@ if __name__ == "__main__":
 
 				case "live":
 					try:
-						await get_all_live(browser, debug=True)
+						context = await browser.new_context(viewport={"width": 800, "height": 600})
+						await context.route("**/*", lambda route, request: route.abort() if request.resource_type in ["image", "media", "font"] else route.continue_())
+						await get_all_live(context, debug=True)
 
 					finally:
-						await browser.close()
+						await context.close()
 
 				case "keywords":
 					try:
+						context = await browser.new_context(viewport={"width": 800, "height": 600})
+						await context.route("**/*", lambda route, request: route.abort() if request.resource_type in ["image", "media", "font"] else route.continue_())
 						test_url = "https://www.pcarmarket.com/auction/2018-porsche-911-gt3-touring-13/"
 						test_listing = listing.Listing("3,300-MILE 2018 PORSCHE 991.2 GT3 TOURING", test_url, "", "", "", 2020)
-						await get_listing_details(test_listing, browser, debug=True)
+						await get_listing_details(test_listing.to_dict(), browser, debug=True)
 
 					finally:
-						await browser.close()
+						await context.close()
+			
+			await browser.close()
 
 	asyncio.run(test("keywords"))

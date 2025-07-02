@@ -145,7 +145,6 @@ async def get_all_live(context, debug=False):
 		for _ in range(25):
 			count = await page.evaluate("document.querySelectorAll('.listing-card').length")
 			await page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
-			await asyncio.sleep(1)  # Give browser time to render to deal w CPU limits
 			
 			try:
 				await page.wait_for_function(
@@ -218,22 +217,25 @@ async def get_all_live(context, debug=False):
 	except Exception as e:
 		print(f'Error fetching BaT results: {e}')
 		return {}
+	
+	finally:
+		await page.close()
 
 
-async def get_listing_details(listing: listing.Listing, context, debug=False):
+async def get_listing_details(listing: dict, context, debug=False):
 	"""
-	Fetches details and keywords for a specific listing from Bring a Trailer.
+	Fetches details and keywords for a specific listing from Bring a Trailer. Async even though it doesn't need to be, for the sake of consistency.
 
 	Args:
-		listing: The listing object to fetch details for.
+		listing: The listing dictionary to fetch details for.
 		context: Playwright async context
 		debug: Print all info
 	Returns:
 		A modified listing dictionary with keywords added.
 	"""
+	page = await context.new_page()
 	try:
-		page = await context.new_page()
-		await page.goto(listing.url, timeout=TIMEOUT)
+		await page.goto(listing["url"], timeout=TIMEOUT)
 		await page.wait_for_selector('.column-groups', timeout=TIMEOUT)
 
 		# Get make, model from the detail page 
@@ -268,14 +270,16 @@ async def get_listing_details(listing: listing.Listing, context, debug=False):
 		""")
 
 		# Add keywords including title to the listing object
-		listing.keywords.extend(listing_keywords)
-		listing.keywords.append(listing.title)
+		if "keywords" not in listing:
+			listing["keywords"] = []
+		listing["keywords"].extend(listing_keywords)
+		listing["keywords"].append(listing["title"])
 
 		if debug:
-			print(f"Keywords for {listing.title}: {listing.keywords}")
+			print(f"Keywords for {listing['title']}: {listing['keywords']}")
 
 	except Exception as e:
-		print(f'Error fetching BaT details for {listing.title}: {e}')
+		print(f'Error fetching BaT details for {listing["title"]}: {e}')
 		return
 	
 	finally:
@@ -297,15 +301,17 @@ if __name__ == "__main__":
 						await browser.close()
 
 				case "live":
-					context = await browser.new_context()
+					context = await browser.new_context(viewport={"width": 800, "height": 600})
+					await context.route("**/*", lambda route, request: route.abort() if request.resource_type in ["image", "media", "font"] else route.continue_())
 					try:
 						await get_all_live(context, debug=True)
 
 					finally:
-						await browser.close()
+						await context.close()
 
 				case "keywords":
-					context = await browser.new_context()
+					context = await browser.new_context(viewport={"width": 800, "height": 600})
+					await context.route("**/*", lambda route, request: route.abort() if request.resource_type in ["image", "media", "font"] else route.continue_())
 					try:
 						# Example listing, replace with actual URL
 						url = "https://bringatrailer.com/listing/2005-porsche-911-carrera-coupe-44/"
@@ -313,7 +319,9 @@ if __name__ == "__main__":
 						await get_listing_details(test_listing, context, debug=True)
 
 					finally:
-						await browser.close()
+						await context.close()
+					
+			await browser.close()
 	
-	asyncio.run(test("keywords"))
+	asyncio.run(test("live"))
 	
