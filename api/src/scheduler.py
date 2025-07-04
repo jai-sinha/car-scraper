@@ -14,6 +14,8 @@ logging.basicConfig(
 	format="%(asctime)s [%(levelname)s] %(message)s",
 	force=True
 )
+logging.getLogger("playwright").setLevel(logging.ERROR)
+logging.getLogger("asyncio").setLevel(logging.ERROR)
 
 load_dotenv()
 
@@ -86,25 +88,9 @@ async def store_in_postgres(results: dict, context):
 				(row[0], row[1], row[2], scraped_at)  # Use the current scraped_at
 				for row in update_rows
 			])
-			
+
 		# 5. Insert new listings (in temp, not in live)
 		new_listings = [next(l for l in results.values() if l["url"] == url) for url in new_urls]
-		
-		# Create tasks for concurrent keyword scraping
-		tasks = []
-		logging.info(f"Found {len(new_listings)} new listings to scrape keywords for")
-		for listing in new_listings:
-			if not listing.get("keywords", []):
-				if listing['title'].startswith("BaT: "):
-					tasks.append(bring_a_trailer.get_listing_details(listing, context))
-				elif listing['title'].startswith("PCAR:"):
-					tasks.append(pcarmarket.get_listing_details(listing, context))
-				elif listing['title'].startswith("C&B: "):
-					tasks.append(cars_and_bids.get_listing_details(listing, context))
-		
-		# Run all keyword scraping concurrently
-		if tasks:
-			await asyncio.gather(*tasks, return_exceptions=True)
 		
 		# Bulk insert new listings
 		if new_listings:
@@ -116,6 +102,56 @@ async def store_in_postgres(results: dict, context):
 				listing["time"], listing["price"], listing["year"], scraped_at)
 				for listing in new_listings
 			])
+
+		# 6. Check for live_listings that need keyword scraping
+		no_keywords = await conn.fetch("""
+			SELECT url, title, image, time, price, year, scraped_at, keywords
+			FROM live_listings
+			WHERE keywords IS NULL OR keywords = ''
+			LIMIT 100;
+		""")
+		
+		if no_keywords:
+			# Convert to dicts for downstream compatibility
+			listings_to_scrape = [
+				{
+					"url": row["url"],
+					"title": row["title"],
+					"image": row["image"],
+					"time": row["time"],
+					"price": row["price"],
+					"year": row["year"],
+					"scraped_at": row["scraped_at"],
+					"keywords": row["keywords"] if row["keywords"] else []
+				}
+				for row in no_keywords
+			]
+
+			# Run keyword scrapers for each listing synchronously, due to resource constraints
+			for listing in listings_to_scrape:
+				if not listing.get("keywords"):
+					if listing['title'].startswith("BaT: "):
+						await bring_a_trailer.get_listing_details(listing, context)
+					elif listing['title'].startswith("PCAR:"):
+						await pcarmarket.get_listing_details(listing, context)
+					elif listing['title'].startswith("C&B: "):
+						await cars_and_bids.get_listing_details(listing, context)
+
+			# Update database with scraped keywords
+			updates = []
+			for listing in listings_to_scrape:
+				if listing.get("keywords"):
+					logging.info(f"Updating keywords for {listing['title']}")
+					updates.append((listing["url"], listing["keywords"]))
+
+			if updates:
+				await conn.executemany("""
+					UPDATE live_listings 
+					SET keywords = to_tsvector('english', $2) 
+					WHERE url = $1
+				""", updates)
+				
+				logging.info(f"Updated keywords for {len(updates)} listings")
 
 	except Exception as e:
 		logging.error(f"Error storing data in Postgres: {e}")

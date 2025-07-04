@@ -274,6 +274,8 @@ async def get_listing_details(listing: dict, context, debug=False):
 			listing["keywords"] = []
 		listing["keywords"].extend(listing_keywords)
 		listing["keywords"].append(listing["title"])
+		# Convert to a single string for tsvector indexing
+		listing["keywords"] = " ".join(listing["keywords"]) 
 
 		if debug:
 			print(f"Keywords for {listing['title']}: {listing['keywords']}")
