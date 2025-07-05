@@ -4,7 +4,7 @@ import asyncio
 import listing
 from datetime import timezone, datetime, timedelta
 
-TIMEOUT = 10000
+TIMEOUT = 15000
 
 async def get_results(query, browser, debug=False):
 	"""
@@ -111,9 +111,7 @@ async def get_all_live(browser, debug=False):
 	Returns:
 		All discovered listings as a dict
 	"""
-
 	search_url = "https://carsandbids.com"
-
 	page = await browser.new_page()
 	try:
 		await page.goto(search_url, timeout=TIMEOUT)
@@ -125,7 +123,7 @@ async def get_all_live(browser, debug=False):
 			timeout=TIMEOUT
 		)
 
-		# Scroll to fight lazy loading
+		# Slowly scroll to fight lazy loading
 		await page.evaluate("""
 			() => {
 				return new Promise(resolve => {
@@ -189,11 +187,8 @@ async def get_all_live(browser, debug=False):
 					delta = timedelta(hours=int(parts[0]), minutes=int(parts[1]), seconds=int(parts[2]))
 				elif len(parts) == 2:  # minutes:seconds
 					delta = timedelta(minutes=int(parts[0]), seconds=int(parts[1]))
-			elif "ended" in timeRemaining.lower(): # Handle cars that have just ended
-				if debug:
-					print(f"Skipping ended auction: {data['title']}, {data['timeRemaining']}", {data['url']})
-					print("-" * 50)
-				continue
+			elif "ended" in timeRemaining.lower():
+				delta = timedelta(seconds=2)  # Give a small buffer for ended auctions
 			else: # No colons and no days means just seconds remaining
 				delta = timedelta(seconds=int(timeRemaining.split('s')[0]))
 
@@ -217,10 +212,67 @@ async def get_all_live(browser, debug=False):
 	except Exception as e:
 		print(f"Error scraping C&B auctions: {e}")
 		return {}
+	
+	finally:
+		await page.close()
+
+async def get_listing_details(listing: dict, context, debug=False):
+	"""
+	Fetches details and keywords for a specific listing from Cars & Bids. Async even though it doesn't need to be, for the sake of consistency.
+
+	Args:
+		listing: The Listing dict to fetch details for
+		context: Playwright async browser context
+		debug: Print all info
+	Returns:
+		None, modifies the listing object in place
+	"""
+	page = await context.new_page()
+	try:
+		await page.goto(listing["url"], timeout=TIMEOUT)
+		
+		await page.wait_for_selector('.quick-facts', timeout=TIMEOUT)
+
+		listing_keywords = await page.evaluate("""
+			() => {
+				const facts = {};
+				const dts = Array.from(document.querySelectorAll('.quick-facts dt'));
+				dts.forEach(dt => {
+						const key = dt.textContent.trim();
+						const dd = dt.nextElementSibling;
+						let value = '';
+						if (dd) {
+							const a = dd.querySelector('a');
+							value = a ? a.textContent.trim() : dd.textContent.trim();
+						}
+						facts[key] = value;
+				});
+				return {
+						make: facts['Make'] || null,
+						model: facts['Model'] || null
+				};
+			}
+		""")
+
+		if "keywords" not in listing:
+			listing["keywords"] = []
+		listing["keywords"].extend([listing_keywords.get("make", ""), listing_keywords.get("model", "")])
+		listing["keywords"].append(listing["title"])
+		# Convert to a single string for tsvector indexing
+		listing["keywords"] = " ".join(listing["keywords"]) 
+
+		if debug:
+			print(f"Keywords for {listing['title']}: {listing['keywords']}")
+
+	except Exception as e:
+		print(f'Error fetching C&B details for {listing["title"]}: {e}')
+
+	finally:
+		await page.close()
 
 
 if __name__ == "__main__":
-	async def test(isSearch):
+	async def test(test_type):
 		async with async_playwright() as p:
 			browser = await p.chromium.launch(
 				headless=True,
@@ -243,21 +295,31 @@ if __name__ == "__main__":
 				timezone_id='America/New_York'
 			)
 			
-			if isSearch:
-				try:
-					from urllib.parse import quote
-					query = quote("997 911")
-					results = await get_results(query, context, debug=True)
-					print(results)
+			match test_type:
+				case "results":
+					try:
+						from urllib.parse import quote
+						query = quote("997 911")
+						results = await get_results(query, context, debug=True)
+						print(results)
 
-				finally:
-					await browser.close()
-			else:
-				try:
-					res = await get_all_live(context, debug=True)
-					print(res)
+					finally:
+						await browser.close()
 
-				finally:
-					await browser.close()
-	
-	asyncio.run(test(False))  # Change to True for search testing
+				case "live":
+					try:
+						res = await get_all_live(context, debug=True)
+						print(res)
+
+					finally:
+						await browser.close()
+
+				case "keywords":
+					try:
+						url = "https://carsandbids.com/auctions/rx4XwZR0/2012-bmw-m3-coupe-competition-package?ss_id=74c51f8b-8c62-4b4a-a504-560438e4c87b&ref=lr_1_1"
+						test_listing = listing.Listing("blah blah", url, "", "", "", 0)
+						await get_listing_details(test_listing.to_dict(), context, debug=True)
+					finally:
+						await browser.close()
+
+	asyncio.run(test("keywords"))

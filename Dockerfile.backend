@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
 
-COPY scraper/requirements.txt .
+COPY api/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright browsers
@@ -14,4 +14,4 @@ RUN playwright install-deps
 EXPOSE 5000
 
 # Don't copy code - it will be mounted as volume
-CMD ["python", "-u", "scraper/src/main.py"]
+CMD ["python", "-u", "api/src/main.py"]

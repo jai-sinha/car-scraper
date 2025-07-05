@@ -6,30 +6,32 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - DATABASE_URL=sqlite:///users.db
+      - PG_HOST=postgres
+      - PG_DATABASE=${POSTGRES_DB}
+      - PG_USER=${POSTGRES_USER}
+      - PG_PASSWORD=${POSTGRES_PASSWORD}
       - PYTHONUNBUFFERED=1
     volumes:
-      - ./scraper:/app/scraper
-      - ./data:/app/data
+      - ./api:/app/api
     restart: unless-stopped
 
   scheduler:
     build:
       context: .
       dockerfile: Dockerfile.backend
-    command: ["python", "-u", "scraper/src/scheduler.py"]
+    command: ["python", "-u", "api/src/scheduler.py"]
     depends_on:
       - postgres
     volumes:
-      - ./scraper:/app/scraper
+      - ./api:/app/api
     restart: unless-stopped
 
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_USER: username
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: auctions
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
@@ -44,7 +46,6 @@ services:
     volumes:
       - ./site:/app
       - /app/node_modules
-      - ./users.db:/app/users.db
     depends_on:
       - backend
     restart: unless-stopped
