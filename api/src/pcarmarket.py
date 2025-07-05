@@ -4,7 +4,7 @@ import re
 import listing
 import asyncio
 
-TIMEOUT = 5000
+TIMEOUT = 15000
 
 async def get_results(query, browser, debug=False):
 	"""

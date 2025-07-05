@@ -108,7 +108,7 @@ async def store_in_postgres(results: dict, context):
 			SELECT url, title, image, time, price, year, scraped_at, keywords
 			FROM live_listings
 			WHERE keywords IS NULL OR keywords = ''
-			LIMIT 100;
+			LIMIT 25;
 		""")
 		
 		if no_keywords:

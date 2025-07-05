@@ -4,7 +4,7 @@ import asyncio
 import listing
 from datetime import timezone, datetime, timedelta
 
-TIMEOUT = 10000
+TIMEOUT = 15000
 
 async def get_results(query, browser, debug=False):
 	"""

@@ -298,20 +298,38 @@ async def startup():
 
 @app.route("/search", methods=["GET"])
 async def get_search():
-	query = request.args.get("query")
-	
+	"""Search for listings using PostgreSQL full-text search"""
+	query = str(request.args.get("query")).lower()
 	try:
-		results = await run_search_scrapers(query)
-		# Convert to serializable format for Listing objects
-		serializable_results = {}
-		for key, value in results.items():
-			if hasattr(value, '__dict__'):
-					serializable_results[key] = value.__dict__
-			else:
-					serializable_results[key] = value
+		conn = await asyncpg.connect(**PG_CONN)
+		try:
+			rows = await conn.fetch("""
+				SELECT title, url, image, time, price, year, scraped_at, keywords
+				FROM live_listings
+				WHERE keywords @@ plainto_tsquery('english', $1)
+				ORDER BY time DESC
+			""", query)
+		finally:
+			await conn.close()
+		if not rows:
+			return jsonify({"error": "No listings found"}), 404
 		
-		return jsonify(serializable_results), 200
-	
+		# Convert rows to a dictionary format
+		listings = {}
+		for row in rows:
+			title, url, image, time_rem, price, year, scraped_at, keywords = row
+			listings[title] = {
+				"title": title,
+				"url": url,
+				"image": image,
+				"time": time_rem,
+				"price": price,
+				"year": year,
+				"keywords": keywords.split() if keywords else [],
+				"scraped_at": scraped_at.isoformat() if scraped_at else None
+			}
+
+		return jsonify(listings), 200
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500
 	
