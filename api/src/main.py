@@ -43,11 +43,20 @@ async def validate_password(password):
 async def hash_password(password):
 	"""Hash password"""
 	salt = bcrypt.gensalt()
-	return bcrypt.hashpw(password.encode('utf-8'), salt)
+	hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+	return hashed.decode('utf-8')  # Convert bytes to string
 
 async def check_password(password, password_hash):
 	"""Check password against hash"""
-	return bcrypt.checkpw(password.encode('utf-8'), password_hash)
+	try:
+		# Convert string back to bytes for bcrypt
+		if isinstance(password_hash, str):
+			password_hash = password_hash.encode('utf-8')
+		
+		return bcrypt.checkpw(password.encode('utf-8'), password_hash)
+	except Exception as e:
+		print(f"Password check error: {e}")
+		return False
 
 async def find_user_by_email_or_username(email_or_username):
 	"""Find user by email or username"""
@@ -283,7 +292,7 @@ async def startup():
 				id SERIAL PRIMARY KEY,
 				email VARCHAR(120) UNIQUE NOT NULL,
 				username VARCHAR(50) UNIQUE NOT NULL,
-				password_hash BYTEA NOT NULL,
+				password_hash TEXT NOT NULL,
 				created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 				is_active BOOLEAN DEFAULT TRUE
 			)
