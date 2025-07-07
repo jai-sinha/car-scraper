@@ -56,6 +56,5 @@ x-resources: &default-resources
       limits:
         memory: 2G
 
-
 volumes:
   pgdata:
