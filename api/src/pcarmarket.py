@@ -234,19 +234,22 @@ async def get_all_live(context: BrowserContext, debug: bool = False) -> Dict:
 		await page.close()
 
 
-async def get_listing_details(listing_dict: Dict, context: BrowserContext, debug: bool = False) -> None:
+async def get_listing_details(title: str, url: str, context: BrowserContext, debug: bool = False) -> None:
 	"""
 	Fetches details and keywords for a specific listing from PCAR Market.
 
 	Args:
-		listing_dict: Listing dictionary containing the URL to fetch details for
+		title: The title of the listing
+		url: The URL of the listing
 		context: Playwright async browser context
 		debug: Print debug information
+	Returns:
+		Keywords extracted from the listing
 	"""
 	page = await context.new_page()
 	
 	try:
-		await page.goto(listing_dict["url"], timeout=TIMEOUT)
+		await page.goto(url, timeout=TIMEOUT)
 		await page.wait_for_selector('#auction-details-list', timeout=TIMEOUT)
 
 		listing_keywords = await page.evaluate("""
@@ -269,16 +272,16 @@ async def get_listing_details(listing_dict: Dict, context: BrowserContext, debug
 		# Update listing with keywords
 		kw = [ 
 			listing_keywords.get("model", ""),
-			listing_dict["title"].replace(".", " ")
+			title.replace(".", " ")
 		]
 		
-		listing_dict["keywords"] = " ".join(filter(None, kw))
-
 		if debug:
-			print(f"Keywords for {listing_dict['title']}: {listing_dict['keywords']}")
+			print(f"Keywords for {title}: {kw}")
+
+		return " ".join(filter(None, kw))
 
 	except Exception as e:
-		print(f'Error fetching PCAR details for {listing_dict["title"]}: {e}')
+		print(f'Error fetching PCAR details for {title}: {e}')
 	finally:
 		await page.close()
 

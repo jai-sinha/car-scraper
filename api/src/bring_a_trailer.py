@@ -232,19 +232,22 @@ async def _scroll_to_load_all_listings(page: Page, max_attempts: int = 25) -> No
 			break
 
 
-async def get_listing_details(listing_dict: Dict, context: BrowserContext, debug: bool = False) -> None:
+async def get_listing_details(title: str, url: str, context: BrowserContext, debug: bool = False) -> None:
 	"""
 	Fetches details and keywords for a specific listing.
 
 	Args:
-		listing_dict: The listing dictionary to update with keywords
+		title: The title of the listing
+		url: The URL of the listing
 		context: Playwright async context
 		debug: Print debug information
+	Returns:
+		Keywords extracted from the listing
 	"""
 	page = await context.new_page()
 	
 	try:
-		await page.goto(listing_dict["url"], timeout=TIMEOUT)
+		await page.goto(url, timeout=TIMEOUT)
 		await page.wait_for_selector('.column-groups', timeout=TIMEOUT)
 
 		# Extract keywords from listing page
@@ -285,15 +288,15 @@ async def get_listing_details(listing_dict: Dict, context: BrowserContext, debug
 		# Update listing with keywords
 		kw = []
 		kw.extend(listing_keywords)
-		kw.append(listing_dict["title"])
+		kw.append(title)
 		
-		listing_dict["keywords"] = " ".join(listing_dict["keywords"])
-
 		if debug:
-			print(f"Keywords for {listing_dict['title']}: {listing_dict['keywords']}")
+			print(f"Keywords for {title}: {kw}")
+
+		return " ".join(kw)
 
 	except Exception as e:
-		print(f'Error fetching BaT details for {listing_dict["title"]}: {e}')
+		print(f'Error fetching BaT details for {title}: {e}')
 	finally:
 		await page.close()
 
