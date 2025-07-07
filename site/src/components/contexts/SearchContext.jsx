@@ -16,6 +16,7 @@ export function SearchProvider({ children }) {
 	const [yearFilter, setYearFilter] = useState(null);
 	const [keywordFilter, setKeywordFilter] = useState(null);
 	const [useDB, setUseDB] = useState(false);
+	const [queryUsed, setQueryUsed] = useState(false);
 
 	const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,6 +32,7 @@ export function SearchProvider({ children }) {
 			} else {
 				url = `${API_URL}/search?query=${encodeURIComponent(query)}`;
 			}
+			setQueryUsed(query);
 			const response = await fetch(url);
 
 			if (!response.ok) {
@@ -200,14 +202,15 @@ export function SearchProvider({ children }) {
     return (
         <SearchContext.Provider value={{
             query, setQuery,
+				queryUsed, setQueryUsed,
             data, setData,
+				useDB, setUseDB,
             filteredData, setFilteredData,
             resetKey, setResetKey,
             loading, setLoading,
             error, setError,
             yearFilter, setYearFilter,
             keywordFilter, setKeywordFilter,
-				useDB, setUseDB,
             // expose all handler functions here
             fetchCarData,
             handleYearFilter,
