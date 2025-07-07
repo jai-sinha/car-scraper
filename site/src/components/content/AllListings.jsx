@@ -18,6 +18,7 @@ function AllListings() {
 				throw new Error(`HTTP error: ${response.status}`);
 			}
 			const data = await response.json();
+			console.log("Fetched live listings:", Object.values(data)[0]);
 			setListings(data);
 			const timestamp = Object.values(data)[0].scraped_at;
 			calculateMins(timestamp);
@@ -38,7 +39,10 @@ function AllListings() {
 	};
 
 	const calculateMins = (timestamp) => {
-		const timestampDate = new Date(timestamp.replace(" ", "T") + "Z");
+		// Ensure the timestamp is in a format the Date constructor can parse
+		// Remove microseconds if present (".203765") for Safari compatibility
+		const cleanedTimestamp = timestamp.replace(/\.\d{6}/, "");
+    	const timestampDate = new Date(cleanedTimestamp);
 		const now = new Date();
 		const diffMins = Math.floor((now - timestampDate) / 60000);
 		setMinutesAgo(diffMins);

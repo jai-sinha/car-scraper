@@ -4,7 +4,7 @@ import KeywordFilter from "./KeywordFilter";
 import YearRangeFilter from "./YearRangeFilter";
 
 const Search = () => {
-	const { query, setQuery, fetchCarData, loading, setData, setFilteredData, setResetKey } = useSearch();
+	const { query, setQuery, useDB, setUseDB, fetchCarData, loading, setData, setFilteredData, setResetKey } = useSearch();
 
 	return (
 		<Form className="mx-auto w-50 p-2">
@@ -14,7 +14,7 @@ const Search = () => {
 				size="lg"
 				id="query"
 				value={query}
-				placeholder="Search (e.g. '991 911', 'BMW E9', 'Mercedes W113 SL')"
+				placeholder="Search (e.g. '991 911', 'Alfa 105 Series', 'Mercedes W113 SL')"
 				onChange={(e) => setQuery(e.target.value)}
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') {
@@ -23,16 +23,27 @@ const Search = () => {
 					}
 				}}
 			/>
-			<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
-				{loading ? "Loading..." : "Search"}
-			</Button>
-			<Button size="lg" variant="secondary" onClick={() => {
-				setQuery('');
-				setData(null);
-				setFilteredData(null);
-				setResetKey(prev => prev + 1);
-			}}> Reset Search
-			</Button>
+			<div className="d-flex align-items-center mb-2 flex-wrap gap-2">
+				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
+					{loading ? "Loading..." : "Search"}
+				</Button>
+				<Button size="lg" variant="secondary" onClick={() => {
+					setQuery('');
+					setData(null);
+					setFilteredData(null);
+					setResetKey(prev => prev + 1);
+				}}> Reset Search
+				</Button>
+				<Form.Check
+					style={{ transform: "scale(1.25)"}}			
+					type="checkbox"
+					id="use-db-search"
+					label="Use DB search"
+					checked={useDB}
+					onChange={e => setUseDB(e.target.checked)}
+					className="m-2 ms-4"
+				/>
+			</div>
 			<div className="d-flex align-items-center mt-2 gap-2">
 				<KeywordFilter />
 				<YearRangeFilter />

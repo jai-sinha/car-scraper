@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 from playwright.async_api import async_playwright, BrowserContext
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, Tuple
 import bring_a_trailer, pcarmarket, cars_and_bids
 
 # Configure logging

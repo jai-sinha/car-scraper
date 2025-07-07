@@ -281,10 +281,10 @@ async def logout():
 	session.clear()
 	return jsonify({'message': 'Logged out successfully'}), 200
 
-# Initialize database
+# Initialize user tables
 @app.before_serving
 async def startup():
-	"""Create database tables"""
+	"""Create user tables"""
 	conn = await asyncpg.connect(**PG_CONN)
 	try:
 		await conn.execute("""
@@ -309,6 +309,19 @@ async def startup():
 async def get_search():
 	"""Search for listings using PostgreSQL full-text search"""
 	query = str(request.args.get("query")).lower()
+
+	try:
+		results = await run_search_scrapers(query)
+		return jsonify(results), 200
+	
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+
+@app.route("/db_search", methods=["GET"])
+async def get_db_search():
+	"""Search for listings using PostgreSQL full-text search"""
+	query = str(request.args.get("query")).lower()
+
 	try:
 		conn = await asyncpg.connect(**PG_CONN)
 		try:

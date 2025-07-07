@@ -147,7 +147,7 @@ async def get_results(query: str, browser, debug: bool = False) -> Dict:
 		for data in listings_data:
 			processed = BringATrailerScraper._process_listing_data(data, scrape_time)
 			if processed:
-				results[processed.url] = processed
+				results[processed.url] = processed.to_dict()
 				
 				if debug:
 					print(processed)

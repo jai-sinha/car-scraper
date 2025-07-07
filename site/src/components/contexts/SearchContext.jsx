@@ -7,18 +7,17 @@ export function useSearch() {
 }
 
 export function SearchProvider({ children }) {
-    const [query, setQuery] = useState('');
-    const [data, setData] = useState(null);
-    const [filteredData, setFilteredData] = useState(null);
-    const [resetKey, setResetKey] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [yearFilter, setYearFilter] = useState(null);
-    const [keywordFilter, setKeywordFilter] = useState(null);
+	const [query, setQuery] = useState('');
+	const [data, setData] = useState(null);
+	const [filteredData, setFilteredData] = useState(null);
+	const [resetKey, setResetKey] = useState(0);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
+	const [yearFilter, setYearFilter] = useState(null);
+	const [keywordFilter, setKeywordFilter] = useState(null);
+	const [useDB, setUseDB] = useState(false);
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    // ...move fetchCarData, applyFilters, handleYearFilter, handleKeywordFilter, clearYearFilter, clearKeywordFilter, parseTimeToHours here...
+	const API_URL = import.meta.env.VITE_API_URL;
 
 	const fetchCarData = async () => {
 		setLoading(true);
@@ -26,7 +25,12 @@ export function SearchProvider({ children }) {
 		setData(null);
 
 		try {
-			const url = `${API_URL}/search?query=${encodeURIComponent(query)}`;
+			let url;
+			if (useDB) {
+				url = `${API_URL}/db_search?query=${encodeURIComponent(query)}`;
+			} else {
+				url = `${API_URL}/search?query=${encodeURIComponent(query)}`;
+			}
 			const response = await fetch(url);
 
 			if (!response.ok) {
@@ -34,8 +38,7 @@ export function SearchProvider({ children }) {
 			}
 
 			const result = await response.json();
-			console.log("Searched URL:", url);
-			console.log(result);
+			console.log("Fetched from endpoint:", url);
 			const sortedData = Object.entries(result)
 				.sort(([, a], [, b]) => parseTimeToHours(a.time) - parseTimeToHours(b.time))
 				.reduce((obj, [key, value]) => ({ 
@@ -109,7 +112,7 @@ export function SearchProvider({ children }) {
 
 		const filtered = Object.fromEntries(
 			Object.entries(data).filter(([key, car]) => {
-				const year = parseInt(car.year);
+				const year = car.year ? parseInt(car.year) : 0; // Default to 0 if year is missing
 				return year >= from && year <= to;
 			})
 		);
@@ -204,6 +207,7 @@ export function SearchProvider({ children }) {
             error, setError,
             yearFilter, setYearFilter,
             keywordFilter, setKeywordFilter,
+				useDB, setUseDB,
             // expose all handler functions here
             fetchCarData,
             handleYearFilter,

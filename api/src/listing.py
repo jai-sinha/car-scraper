@@ -6,7 +6,7 @@ class Listing:
 		self.time 	= time
 		self.price 	= price
 		self.year 	= year
-		self.keywords = keywords or []
+		self.keywords = keywords
 
 	def __str__(self):
 		return f"Title: {self.title}\nURL: {self.url}\nCurrent Bid: {self.price}\nEnd Time (UTC): {self.time}"
