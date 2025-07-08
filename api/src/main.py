@@ -464,7 +464,7 @@ async def save_listing():
 	if not user_id:
 		return jsonify({'error': 'User not found'}), 401
 	
-	saved_at = datetime.now(timezone.utc).isoformat()
+	saved_at = datetime.now(timezone.utc)
 
 	try:
 		conn = await asyncpg.connect(**PG_CONN)
@@ -508,7 +508,7 @@ async def get_garage():
 			rows = await conn.fetch("""
 				SELECT title, url, image, time, price, year
 				FROM saved_listings WHERE user_id = $1
-				ORDER BY scraped_at DESC
+				ORDER BY saved_at DESC
 			""", user_id)
 		finally:
 			await conn.close()
