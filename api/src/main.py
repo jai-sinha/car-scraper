@@ -489,7 +489,10 @@ async def save_listing():
 		finally:
 			await conn.close()
 
-		return jsonify({"message": "Listing saved successfully"}), 201
+		return jsonify({
+			'message': 'Login successful',
+			'car': dict(listing)
+		}), 201
 
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500

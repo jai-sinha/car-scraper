@@ -1,59 +1,73 @@
 import { useLoginStatus } from "../contexts/LoginStatusContext";
-import { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
+import { useSavedListings } from "../contexts/SavedContext";
+import { Row, Col, Container, Spinner, Alert } from "react-bootstrap";
 import CarSummary from "../helpers/CarSummary";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 function Garage() {
 	const { loginStatus } = useLoginStatus();
-	const [savedListings, setSavedListings] = useState([]);
-
-	const fetchSavedListings = async () => {
-		try {
-			const response = await fetch(`${API_URL}/garage`, {
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'include'
-			});
-			if (!response.ok) throw new Error('Failed to fetch saved listings');
-			const data = await response.json();
-			setSavedListings(data);
-		} catch (error) {
-			console.error('Error fetching saved listings:', error);
-			setSavedListings([]);
-		}
-	};
-
-	useEffect(() => {
-		if (loginStatus) {
-			fetchSavedListings();
-		}
-	}, [loginStatus]);
+	const { saved, loading, error } = useSavedListings();
 
 	if (!loginStatus) {
-		return <h2>You need to log in to use this feature.</h2>;
+		return (
+			<Container className="mt-5">
+				<Alert variant="info" className="text-center">
+					<h4>Login Required</h4>
+					<p className="mb-0">You need to log in to view your saved listings.</p>
+				</Alert>
+			</Container>
+		);
 	}
 
-	if (!savedListings || Object.keys(savedListings).length === 0) {
-		return <h2 className="text-center">You have no saved listings in your Garage. Go search for some cars to save!</h2>;
+	if (loading) {
+		return (
+			<Container className="mt-5 text-center">
+				<Spinner animation="border" variant="primary" size="lg" />
+				<p className="mt-3">Loading your saved listings...</p>
+			</Container>
+		);
+	}
+
+	if (error) {
+		return (
+			<Container className="mt-5">
+				<Alert variant="danger" className="text-center">
+					<h4>Error</h4>
+					<p className="mb-0">{error}</p>
+				</Alert>
+			</Container>
+		);
+	}
+
+	if (!saved || saved.length === 0) {
+		return (
+			<Container className="mt-5">
+				<Alert variant="secondary" className="text-center">
+					<h4>No Saved Listings</h4>
+					<p className="mb-0">You haven't saved any cars yet. Start browsing to find your favorites!</p>
+				</Alert>
+			</Container>
+		);
 	}
 
 	return (
-		<div>
-			<h2 className="text-center">Your Saved Listings:</h2>
-				<Row>
-					{Object.values(savedListings).map(car => (
-						<Col xs={12} md={6} lg={3} key={car.url}>
-							<CarSummary
-								{...car}
-								initialSaved={true}
-								onUnsave={ fetchSavedListings }
-							/>
-						</Col>
-					))}
-				</Row>
-		</div>
+		<Container className="mt-4">
+			<div className="mb-4">
+				<h2 className="text-center mb-3">
+					Your Garage
+				</h2>
+				<p className="text-center text-muted">
+					{saved.length} saved listing{saved.length !== 1 ? 's' : ''}
+				</p>
+			</div>
+			
+			<Row className="g-4">
+				{saved.map(car => (
+					<Col xs={12} sm={6} lg={4} xl={3} key={car.url}>
+						<CarSummary {...car} />
+					</Col>
+				))}
+			</Row>
+		</Container>
 	);
 }
 

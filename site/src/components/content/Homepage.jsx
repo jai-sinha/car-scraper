@@ -19,7 +19,7 @@ function ResultsWrapper() {
 			<h1 className="text-center">{Object.values(display).length} Results for '{searchedQuery}'</h1>
 			<Row>
 				{Object.values(display).map(car => (
-					<Col xs={12} md={6} lg={3} key={car.url}>
+					<Col xs={12} sm={6} lg={4} xl={3} key={car.url}>
 						<CarSummary {...car} />
 					</Col>
 				))}
