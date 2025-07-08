@@ -1,109 +1,75 @@
 import { useState } from "react";
-import { Nav, Button, Form } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 function LoginModal({ show, onHide, onLogin }) {
-	const [email_or_username, setUsername] = useState('');
+	const [email_or_username, setEmailOrUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const navigate = useNavigate();
 
-	const handleLogin = (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
-		// Call the onLogin function passed from parent
 		onLogin({ email_or_username, password });
-		// Reset form
-		setUsername('');
-		setPassword('');
+		resetForm();
 		navigate('/');
 	};
 
 	const handleClose = () => {
-		setUsername('');
-		setPassword('');
+		resetForm();
 		onHide();
 	};
 
-	if (!show) return null;
+	const resetForm = () => {
+		setEmailOrUsername('');
+		setPassword('');
+	};
 
 	return (
-		<div 
-			className="position-fixed top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center"
-			style={{ zIndex: 1050 }}
-		>
-			<div 
-				className="bg-white rounded w-100 mx-3" 
-				style={{
-					boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
-					maxWidth: '500px'
-				}}
-			>
-				<div className="py-3">
-					<h4 className="text-center fw-semibold">
-						Log In
-					</h4>
-					<div className="text-center small">
+		<Modal show={show} onHide={handleClose} centered>
+			<Modal.Header closeButton>
+					<Modal.Title>Log In</Modal.Title>
+			</Modal.Header>
+			
+			<Modal.Body>
+					<div className="text-center mb-3">
 						<span>Don't have an account? </span>
-						<Nav.Link 
-							as={Link} 
-							to="register" 
-							onClick={handleClose} 
-							style={{ color: '#007bff' }}
-						>
+						<Link to="/register" onClick={handleClose} className="text-decoration-none">
 							Sign up here
-						</Nav.Link>
+						</Link>
 					</div>
 
-					<Form onSubmit={handleLogin}>
-						<Form.Label htmlFor="username">Username or Email</Form.Label>
-						<Form.Control
-							value={email_or_username}
-							onChange={(e) => setUsername(e.target.value)}
-							size="sm"
-							required
-						/>
+					<Form onSubmit={handleSubmit}>
+						<Form.Group className="mb-3">
+							<Form.Label>Username or Email</Form.Label>
+							<Form.Control
+									type="text"
+									value={email_or_username}
+									onChange={(e) => setEmailOrUsername(e.target.value)}
+									required
+							/>
+						</Form.Group>
 
-						<Form.Label htmlFor="password">Password</Form.Label>
-						<Form.Control
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							size="sm"
-							required
-							type="password"
-							className="mb-3"
-						/>
-						{/* <div style={{
-							marginBottom: '1.5rem',
-							fontSize: '14px'
-							}}>
-							<span style={{ color: '#333' }}>(Forgot your password? </span>
-							<a 
-								href="#" 
-								style={{
-									color: '#007bff',
-									textDecoration: 'none'
-								}}
-							>
-								Click Here
-							</a>
-							<span style={{ color: '#333' }}>)</span>
-						</div> */}
-						<div className="d-flex gap-1 justify-content-center align-items-center">
-							<Button
-								onClick={handleLogin}
-							>
-								Log In
-							</Button>
-							<Button
-								variant='secondary'
-								onClick={handleClose}
-							>
-								Cancel
-							</Button>
-						</div>
+						<Form.Group className="mb-3">
+							<Form.Label>Password</Form.Label>
+							<Form.Control
+									type="password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									required
+							/>
+						</Form.Group>
 					</Form>
-				</div>
-			</div>
-		</div>
+			</Modal.Body>
+
+			<Modal.Footer className="d-flex justify-content-center gap-2">
+					<Button variant="secondary" onClick={handleClose}>
+						Cancel
+					</Button>
+					<Button variant="primary" onClick={handleSubmit}>
+						Log In
+					</Button>
+			</Modal.Footer>
+		</Modal>
 	);
 }
 

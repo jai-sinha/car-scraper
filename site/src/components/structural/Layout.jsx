@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
 import LoginStatusContext from "../contexts/LoginStatusContext";
@@ -8,21 +9,7 @@ import LogoutModal from "../auth/LogoutModal"
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Layout(props) {
-	const storedLoginStatus = sessionStorage.getItem("loginStatus");
-	const [loginStatus, setLoginStatus] = useState(
-		storedLoginStatus ? JSON.parse(storedLoginStatus) : null
-	);
-	const [showLoginModal, setShowLoginModal] = useState(false);
-	const [showLogoutModal, setShowLogoutModal] = useState(false);
-
-	// Update sessionStorage whenever loginStatus changes
-	useEffect(() => {
-		if (loginStatus) {
-			sessionStorage.setItem("loginStatus", JSON.stringify(loginStatus));
-		} else {
-			sessionStorage.removeItem("loginStatus");
-		}
-	}, [loginStatus]);
+	const { loginStatus, setLoginStatus, showLoginModal, setShowLoginModal, showLogoutModal, setShowLogoutModal } = useLoginStatus();
 
 	const handleLoginClick = (e) => {
 		e.preventDefault();
@@ -82,6 +69,7 @@ function Layout(props) {
 		  	<Container>
 			 	<Navbar.Brand as={Link} to="/">Car Scraper</Navbar.Brand>
 			 	<Nav className="me-auto">
+					<Nav.Link as={Link} to="/garage">Garage</Nav.Link>
 					{!loginStatus ? (
 						<Nav.Link as={Link} href="#" onClick={handleLoginClick}>Login</Nav.Link>
 						) : (
@@ -98,9 +86,7 @@ function Layout(props) {
 		</Navbar>
 		
 		<div style={{ margin: "1rem" }}>
-			<LoginStatusContext.Provider value={[loginStatus, setLoginStatus]}>
-				<Outlet />
-			</LoginStatusContext.Provider>
+			<Outlet />
 		</div>
 
 		<LoginModal 
