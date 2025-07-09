@@ -281,12 +281,12 @@ async def logout():
 	session.clear()
 	return jsonify({'message': 'Logged out successfully'}), 200
 
-# Initialize user tables
 @app.before_serving
 async def startup():
-	"""Create user tables"""
+	"""Create user and listing tables"""
 	conn = await asyncpg.connect(**PG_CONN)
 	try:
+		# Users
 		await conn.execute("""
 			CREATE TABLE IF NOT EXISTS users (
 				id SERIAL PRIMARY KEY,
@@ -297,11 +297,64 @@ async def startup():
 				is_active BOOLEAN DEFAULT TRUE
 			)
 		""")
-		
-		# Create indexes
 		await conn.execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)")
 		await conn.execute("CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)")
-		
+
+		# Live listings
+		await conn.execute("""
+			CREATE TABLE IF NOT EXISTS live_listings (
+				url TEXT PRIMARY KEY,
+				title TEXT,
+				image TEXT,
+				time TIMESTAMP WITH TIME ZONE,
+				price TEXT,
+				year INTEGER,
+				scraped_at TIMESTAMP WITH TIME ZONE,
+				keywords TSVECTOR
+			)
+		""")
+
+		# Temp listings
+		await conn.execute("""
+			CREATE TABLE IF NOT EXISTS temp_listings (
+				url TEXT PRIMARY KEY,
+				title TEXT,
+				image TEXT,
+				time TIMESTAMP WITH TIME ZONE,
+				price TEXT,
+				year INTEGER,
+				scraped_at TIMESTAMP WITH TIME ZONE,
+				keywords TSVECTOR
+			)
+		""")
+
+		# Closed listings
+		await conn.execute("""
+			CREATE TABLE IF NOT EXISTS closed_listings (
+				url TEXT PRIMARY KEY,
+				title TEXT,
+				image TEXT,
+				price TEXT,
+				year INTEGER,
+				closed_at TIMESTAMP WITH TIME ZONE,
+				keywords TSVECTOR
+			)
+		""")
+
+		# Saved listings
+		await conn.execute("""
+			CREATE TABLE IF NOT EXISTS saved_listings (
+				user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+				url TEXT REFERENCES live_listings(url) ON DELETE CASCADE,
+				title TEXT,
+				image TEXT,
+				time TIMESTAMP WITH TIME ZONE,
+				price TEXT,
+				year INTEGER,
+				saved_at TIMESTAMP WITH TIME ZONE,
+				PRIMARY KEY (user_id, url)
+			)
+		""")
 	finally:
 		await conn.close()
 
@@ -397,6 +450,123 @@ async def get_all_listings():
 	
 	except Exception as e:
 		return jsonify({"error": str(e)}), 500
+
+@app.route("/save", methods=["POST"])
+@login_required
+async def save_listing():
+	"""Save a listing to the current user's garage"""
+	data = await request.get_json()
+	url = data.get("url", "")
+	if not url:
+		return jsonify({"error": "URL is required"}), 400
 	
+	user_id = session['user_id']
+	if not user_id:
+		return jsonify({'error': 'User not found'}), 401
+	
+	saved_at = datetime.now(timezone.utc)
+
+	try:
+		conn = await asyncpg.connect(**PG_CONN)
+
+		try:
+			# Fetch listing data from live_listings
+			listing = await conn.fetchrow("""
+				SELECT title, url, image, time, price, year, keywords
+				FROM live_listings WHERE url = $1
+			""", url)
+			if not listing:
+				return jsonify({"error": "Listing not found"}), 404
+
+			# Insert into saved_listings
+			await conn.execute("""
+				INSERT INTO saved_listings (user_id, url, title, image, time, price, year, saved_at)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+				ON CONFLICT (user_id, url) DO NOTHING
+			""", user_id, listing['url'], listing['title'], listing['image'], listing['time'],
+				listing['price'], listing['year'], saved_at)
+		
+		finally:
+			await conn.close()
+
+		return jsonify({
+			'message': 'Login successful',
+			'car': dict(listing)
+		}), 201
+
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+	
+@app.route("/garage", methods=["GET"])
+@login_required
+async def get_garage():
+	"""Get all saved listings for the current user"""
+	user_id = session.get('user_id')
+	if not user_id:
+		return jsonify({'error': 'User not found'}), 401
+	
+	try:
+		conn = await asyncpg.connect(**PG_CONN)
+		try:
+			rows = await conn.fetch("""
+				SELECT title, url, image, time, price, year
+				FROM saved_listings WHERE user_id = $1
+				ORDER BY saved_at DESC
+			""", user_id)
+		finally:
+			await conn.close()
+
+		if not rows:
+			return {}, 200
+
+		# Convert rows to a dictionary format
+		listings = {}
+		for row in rows:
+			title, url, image, time_rem, price, year = row
+			listings[title] = {
+				"title": title,
+				"url": url,
+				"image": image,
+				"time": time_rem,
+				"price": price,
+				"year": year,
+			}
+
+		return jsonify(listings), 200
+	
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+	
+@app.route("/delete_saved_listing", methods=["DELETE"])
+@login_required
+async def delete_saved_listing():
+	"""Delete a saved listing from the user's garage"""
+	data = await request.get_json()
+	url = data.get("url", "")
+	if not url:
+		return jsonify({"error": "URL is required"}), 400
+	
+	user_id = session.get('user_id')
+	if not user_id:
+		return jsonify({'error': 'User not found'}), 401
+	
+	try:
+		conn = await asyncpg.connect(**PG_CONN)
+		try:
+			result = await conn.execute("""
+				DELETE FROM saved_listings WHERE user_id = $1 AND url = $2
+			""", user_id, url)
+			
+			if result == "DELETE 0":
+				return jsonify({"error": "Listing not found in garage"}), 404
+			
+		finally:
+			await conn.close()
+
+		return jsonify({"message": "Listing deleted successfully"}), 200
+	
+	except Exception as e:
+		return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
 	app.run(host="0.0.0.0", port=5000, debug=True)

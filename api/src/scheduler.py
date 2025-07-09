@@ -47,7 +47,7 @@ class ScraperScheduler:
 		}
 	
 	async def create_browser_contexts(self, browser) -> Tuple[BrowserContext, BrowserContext, BrowserContext]:
-		"""Create browser contexts for each scraper with appropriate settings."""
+		"""Create browser contexts for each scraper with appropriate settings and clear cache/cookies."""
 		# Cars & Bids context with full user agent
 		context_cab = await browser.new_context(
 			user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -55,11 +55,15 @@ class ScraperScheduler:
 			locale='en-US',
 			timezone_id='America/New_York'
 		)
-		
 		# Standard contexts for other scrapers
 		context_bat = await browser.new_context(viewport={"width": 800, "height": 600})
 		context_pcar = await browser.new_context(viewport={"width": 800, "height": 600})
-		
+
+		# Clear cookies and permissions to avoid cache/cookie reuse
+		for ctx in [context_bat, context_pcar, context_cab]:
+			await ctx.clear_cookies()
+			await ctx.clear_permissions()
+
 		# Block resources to speed up scraping
 		contexts = [context_bat, context_pcar, context_cab]
 		for ctx in contexts:
@@ -69,7 +73,7 @@ class ScraperScheduler:
 				if request.resource_type in ["image", "media", "font"] 
 				else route.continue_()
 			)
-		
+			
 		return context_bat, context_pcar, context_cab
 	
 	async def run_all_scrapers(self) -> Dict:

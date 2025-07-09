@@ -61,7 +61,7 @@ function AllListings() {
 			<h6 style={{ cursor: "pointer", display: "inline-block" }} onClick={refreshListings}>*as of {minutesAgo} minutes ago (click me to refresh)</h6>
 			<Row>
 				{visibleCars.map(car => (
-					<Col xs={12} md={6} lg={3} key={car.url}>
+					<Col xs={12} sm={6} lg={4} xl={3} key={car.url}>
 						<CarSummary {...car} />
 					</Col>
 				))}

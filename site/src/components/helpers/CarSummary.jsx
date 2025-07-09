@@ -1,8 +1,12 @@
 import { Card } from "react-bootstrap";
-import '../../index.css'
+import { FaStar } from "react-icons/fa";
+import { useSavedListings } from "../contexts/SavedContext";
+import '../../index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function CarSummary(props) {
+	const { isSaved, addSaved, removeSaved } = useSavedListings();
+	const saved = isSaved(props.url);
 
 	function formatTimeLeft(endTime) {
 		if (endTime == "N/A") return "N/A";
@@ -21,6 +25,16 @@ export default function CarSummary(props) {
 		else return `${minutes.toString()}m`;
 	}
 
+	async function handleSave(e) {
+		e.preventDefault();
+		if (saved) {
+			await removeSaved(props.url);
+		} else {
+			console.log(`Removed ${props.title} from garage`);
+			await addSaved(props.url);
+		}
+	}
+
 	return (
 	  <a
 			href={props.url}
@@ -29,12 +43,35 @@ export default function CarSummary(props) {
 			className="text-decoration-none text-dark"
 			style={{ display: "block" }}
 		>
-			<Card>
-				<Card.Img className="rounded-1" variant="top" src={props.image} />
+			<Card className="position-relative">
+				<div style={{ position: "relative" }}>
+					<Card.Img
+						className="rounded-1"
+						variant="top"
+						src={props.image}
+						style={{ width: "100%", height: "auto", display: "block" }}
+					/>
+					<FaStar
+						onClick={handleSave}
+						style={{
+						position: "absolute",
+						top: "8%",
+						right: "8%",
+						cursor: "pointer",
+						fontSize: "clamp(1.25em, 2vw, 1.75em)",
+						color: saved ? "gold" : "#fff",
+						stroke: "black",
+						strokeWidth: 35,
+						zIndex: 2,
+						transition: "color 0.2s, filter 0.2s"
+						}}
+						title={saved ? "Remove from Garage" : "Save to Garage"}
+					/>
+				</div>
 				<Card.Body>
 					<Card.Title>
 						<h4 className="fw-semibold">
-								{props.title}
+							{props.title}
 						</h4>
 					</Card.Title>
 					<Card.Text>
