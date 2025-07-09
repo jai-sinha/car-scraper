@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginStatusContext = createContext();
 const API_URL = import.meta.env.VITE_API_URL;
@@ -14,6 +15,7 @@ export function LoginStatusProvider({ children }) {
 	);
 	const [showLoginModal, setShowLoginModal] = useState(false);
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (loginStatus) {
@@ -65,12 +67,47 @@ export function LoginStatusProvider({ children }) {
 		}
 	};
 
+	const handleRegister = async (email, username, password, confirmPassword) => {
+		if (!username || !password || !email) {
+			alert("You must provide an email, username and password!");
+			console.log(email, username, password, confirmPassword);
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			alert("Your passwords do not match!");
+			return;
+		}
+
+		const credentials = JSON.stringify({ email, username, password });
+		console.log('Registration attempted with:', credentials);
+
+		try {
+			const response = await fetch(`${API_URL}/register`, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					credentials: 'include',
+					body: credentials
+			});
+			const userData = await response.json();
+			console.log(userData);
+			if (response.ok) {
+					setLoginStatus(userData.user);
+					navigate("/");
+			} else {
+					alert('Registration failed: ' + userData.error);
+			}
+		} catch (error) {
+			alert('Registration error: ' + error.message);
+		}
+	};
+
 	return (
 		<LoginStatusContext.Provider value={{
 			loginStatus, setLoginStatus,
 			showLoginModal, setShowLoginModal,
 			showLogoutModal, setShowLogoutModal,
-			handleLogin, handleLogout
+			handleLogin, handleLogout, handleRegister
 		}}>
 			{children}
 		</LoginStatusContext.Provider>

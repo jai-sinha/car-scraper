@@ -517,7 +517,7 @@ async def get_garage():
 			await conn.close()
 
 		if not rows:
-			return jsonify({"error": "No saved listings found"}), 404
+			return {}, 200
 
 		# Convert rows to a dictionary format
 		listings = {}

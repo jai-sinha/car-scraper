@@ -1,52 +1,17 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { useNavigate, Link } from 'react-router-dom';
 import { useLoginStatus } from "../contexts/LoginStatusContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 function Register() {
 	const [email, setEmail] = useState('');
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
-	const navigate = useNavigate();
-	const { setLoginStatus, setShowLoginModal } = useLoginStatus();
+	const { setShowLoginModal, handleRegister } = useLoginStatus();
 
-	const handleRegister = async (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-
-		if (!username || !password || !email) {
-			alert("You must provide an email, username and password!");
-			return;
-		}
-
-		if (password !== confirmPassword) {
-			alert("Your passwords do not match!");
-			return;
-		}
-
-		const credentials = JSON.stringify({ email, username, password });
-		console.log('Registration attempted with:', credentials);
-
-		try {
-			const response = await fetch(`${API_URL}/register`, {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					credentials: 'include',
-					body: credentials
-			});
-			const userData = await response.json();
-			console.log(userData);
-			if (response.ok) {
-					setLoginStatus(userData.user);
-					navigate("/");
-			} else {
-					alert('Registration failed: ' + userData.error);
-			}
-		} catch (error) {
-			alert('Registration error: ' + error.message);
-		}
+		await handleRegister(email, username, password, confirmPassword);
 	};
 
 	return (
@@ -71,7 +36,7 @@ function Register() {
 								</Button>
 							</div>
 
-							<Form onSubmit={handleRegister}>
+							<Form onSubmit={handleSubmit}>
 								<Form.Group className="mb-3">
 									<Form.Label htmlFor="emailInput">Email</Form.Label>
 									<Form.Control 
@@ -134,8 +99,7 @@ function Register() {
 							<ul className="list-unstyled mt-3">
 								<li className="mb-2">🚗 Save your favorite cars</li>
 								<li className="mb-2">📊 Track price changes</li>
-								<li className="mb-2">🔔 Get notified of deals</li>
-								<li className="mb-2">⭐ Access premium features</li>
+								<li className="mb-2">⭐ Be awesome!!</li>
 							</ul>
 						</Card.Body>
 					</Card>
