@@ -11,7 +11,7 @@ export function SavedListingsProvider({ children }) {
 	const [saved, setSaved] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
-	const { loginStatus } = useLoginStatus();
+	const { loginStatus, setShowLoginModal } = useLoginStatus();
 
 	const API_URL = import.meta.env.VITE_API_URL;
 
@@ -43,7 +43,10 @@ export function SavedListingsProvider({ children }) {
 	const isSaved = (url) => saved.some(car => car.url === url);
 
 	const addSaved = async (url) => {
-		if (!loginStatus) return;
+		if (!loginStatus) {
+			setShowLoginModal(true);
+			return;
+		}
 		try {
 			setLoading(true);
 			const res = await fetch(`${API_URL}/save`, {

@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from "react";
 import { useLoginStatus } from "../contexts/LoginStatusContext";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Link, Outlet } from "react-router-dom";
-import LoginStatusContext from "../contexts/LoginStatusContext";
 import LoginModal from "../auth/LoginModal"
 import LogoutModal from "../auth/LogoutModal"
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 function Layout(props) {
-	const { loginStatus, setLoginStatus, showLoginModal, setShowLoginModal, showLogoutModal, setShowLogoutModal } = useLoginStatus();
+	const { loginStatus, showLoginModal, setShowLoginModal, showLogoutModal, setShowLogoutModal, handleLogin, handleLogout } = useLoginStatus();
 
 	const handleLoginClick = (e) => {
 		e.preventDefault();
@@ -21,48 +17,6 @@ function Layout(props) {
 		setShowLogoutModal(true);
 	};
 
-	async function handleLogin(credentials) {
-		console.log('Login attempted with:', credentials);
-
-		try {
-			const response = await fetch(`${API_URL}/login`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'include',
-				body: JSON.stringify(credentials)
-			});
-			const userData = await response.json();
-			console.log(userData);
-			if (response.ok) {
-				setLoginStatus(userData.user);
-				setShowLoginModal(false);
-			} else {
-				alert('Login failed: ' + userData.error);
-			}
-			} catch (error) {
-			alert('Login error: ' + error.message);
-		}
-	};
-
-	async function handleLogout() {
-		try {
-			const response = await fetch(`${API_URL}/logout`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: "include"
-			});
-			const userData = await response.json();
-			console.log(userData);
-			if (response.ok) {
-				setLoginStatus(null);
-			} else {
-				alert('Logout failed: ' + userData.error);
-			}
-			} catch (error) {
-			alert('Logout error: ' + error.message);
-		}
-	};
-
   return (
 	 <div>
 		<Navbar bg="dark" variant="dark">
@@ -71,9 +25,9 @@ function Layout(props) {
 			 	<Nav className="me-auto">
 					<Nav.Link as={Link} to="/garage">Garage</Nav.Link>
 					{!loginStatus ? (
-						<Nav.Link as={Link} href="#" onClick={handleLoginClick}>Login</Nav.Link>
+						<Nav.Link as={Link} onClick={handleLoginClick}>Login</Nav.Link>
 						) : (
-						<Nav.Link as={Link} href="#" onClick={handleLogoutClick}>Logout</Nav.Link>
+						<Nav.Link as={Link} onClick={handleLogoutClick}>Logout</Nav.Link>
 						)
 					}
 			 	</Nav>
