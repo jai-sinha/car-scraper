@@ -32,7 +32,7 @@ PG_CONN = {
 
 # Constants
 MIN_BAT_LISTINGS = 500
-KEYWORD_BATCH_SIZE = 25
+KEYWORD_BATCH_SIZE = 50
 SCHEDULE_INTERVAL_MINUTES = 2
 
 
@@ -152,14 +152,32 @@ class ScraperScheduler:
 			if not no_keywords:
 				return
 			
-			# Extract keywords for each listing
-			updates = []
-			for listing in no_keywords:
-				kw = await self._extract_keywords_for_listing(listing, context)
-				if kw:
-					updates.append((listing["url"], kw))
-			
-			# Update database with new keywords
+			# Create a pool of 2 pages using an asyncio Queue
+			page_pool = asyncio.Queue()
+			for _ in range(2):
+				page = await context.new_page()
+				await page_pool.put(page)
+
+			async def extract_kw(listing: asyncpg.Record):
+				# Acquire a page from the pool
+				page = await page_pool.get()
+				try:
+					kw = await self._extract_keywords_for_listing(listing, page)
+					return (listing["url"], kw) if kw else None
+				finally:
+					# Return the page back to the pool
+					await page_pool.put(page)
+
+			# Schedule all extraction tasks concurrently
+			tasks = [extract_kw(listing) for listing in no_keywords]
+			extraction_results = await asyncio.gather(*tasks, return_exceptions=True)
+
+			# Filter valid updates
+			updates = [
+				result for result in extraction_results
+				if result is not None and not isinstance(result, Exception)
+			]
+
 			if updates:
 				await conn.executemany("""
 					UPDATE live_listings 
@@ -167,26 +185,26 @@ class ScraperScheduler:
 					WHERE url = $1
 				""", updates)
 				logging.info(f"Updated keywords for {len(updates)} listings")
-					
 		finally:
+			# Close all pages in the pool
+			while not page_pool.empty():
+				page = await page_pool.get()
+				await page.close()
 			await conn.close()
-	
-	async def _extract_keywords_for_listing(self, listing: asyncpg.Record, context: BrowserContext) -> None:
-		"""Extract keywords for a single listing based on its source."""
-		title = listing['title']
 
+	async def _extract_keywords_for_listing(self, listing: asyncpg.Record, page) -> None:
+		"""Extract keywords for a single listing using the provided page."""
+		title = listing['title']
 		try:
 			if title.startswith("BaT"):
-				kw = await bring_a_trailer.get_listing_details(listing["title"], listing["url"] , context)
+				kw = await bring_a_trailer.get_listing_details(listing["title"], listing["url"], page)
 			elif title.startswith("PCAR"):
-				kw = await pcarmarket.get_listing_details(listing["title"], listing["url"], context)
+				kw = await pcarmarket.get_listing_details(listing["title"], listing["url"], page)
 			elif title.startswith("C&B"):
-				kw = await cars_and_bids.get_listing_details(listing["title"], listing["url"], context)
-
+				kw = await cars_and_bids.get_listing_details(listing["title"], listing["url"], page)
 			if kw:
 				logging.info(f"Extracted keywords for {title}")
 				return kw
-					
 		except Exception as e:
 			logging.error(f"Error extracting keywords for {title}: {e}")
 

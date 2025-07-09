@@ -18,14 +18,6 @@ class PCarMarketScraper:
 		return int(year_match.group(0)) if year_match else None
 	
 	@staticmethod
-	def _format_marketplace_listing(data: Dict) -> tuple:
-		"""Format marketplace listing data."""
-		bid = f"{data['buyNow']} (MarketPlace)"
-		end_time = "N/A"
-		title = data['title'][13:]  # Remove "MarketPlace " prefix
-		return bid, end_time, title
-	
-	@staticmethod
 	def _format_auction_listing(data: Dict) -> tuple:
 		"""Format auction listing data."""
 		bid = data['bid']
@@ -76,18 +68,12 @@ class PCarMarketScraper:
 	@staticmethod
 	def _process_listing_data(data: Dict) -> Optional[listing.Listing]:
 		"""Process raw listing data into Listing format."""
-		if not data['title'] or not data['url']:
+		if not data['title'] or not data['url'] or not data['timeRemaining']:
 			return None
 		
 		year = PCarMarketScraper._extract_year(data['title'])
 		
-		# Handle marketplace vs auction listings
-		if data['title'].startswith("MarketPlace"):
-			bid, end_time, title = PCarMarketScraper._format_marketplace_listing(data)
-		else:
-			if not data['timeRemaining']:
-				return None
-			bid, end_time, title = PCarMarketScraper._format_auction_listing(data)
+		bid, end_time, title = PCarMarketScraper._format_auction_listing(data)
 		
 		url = f"{BASE_URL}{data['url']}"
 		key = f"PCAR: {title}"
@@ -234,20 +220,18 @@ async def get_all_live(context: BrowserContext, debug: bool = False) -> Dict:
 		await page.close()
 
 
-async def get_listing_details(title: str, url: str, context: BrowserContext, debug: bool = False) -> None:
+async def get_listing_details(title: str, url: str, page, debug: bool = False) -> None:
 	"""
 	Fetches details and keywords for a specific listing from PCAR Market.
 
 	Args:
 		title: The title of the listing
 		url: The URL of the listing
-		context: Playwright async browser context
+		page: Playwright async page
 		debug: Print debug information
 	Returns:
 		Keywords extracted from the listing
 	"""
-	page = await context.new_page()
-	
 	try:
 		await page.goto(url, timeout=TIMEOUT)
 		await page.wait_for_selector('#auction-details-list', timeout=TIMEOUT)
@@ -333,12 +317,10 @@ async def _test_keywords():
 		)
 		
 		try:
+			page = await context.new_page()
 			test_url = "https://www.pcarmarket.com/auction/2018-porsche-911-gt3-touring-13/"
-			test_listing = listing.Listing(
-					"3,300-MILE 2018 PORSCHE 991.2 GT3 TOURING", 
-					test_url, "", "", "", 2020
-			).to_dict()
-			await get_listing_details(test_listing, context, debug=True)
+			test_title = "MARKETPLACE: 3,300-MILE 2018 PORSCHE 991.2 GT3 TOURING"
+			await get_listing_details(test_title, test_url, page, debug=True)
 		finally:
 			await context.close()
 			await browser.close()
@@ -346,4 +328,4 @@ async def _test_keywords():
 
 if __name__ == "__main__":
 	# Available tests: "results", "live", "keywords"
-	asyncio.run(_test_results())
+	asyncio.run(_test_keywords())

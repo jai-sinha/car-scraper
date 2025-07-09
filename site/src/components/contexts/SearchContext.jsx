@@ -42,7 +42,7 @@ export function SearchProvider({ children }) {
 			const result = await response.json();
 			console.log("Fetched from endpoint:", url);
 			const sortedData = Object.entries(result)
-				.sort(([, a], [, b]) => parseTimeToHours(a.time) - parseTimeToHours(b.time))
+				.sort(([, a], [, b]) => getTimeLeftInSeconds(a.time) - getTimeLeftInSeconds(b.time))
 				.reduce((obj, [key, value]) => ({ 
 					...obj, 
 					[key]: value
@@ -182,43 +182,35 @@ export function SearchProvider({ children }) {
 		}
 	};
 
-	const parseTimeToHours = (timeString) => {	
-		const number = parseInt(timeString);
-		if (timeString.includes('N/A')) {
-			return Infinity; // In MarketPlace, so no time limit.
-		} else if (timeString.includes('day')) {
-			return number * 24; // Convert days to hours
-		} else { // Handle hours + minutes
-			const hourMatch = timeString.match(/(\d+)h/);
-			const minuteMatch = timeString.match(/(\d+)m/);
-			const hours = hourMatch ? parseInt(hourMatch[1]) : 0;
-			const minutes = minuteMatch ? parseInt(minuteMatch[1]) : 0;
-			return hours + (minutes / 60);
-		}
-	};
+	const getTimeLeftInSeconds = (endTime) => {
+		if (endTime === "N/A") return 0;
+		const end = new Date(endTime);
+		const now = new Date();
+		const diffInSeconds = Math.max(0, Math.floor((end - now) / 1000));
+		return diffInSeconds;
+	}
 
-    // (Paste all the logic from Search.jsx here, but remove the JSX return)
-
-    return (
-        <SearchContext.Provider value={{
-            query, setQuery,
-				searchedQuery, setSearchedQuery,
-            data, setData,
-				useDB, setUseDB,
-            filteredData, setFilteredData,
-            resetKey, setResetKey,
-            loading, setLoading,
-            error, setError,
-            yearFilter, setYearFilter,
-            keywordFilter, setKeywordFilter,
-            // expose all handler functions here
-            fetchCarData,
-            handleYearFilter,
-            handleKeywordFilter,
-            clearYearFilter,
-            clearKeywordFilter,
-        }}>
-            {children}
-        </SearchContext.Provider>
-    );
+	return (
+		<SearchContext.Provider value={{
+			query, setQuery,
+			searchedQuery, setSearchedQuery,
+			data, setData,
+			useDB, setUseDB,
+			filteredData, setFilteredData,
+			resetKey, setResetKey,
+			loading, setLoading,
+			error, setError,
+			yearFilter, setYearFilter,
+			keywordFilter, setKeywordFilter,
+			// expose all handler functions here
+			fetchCarData,
+			handleYearFilter,
+			handleKeywordFilter,
+			clearYearFilter,
+			clearKeywordFilter,
+			getTimeLeftInSeconds,
+		}}>
+			{children}
+		</SearchContext.Provider>
+	);
 }
