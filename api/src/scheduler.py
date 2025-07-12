@@ -22,7 +22,7 @@ logging.getLogger("asyncio").setLevel(logging.ERROR)
 # Load environment variables
 load_dotenv()
 
-# Database configuration
+# Database config
 PG_CONN = {
 	"host": os.environ.get("PG_HOST"),
 	"database": os.environ.get("PG_DATABASE"),
@@ -32,8 +32,9 @@ PG_CONN = {
 
 # Constants
 MIN_BAT_LISTINGS = 500
-KEYWORD_BATCH_SIZE = 50
-SCHEDULE_INTERVAL_MINUTES = 2
+KEYWORD_BATCH_SIZE = os.environ.get("KEYWORD_BATCH_SIZE", 50)
+SCHEDULE_INTERVAL_MINUTES = os.environ.get("SCHEDULE_INTERVAL_MINUTES", 2)
+ASYNC_KEYWORD_SCRAPE_COUNT = os.environ.get("ASYNC_KEYWORD_SCRAPE_COUNT", 2)
 
 
 class ScraperScheduler:
@@ -152,9 +153,9 @@ class ScraperScheduler:
 			if not no_keywords:
 				return
 			
-			# Create a pool of 2 pages using an asyncio Queue
+			# Create a pool of pages using an asyncio Queue
 			page_pool = asyncio.Queue()
-			for _ in range(2):
+			for _ in range(ASYNC_KEYWORD_SCRAPE_COUNT):
 				page = await context.new_page()
 				await page_pool.put(page)
 
