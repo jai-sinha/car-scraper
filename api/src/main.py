@@ -435,12 +435,12 @@ async def get_all_listings():
 		# Convert rows to a dictionary format
 		listings = {}
 		for row in rows:
-			title, url, image, time_rem, price, year, scraped_at = row
+			title, url, image, time, price, year, scraped_at = row
 			listings[title] = {
 				"title": title,
 				"url": url,
 				"image": image,
-				"time": time_rem,
+				"time": time,
 				"price": price,
 				"year": year,
 				"scraped_at": scraped_at.isoformat() if scraped_at else None

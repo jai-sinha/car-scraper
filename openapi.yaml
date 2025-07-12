@@ -1,0 +1,442 @@
+openapi: 3.0.0
+info:
+  title: Car Scraper API
+  version: 1.0.0
+  description: |
+    API for aggregating and searching car listings from multiple auction sites.
+    Includes user authentication, garage functionality, and full-text search capabilities.
+
+servers:
+  - url: http://127.0.0.1:5001
+
+paths:
+  # Authentication endpoints
+  /register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - username
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  description: User's username
+                password:
+                  type: string
+                  minLength: 8
+                  description: Password (must contain at least one letter and one number)
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /login:
+    post:
+      summary: Login user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email_or_username
+                - password
+              properties:
+                email_or_username:
+                  type: string
+                  description: User's email or username
+                password:
+                  type: string
+                  description: User's password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /logout:
+    post:
+      summary: Logout user
+      tags:
+        - Authentication
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /me:
+    get:
+      summary: Get current user information
+      tags:
+        - Authentication
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: Current user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /delete_user:
+    delete:
+      summary: Delete current user account
+      tags:
+        - Authentication
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  description: Password confirmation
+      responses:
+        '200':
+          description: User account deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Invalid password or authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Listing endpoints
+  /search:
+    get:
+      summary: Search live listings with real-time scraping
+      tags:
+        - Listings
+      parameters:
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Search query (make, model, year, etc.)
+      responses:
+        '200':
+          description: List of matching car listings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Listing'
+        '500':
+          description: Search failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /db_search:
+    get:
+      summary: Search listings from database using full-text search-- far faster than scraping, but requires database population, which can take some time.
+      tags:
+        - Listings
+      parameters:
+        - in: query
+          name: query
+          required: true
+          schema:
+            type: string
+          description: Search query for full-text search
+      responses:
+        '200':
+          description: List of matching car listings from database
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ListingWithKeywords'
+        '404':
+          description: No listings found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /listings:
+    get:
+      summary: Get all live listings
+      tags:
+        - Listings
+      parameters:
+        - in: query
+          name: refresh
+          schema:
+            type: string
+            enum: [true, false]
+          description: Whether to refresh listings by running scrapers
+      responses:
+        '200':
+          description: All current live listings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ListingWithScrapedAt'
+        '404':
+          description: No listings found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Garage endpoints
+  /save:
+    post:
+      summary: Save a listing to your garage
+      tags:
+        - Garage
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  description: Listing URL to save
+      responses:
+        '201':
+          description: Listing saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  car:
+                    $ref: '#/components/schemas/Listing'
+        '400':
+          description: URL is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Listing not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /garage:
+    get:
+      summary: Get your saved listings
+      tags:
+        - Garage
+      security:
+        - sessionAuth: []
+      responses:
+        '200':
+          description: List of saved listings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Listing'
+        '401':
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /delete_saved_listing:
+    delete:
+      summary: Delete a saved listing from your garage
+      tags:
+        - Garage
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+              properties:
+                url:
+                  type: string
+                  description: URL of the listing to delete
+      responses:
+        '200':
+          description: Listing deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Listing not found in garage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: session
+      description: Session-based authentication using cookies
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+
+    Listing:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+        image:
+          type: string
+        time:
+          type: string
+          format: date-time
+        price:
+          type: string
+        year:
+          type: integer
+
+    ListingWithKeywords:
+      allOf:
+        - $ref: '#/components/schemas/Listing'
+        - type: object
+          properties:
+            keywords:
+              type: string
+              format: Postgres tsvector
+            scraped_at:
+              type: string
+              format: date-time
+
+    ListingWithScrapedAt:
+      allOf:
+        - $ref: '#/components/schemas/Listing'
+        - type: object
+          properties:
+            scraped_at:
+              type: string
+              format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string

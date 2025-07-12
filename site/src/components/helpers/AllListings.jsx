@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearch } from "../contexts/SearchContext";
 import { Row, Col, Button } from "react-bootstrap";
 import CarSummary from "./CarSummary";
 
@@ -9,6 +10,7 @@ function AllListings() {
 	const [listings, setListings] = useState(null);
 	const [minutesAgo, setMinutesAgo] = useState(null);
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+	const { getTimeLeftInSeconds } = useSearch();
 
 	const fetchListings = async () => {
 		try {
@@ -19,7 +21,13 @@ function AllListings() {
 			}
 			const data = await response.json();
 			console.log("Fetched live listings:", Object.values(data)[0]);
-			setListings(data);
+			const sortedData = Object.entries(data)
+				.sort(([, a], [, b]) => getTimeLeftInSeconds(a.time) - getTimeLeftInSeconds(b.time))
+				.reduce((obj, [key, value]) => ({ 
+					...obj, 
+					[key]: value
+				}), {});
+			setListings(sortedData);
 			const timestamp = Object.values(data)[0].scraped_at;
 			calculateMins(timestamp);
 		} catch (err) {

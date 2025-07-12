@@ -34,7 +34,7 @@ class BringATrailerScraper:
 					seconds=int(parts[1])
 				)
 		elif "ended" in time_str:
-			return timedelta(seconds=2)  # Small buffer for ended auctions
+			return None  # Remove ended auctions from results
 		else:
 			# Just seconds remaining
 			seconds = int(time_str.split('s')[0])
@@ -79,6 +79,8 @@ class BringATrailerScraper:
 		try:
 			# Extract end time from time remaining
 			delta = BringATrailerScraper._parse_time_remaining(data['timeRemaining'])
+			if delta is None:
+				return None
 			end_time = scrape_time + delta
 		except (ValueError, IndexError) as e:
 			return None
@@ -232,19 +234,18 @@ async def _scroll_to_load_all_listings(page: Page, max_attempts: int = 25) -> No
 			break
 
 
-async def get_listing_details(title: str, url: str, context: BrowserContext, debug: bool = False) -> None:
+async def get_listing_details(title: str, url: str, page, debug: bool = False) -> None:
 	"""
 	Fetches details and keywords for a specific listing.
 
 	Args:
 		title: The title of the listing
 		url: The URL of the listing
-		context: Playwright async context
+		page: Playwright async page
 		debug: Print debug information
 	Returns:
 		Keywords extracted from the listing
 	"""
-	page = await context.new_page()
 	
 	try:
 		await page.goto(url, timeout=TIMEOUT)
@@ -297,8 +298,6 @@ async def get_listing_details(title: str, url: str, context: BrowserContext, deb
 
 	except Exception as e:
 		print(f'Error fetching BaT details for {title}: {e}')
-	finally:
-		await page.close()
 
 
 # Test functions
@@ -349,11 +348,9 @@ async def _test_keywords():
 		
 		try:
 			url = "https://bringatrailer.com/listing/2005-porsche-911-carrera-coupe-44/"
-			test_listing = listing.Listing(
-					"2015 porsche 911 carrera coupe", 
-					url, "", "", "", 2020
-			).to_dict()
-			await get_listing_details(test_listing, context, debug=True)
+			title = "2005 Porsche 911 Carrera Coupe 6-Speed"
+			page = await context.new_page()
+			await get_listing_details(title, url, page, debug=True)
 		finally:
 			await context.close()
 			await browser.close()
@@ -361,4 +358,4 @@ async def _test_keywords():
 
 if __name__ == "__main__":
 	# Available tests: "results", "live", "keywords"
-	asyncio.run(_test_results())
+	asyncio.run(_test_keywords())

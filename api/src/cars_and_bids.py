@@ -252,20 +252,18 @@ async def _scroll_to_load_all_listings(page: Page) -> None:
 	""")
 
 
-async def get_listing_details(title: str, url: str, context: BrowserContext, debug: bool = False) -> None:
+async def get_listing_details(title: str, url: str, page, debug: bool = False) -> None:
 	"""
 	Fetches details and keywords for a specific listing from Cars & Bids.
 
 	Args:
 		title: The title of the listing
 		url: The URL of the listing
-		context: Playwright async browser context
+		page: Playwright async page
 		debug: Print debug information
 	Returns:
 		Keywords extracted from the listing
 	"""
-	page = await context.new_page()
-	
 	try:
 		await page.goto(url, timeout=TIMEOUT)
 		await page.wait_for_selector('.quick-facts', timeout=TIMEOUT)
@@ -407,12 +405,10 @@ async def _test_keywords():
 		)
 		
 		try:
+			page = await context.new_page()
 			url = "https://carsandbids.com/auctions/rx4XwZR0/2012-bmw-m3-coupe-competition-package"
-			test_listing = listing.Listing(
-					"2012 BMW M3 Coupe Competition Package", 
-					url, "", "", "", 2012
-			).to_dict()
-			await get_listing_details(test_listing, context, debug=True)
+			title = "2012 BMW M3 Coupe Competition Package"
+			await get_listing_details(title, url, page, debug=True)
 		finally:
 			await context.close()
 			await browser.close()
@@ -420,4 +416,4 @@ async def _test_keywords():
 
 if __name__ == "__main__":
 	# Available tests: "results", "live", "keywords"
-	asyncio.run(_test_live())
+	asyncio.run(_test_keywords())
