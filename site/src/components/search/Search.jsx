@@ -4,7 +4,7 @@ import KeywordFilter from "./KeywordFilter";
 import YearRangeFilter from "./YearRangeFilter";
 
 const Search = () => {
-	const { query, setQuery, useDB, setUseDB, fetchCarData, loading, setData, setFilteredData, setResetKey } = useSearch();
+	const { query, setQuery, useDB, setUseDB, fetchSearchData, loading, setData, setFilteredData, setResetKey, setSearchedQuery } = useSearch();
 
 	return (
 		<Form className="mx-auto w-50 p-2">
@@ -16,15 +16,16 @@ const Search = () => {
 				value={query}
 				placeholder="Search (e.g. '991 911', 'Alfa 105 Series', 'Mercedes W113 SL')"
 				onChange={(e) => setQuery(e.target.value)}
-				onKeyDown={(e) => {
+				onKeyDown={async (e) => {
 					if (e.key === 'Enter') {
 						e.preventDefault();
-						fetchCarData();
+						setSearchedQuery(query);
+						await fetchSearchData();
 					}
 				}}
 			/>
 			<div className="d-flex align-items-center mb-2 flex-wrap gap-2">
-				<Button className="me-1" size="lg" variant="primary" onClick={fetchCarData} disabled={loading}>
+				<Button className="me-1" size="lg" variant="primary" onClick={fetchSearchData} disabled={loading}>
 					{loading ? "Loading..." : "Search"}
 				</Button>
 				<Button size="lg" variant="secondary" onClick={() => {
@@ -32,6 +33,7 @@ const Search = () => {
 					setData(null);
 					setFilteredData(null);
 					setResetKey(prev => prev + 1);
+					setSearchedQuery('');
 				}}> Reset Search
 				</Button>
 				<Form.Check

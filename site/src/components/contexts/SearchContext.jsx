@@ -16,11 +16,11 @@ export function SearchProvider({ children }) {
 	const [yearFilter, setYearFilter] = useState(null);
 	const [keywordFilter, setKeywordFilter] = useState(null);
 	const [useDB, setUseDB] = useState(false);
-	const [searchedQuery, setSearchedQuery] = useState(false);
+	const [searchedQuery, setSearchedQuery] = useState('');	
 
 	const API_URL = import.meta.env.VITE_API_URL;
 
-	const fetchCarData = async () => {
+	const fetchSearchData = async () => {
 		setLoading(true);
 		setError(null);
 		setData(null);
@@ -190,6 +190,8 @@ export function SearchProvider({ children }) {
 		return diffInSeconds;
 	}
 
+
+
 	return (
 		<SearchContext.Provider value={{
 			query, setQuery,
@@ -203,7 +205,7 @@ export function SearchProvider({ children }) {
 			yearFilter, setYearFilter,
 			keywordFilter, setKeywordFilter,
 			// expose all handler functions here
-			fetchCarData,
+			fetchSearchData,
 			handleYearFilter,
 			handleKeywordFilter,
 			clearYearFilter,

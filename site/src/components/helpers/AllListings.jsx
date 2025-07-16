@@ -12,7 +12,7 @@ function AllListings() {
 	const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 	const { getTimeLeftInSeconds } = useSearch();
 
-	const fetchListings = async () => {
+	const fetchAllListingsData = async () => {
 		try {
 			const response = await fetch(`${API_URL}/listings`);
 			console.log("Fetching live listings from:", `${API_URL}/listings`);
@@ -36,14 +36,17 @@ function AllListings() {
 	};
 
 	useEffect(() => {
-		fetchListings();
+		const fetchData = async () => {
+			await fetchAllListingsData();
+		};
+		fetchData();
 	}, []);
 
 	const refreshListings = async () => {
 		setListings(null); // Reset listings to show loading state
 		setMinutesAgo(null); // Reset minutes ago to show loading state
 		setVisibleCount(PAGE_SIZE);
-		await fetchListings();
+		await fetchAllListingsData();
 	};
 
 	const calculateMins = (timestamp) => {
@@ -66,7 +69,7 @@ function AllListings() {
 	return (
 		<div className="text-center">
 			<h1>{cars.length} Live* Auction Listings</h1>
-			<h6 style={{ cursor: "pointer", display: "inline-block" }} onClick={refreshListings}>*as of {minutesAgo} minutes ago (click me to refresh)</h6>
+			<h6 style={{ cursor: "pointer", display: "inline-block" }} onClick={async () => await refreshListings()}>*as of {minutesAgo} minutes ago (click me to refresh)</h6>
 			<Row>
 				{visibleCars.map(car => (
 					<Col xs={12} sm={6} lg={4} xl={3} key={car.url}>
